@@ -1,10 +1,7 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 
-/**
- * Centralized API client for handling backend requests using Axios.
- */
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.example.com';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://tuApi.com';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
