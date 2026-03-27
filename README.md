@@ -127,8 +127,8 @@ npm run build
 **TEAMSYS S.R.L.**
 
 - **Diego Armando Alvarez** - Frontend Developer - [EMAIL_ADDRESS]
-- **Integrante #2** - Developer - [EMAIL_ADDRESS]
-- **Integrante #3** - Developer - [EMAIL_ADDRESS]
+- **Jhoel Olivera Antezana** - Frontend Developer - [EMAIL_ADDRESS]
+- **Gaston Garcia Escobar** - Developer - [EMAIL_ADDRESS]
 - **Integrante #4** - Developer - [EMAIL_ADDRESS]
 
 **Contacto General**: [TEAMSYS2020@GMAIL.COM](mailto:TEAMSYS2020@GMAIL.COM)
