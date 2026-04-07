@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
-import { LandingPage } from '@features/landing';
+import { LandingPage } from '@/features/landing';
 import { LoginPage } from '@features/login';
 import { RegisterPage } from '@features/register';
 

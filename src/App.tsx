@@ -1,12 +1,7 @@
-import { AppRouter } from './core/router/AppRouter';
-import { ToastProvider } from '@shared/context/ToastProvider';
+import GestionUsuariosPage from './features/gestionUsuarios/pages/GestionUsuariosPage';
 
 function App() {
-  return (
-    <ToastProvider>
-      <AppRouter />
-    </ToastProvider>
-  );
+  return <GestionUsuariosPage />;
 }
 
 export default App;
