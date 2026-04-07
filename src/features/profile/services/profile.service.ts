@@ -13,7 +13,7 @@ export const profileService = {
   },
 
   getProfesiones: async (): Promise<ProfesionesResponseDto[]> => {
-    const response = await fetch('/api/profesiones', {
+    const response = await fetch('http://localhost:8081/api/profesiones', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -29,18 +29,16 @@ export const profileService = {
 
   // Método actualizado para hacer POST al backend
   updateProfile: async (dto: ProfileRequestDto): Promise<ProfileResponse> => {
-    
-    /* LÓGICA DE TOKEN (Comentada por ahora):
+    console.log(dto)
+     //LÓGICA DE TOKEN (Comentada por ahora):
        const token = sessionStorage.getItem('jwt'); 
-    */
-
-    const response = await fetch('/api/profile/update', { // Ajusta esta URL a tu endpoint de Spring Boot
+    const response = await fetch('http://localhost:8081/api/usuarios/perfil', { // Ajusta esta URL a tu endpoint de Spring Boot
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        /* Si tuvieras el token, se agregaría así:
+        // Si tuvieras el token, se agregaría así:
            'Authorization': `Bearer ${token}` 
-        */
+        
       },
       body: JSON.stringify(dto),
     });
