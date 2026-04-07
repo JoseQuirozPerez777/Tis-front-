@@ -6,7 +6,7 @@ export const loginAdapter = {
     return {
       id: dto.id,
       email: dto.email,
-      fullName: `${dto.first_name} ${dto.last_name}`,
+      fullName: `${dto.name}`,
       token: dto.access_token,
     };
   },
