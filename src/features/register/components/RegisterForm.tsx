@@ -33,14 +33,6 @@ export const RegisterForm = () => {
           />
 
           <Input
-            label="Profesión"
-            placeholder="Desarrollador Full Stack"
-            {...register('profession')}
-            error={errors.profession?.message}
-            className="bg-white/5 border-white/10 focus:border-brand-azul-brillante/50 transition-all"
-          />
-
-          <Input
             label="Correo Electrónico"
             type="email"
             placeholder="correo@ejemplo.com"
