@@ -1,13 +1,19 @@
 import { useState, type FormEvent } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useToast } from '@shared/hooks/useToast';
+import { loginService } from '../services/login.service';
 
 export const ResetPasswordForm = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const token = searchParams.get('token');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,25 +31,34 @@ export const ResetPasswordForm = () => {
       return;
     }
 
+    if (!token) {
+      showToast('Token de recuperación inválido o expirado', 'error');
+      return;
+    }
+
     setIsLoading(true);
 
-    // TODO: Backend integration
-    // Send request to backend with:
-    // - token/code from URL parameters
-    // - newPassword
-    // Example: POST /api/auth/reset-password { token, newPassword }
-
-    await new Promise(resolve => setTimeout(resolve, 700));
-
-    setIsLoading(false);
-    setNewPassword('');
-    setConfirmPassword('');
-
-    showToast('Contraseña cambiada', 'success');
-
-    // TODO: Backend integration
-    // After successful password reset, redirect to login page
-    // Example: navigate('/login')
+    try {
+      const result = await loginService.resetPassword(token, newPassword);
+      
+      if (result.success) {
+        setNewPassword('');
+        setConfirmPassword('');
+        showToast('Contraseña cambiada exitosamente', 'success');
+        
+        // Redirigir a login después de un breve delay
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        showToast(result.message || 'Error al restablecer la contraseña', 'error');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al restablecer la contraseña';
+      showToast(errorMessage, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isPasswordsMatching = newPassword === confirmPassword && newPassword.length > 0;
@@ -81,7 +96,7 @@ export const ResetPasswordForm = () => {
       <Button
         type="submit"
         isLoading={isLoading}
-        disabled={!newPassword.trim() || !isPasswordsMatching}
+        disabled={!newPassword.trim() || !isPasswordsMatching || !token || isLoading}
         className="w-full h-14 text-lg font-bold tracking-wide mt-4 shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
       >
         Restablecer Contraseña

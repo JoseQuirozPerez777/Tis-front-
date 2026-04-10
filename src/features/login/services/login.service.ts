@@ -1,5 +1,12 @@
 import { DEFAULT_USERS } from "@core/api/mock-data";
+import { apiClient } from "@core/api/api-client";
 import type { User } from "../models/user.model";
+import type { 
+  SendPasswordResetEmailRequestDTO, 
+  SendPasswordResetEmailResponseDTO,
+  ResetPasswordRequestDTO,
+  ResetPasswordResponseDTO 
+} from "./login.dto";
 
 export const loginService = {
   async login(email: string, pass: string): Promise<User> {
@@ -30,4 +37,28 @@ export const loginService = {
     return loginAdapter.toUser(data);
     */
   },
+
+  async sendPasswordResetEmail(correo: string): Promise<SendPasswordResetEmailResponseDTO> {
+    const payload: SendPasswordResetEmailRequestDTO = { correo };
+    const response = await apiClient.post<SendPasswordResetEmailResponseDTO>(
+      '/api/password/email',
+      payload
+    );
+    return response;
+  },
+
+  async resetPassword(token: string, password: string): Promise<ResetPasswordResponseDTO> {
+    const payload: ResetPasswordRequestDTO = { password };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    const response = await apiClient.post<ResetPasswordResponseDTO>(
+      '/api/password/reset-password',
+      payload,
+      config
+    );
+    return response;
+  }
 };
