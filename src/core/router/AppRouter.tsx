@@ -23,9 +23,9 @@ export const AppRouter = () => {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          {/* Add more private routes here later like /skills, /projects */}
+          <Route path="/hardskills" element={<HardSkillPage />} />
+          {/* Add more private routes here later like /projects */}
         </Route>
-        <Route path="hardskills" element={<HardSkillPage />} />
       </Route>
     </Routes>
   );
