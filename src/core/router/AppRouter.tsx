@@ -7,7 +7,7 @@ import { LoginPage, ForgotPasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
-
+import { HardSkillPage } from '@features/HardSkills';
 export const AppRouter = () => {
   return (
     <Routes>
@@ -25,6 +25,7 @@ export const AppRouter = () => {
           <Route path="/profile" element={<ProfilePage />} />
           {/* Add more private routes here later like /skills, /projects */}
         </Route>
+        <Route path="hardskills" element={<HardSkillPage />} />
       </Route>
     </Routes>
   );
