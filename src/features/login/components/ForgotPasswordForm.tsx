@@ -19,8 +19,8 @@ export const ForgotPasswordForm = () => {
     try {
       const result = await loginService.sendPasswordResetEmail(email);
       
-      if (result.success) {
-        showToast('Se ha enviado un correo de verificación. Revisa tu bandeja de entrada.', 'success');
+      if (result.success || result.message) {
+        showToast(result.message ||'Se ha enviado un correo de verificación. Revisa tu bandeja de entrada.', 'success');
         setEmail('');
       } else {
         showToast(result.message || 'Error al enviar el correo de recuperación', 'error');

@@ -16,7 +16,7 @@ export interface SendPasswordResetEmailRequestDTO {
 }
 
 export interface SendPasswordResetEmailResponseDTO {
-  success: boolean;
+  success?: boolean;
   message?: string;
 }
 
