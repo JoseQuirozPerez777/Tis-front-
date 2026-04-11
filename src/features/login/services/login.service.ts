@@ -13,6 +13,28 @@ interface UsuarioRespuestaDTO {
 
 export const loginService = {
   async login(email: string, pass: string): Promise<User> {
+    return new Promise((resolve, reject) => {
+      // Simulamos la verificación local para probar sin Backend/BD
+      setTimeout(() => {
+        if (pass === '123456' || email === 'admin@admin.com') {
+          const fakeToken = 'mock-jwt-token-123456789';
+          sessionStorage.setItem('jwt', fakeToken);
+          
+          resolve({
+            id: '1',
+            email: email,
+            fullName: 'Usuario de Prueba (Sin DB)',
+            token: fakeToken,
+          });
+        } else {
+          reject(new Error('Credenciales inválidas. Usa la contraseña "123456" para entrar sin BD.'));
+        }
+      }, 600);
+    });
+
+    /*
+    // CÓDIGO ORIGINAL HACIA EL BACKEND
+
     // 2. Construimos el DTO que espera el Backend (LoginRequestDTO)
     const loginRequest = {
       correo: email,
@@ -49,5 +71,6 @@ export const loginService = {
       fullName: data.usuario.nombre,
       token: data.token // Retornamos el token real del JWT
     };
+    */
   },
 };
