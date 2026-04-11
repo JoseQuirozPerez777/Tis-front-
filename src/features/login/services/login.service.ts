@@ -1,4 +1,12 @@
+import { DEFAULT_USERS } from "@core/api/mock-data";
+import { apiClient } from "@core/api/api-client";
 import type { User } from "../models/user.model";
+import type { 
+  SendPasswordResetEmailRequestDTO, 
+  SendPasswordResetEmailResponseDTO,
+  ResetPasswordRequestDTO,
+  ResetPasswordResponseDTO 
+} from "./login.dto";
 
 // 1. Definimos la interfaz de la respuesta que viene del Back (Java)
 interface UsuarioRespuestaDTO {
@@ -73,4 +81,28 @@ export const loginService = {
     };
     */
   },
+
+  async sendPasswordResetEmail(correo: string): Promise<SendPasswordResetEmailResponseDTO> {
+    const payload: SendPasswordResetEmailRequestDTO = { correo };
+    const response = await apiClient.post<SendPasswordResetEmailResponseDTO>(
+      '/api/password/email',
+      payload
+    );
+    return response;
+  },
+
+  async resetPassword(token: string, password: string): Promise<ResetPasswordResponseDTO> {
+    const payload: ResetPasswordRequestDTO = { password };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    const response = await apiClient.post<ResetPasswordResponseDTO>(
+      '/api/password/reset-password',
+      payload,
+      config
+    );
+    return response;
+  }
 };

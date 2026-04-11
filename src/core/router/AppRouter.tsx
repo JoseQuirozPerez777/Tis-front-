@@ -3,7 +3,7 @@ import { MainLayout } from '../layouts/MainLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { LandingPage } from '@features/landing';
-import { LoginPage, ForgotPasswordPage } from '@features/login';
+import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
@@ -16,6 +16,8 @@ export const AppRouter = () => {
         <Route index element={<LandingPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="cambiar-password" element={<CambiarPasswordPage />} />
       </Route>
 
       {/* Protected/Private Routes */}
