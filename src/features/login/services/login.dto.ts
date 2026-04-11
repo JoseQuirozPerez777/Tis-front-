@@ -1,8 +1,7 @@
 export interface LoginResponseDTO {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   access_token: string;
 }
 
