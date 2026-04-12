@@ -22,8 +22,8 @@ export const photoService = {
   },
 
   uploadToCloudinary: async (file: File): Promise<string> => {
-    const CLOUD_NAME = 'ddjrzszrw';
-    const UPLOAD_PRESET = 'servineo_unsigned';
+    const CLOUD_NAME = 'dhvhvro3n';
+    const UPLOAD_PRESET = 'profile_photos_unsigned';
 
     const formData = new FormData();
     formData.append('file', file);
