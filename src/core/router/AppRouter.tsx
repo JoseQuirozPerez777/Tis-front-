@@ -8,6 +8,8 @@ import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
 import { HardSkillPage } from '@features/HardSkills';
+import { PhotoPage } from '@/features/photo/pages/PhotoPage';
+
 export const AppRouter = () => {
   return (
     <Routes>
@@ -18,6 +20,7 @@ export const AppRouter = () => {
         <Route path="register" element={<RegisterPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="cambiar-password" element={<CambiarPasswordPage />} />
+        <Route path="Photo" element={<PhotoPage />} />
       </Route>
 
       {/* Protected/Private Routes */}
