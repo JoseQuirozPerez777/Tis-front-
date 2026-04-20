@@ -4,7 +4,7 @@ import { hardSkillsService } from '../services/hardSkills.service';
 
 export const useHardSkills = () => {
   const [name, setName] = useState('');
-  const [masteryLevel, setMasteryLevel] = useState('Básico');
+  const [masteryLevel, setMasteryLevel] = useState('Selecione');
   const [category, setCategory] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState<number | ''>('');
   const [description, setDescription] = useState('');
@@ -29,7 +29,7 @@ export const useHardSkills = () => {
       showToast(`Habilidad ${newSkill.name} añadida con éxito.`, 'success');
       // Limpiar formulario
       setName('');
-      setMasteryLevel('Básico');
+      setMasteryLevel('Selecione');
       setCategory('');
       setYearsOfExperience('');
       setDescription('');
