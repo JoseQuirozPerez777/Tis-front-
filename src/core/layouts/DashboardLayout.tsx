@@ -37,8 +37,26 @@ export const DashboardLayout = () => {
             <span className="font-bold tracking-tight text-[#E2F0FF] truncate hidden sm:block">Portafolios TIS</span>
           </Link>
 
-          {/* User Profile / Menu Toggle */}
-          <div className="relative" ref={menuRef}>
+          {/* Navigation & User Profile */}
+          <div className="flex items-center gap-6">
+            {/* Top Navigation Links */}
+            <nav className="hidden md:flex items-center gap-6">
+              <Link 
+                to="/dashboard" 
+                className={`text-sm font-medium transition-colors ${location.pathname === '/dashboard' ? 'text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                Inicio
+              </Link>
+              <Link 
+                to="/profile" 
+                className={`text-sm font-medium transition-colors ${location.pathname === '/profile' ? 'text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                Mi Perfil
+              </Link>
+            </nav>
+
+            {/* User Profile / Menu Toggle */}
+            <div className="relative" ref={menuRef}>
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="flex items-center gap-4 focus:outline-none transition-opacity hover:opacity-80 p-1 rounded-lg"
@@ -96,6 +114,7 @@ export const DashboardLayout = () => {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </header>
 

@@ -2,6 +2,37 @@ import React from 'react';
 import { useAuth } from '@/core/context/AuthContext';
 import { Link } from 'react-router-dom';
 
+const mockPosts = [
+  {
+    id: 1,
+    author: 'Ana Martínez',
+    avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
+    timestamp: 'Hace 2 horas',
+    content: 'Acabo de publicar mi nuevo proyecto de e-commerce usando React y Node.js. Implementé pasarela de pagos con Stripe y autenticación JWT. ¡Muy emocionada por los resultados!',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    likes: 24,
+    comments: 5
+  },
+  {
+    id: 2,
+    author: 'Carlos Gómez',
+    avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+    timestamp: 'Hace 5 horas',
+    content: '¿Alguien más está probando la nueva versión de Next.js? Los Server Actions están increíbles para simplificar el backend. Aquí les dejo un pequeño artículo que escribí al respecto.',
+    likes: 45,
+    comments: 12
+  },
+  {
+    id: 3,
+    author: 'Laura Silva',
+    avatarUrl: 'https://i.pravatar.cc/150?u=a04258a2462d826712d',
+    timestamp: 'Ayer a las 14:30',
+    content: 'Finalmente obtuve mi certificación en AWS Solutions Architect. Fue un camino largo pero valió la pena cada hora de estudio. 🚀☁️',
+    likes: 112,
+    comments: 18
+  }
+];
+
 export const DashboardPage = () => {
   const { user } = useAuth();
 
@@ -20,57 +51,44 @@ export const DashboardPage = () => {
 
       </div>
 
-      {/* Stats/Quick Access Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {/* Card 1 */}
-        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/50 transition-colors group">
-          <div className="w-12 h-12 bg-brand-azul-brillante/10 rounded-xl flex items-center justify-center text-brand-azul-brillante mb-4 group-hover:scale-110 transition-transform">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">Tu Perfil</h3>
-          <p className="text-text-secondary text-sm mb-4">
-            Mantén tu información personal y de contacto actualizada para destacar en tu portafolio.
-          </p>
-          <Link to="/profile" className="text-brand-azul-brillante font-medium text-sm hover:underline flex items-center gap-1">
-            Revisar perfil
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          </Link>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-morado/50 transition-colors group">
-          <div className="w-12 h-12 bg-brand-morado/10 rounded-xl flex items-center justify-center text-brand-morado mb-4 group-hover:scale-110 transition-transform">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades</h3>
-          <p className="text-text-secondary text-sm mb-4">
-            Añade y organiza tus habilidades técnicas y blandas para mostrar tu especialidad.
-          </p>
-          <Link to="/skills" className="text-brand-morado font-medium text-sm hover:underline flex items-center gap-1">
-            Gestionar habilidades
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          </Link>
-        </div>
-
-        {/* Card 3 */}
-        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
-          <div className="w-12 h-12 bg-[#10B981]/10 rounded-xl flex items-center justify-center text-[#10B981] mb-4 group-hover:scale-110 transition-transform">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">Proyectos</h3>
-          <p className="text-text-secondary text-sm mb-4">
-            Muestra tus mejores trabajos. Crea y conecta repositorios o describe tus casos de éxito.
-          </p>
-          <Link to="/projects" className="text-[#10B981] font-medium text-sm hover:underline flex items-center gap-1">
-            Ir a proyectos
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          </Link>
+      {/* Feed de Publicaciones */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold text-text-primary mb-6">Publicaciones Recientes</h2>
+        
+        <div className="space-y-6">
+          {mockPosts.map((post) => (
+            <div key={post.id} className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/30 transition-colors">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-card-border">
+                  <img src={post.avatarUrl} alt={post.author} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-text-primary">{post.author}</h3>
+                  <p className="text-text-secondary text-sm">{post.timestamp}</p>
+                </div>
+              </div>
+              <p className="text-text-primary mb-4 leading-relaxed">{post.content}</p>
+              {post.image && (
+                <div className="mb-4 rounded-xl overflow-hidden border border-card-border">
+                  <img src={post.image} alt="Publicación" className="w-full h-auto object-cover max-h-96" />
+                </div>
+              )}
+              <div className="flex items-center gap-6 text-text-secondary border-t border-card-border pt-4">
+                <button className="flex items-center gap-2 hover:text-brand-azul-brillante transition-colors group">
+                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <span className="text-sm font-medium">{post.likes}</span>
+                </button>
+                <button className="flex items-center gap-2 hover:text-brand-azul-brillante transition-colors group">
+                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span className="text-sm font-medium">{post.comments}</span>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
