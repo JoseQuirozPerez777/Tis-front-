@@ -1,6 +1,14 @@
-export interface ProfessionalLinksData {
+export interface ProfessionalLinksFormPayload {
   linkedin?: string;
+  linkedinPublic?: boolean;
   github?: string;
+  githubPublic?: boolean;
+}
+
+export interface RedSocialRequestDTO {
+  nombreRed: string;
+  urlPerfil: string;
+  esPublico: boolean;
 }
 
 export interface RedSocialResponseDTO {
