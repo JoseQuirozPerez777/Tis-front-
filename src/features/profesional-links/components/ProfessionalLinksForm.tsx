@@ -71,6 +71,7 @@ export const ProfessionalLinksForm = () => {
                 type="url"
                 placeholder="https://www.linkedin.com/in/tuusuario"
                 {...register('linkedin')}
+
                 className="w-full rounded-xl border border-white/10 bg-[#0F223D] px-4 py-3 text-[#E5E7EB] outline-none focus:border-[#3B82F6]"
               />
 
@@ -101,6 +102,7 @@ export const ProfessionalLinksForm = () => {
                 type="url"
                 placeholder="https://github.com/tuusuario"
                 {...register('github')}
+                
                 className="w-full rounded-xl border border-white/10 bg-[#0F223D] px-4 py-3 text-[#E5E7EB] outline-none focus:border-[#3B82F6]"
               />
 
