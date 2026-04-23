@@ -56,6 +56,26 @@ export const DashboardPage = () => {
           </Link>
         </div>
 
+                {/* Card 3 */}
+        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-violet-500/50 transition-colors group">
+          <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-4 group-hover:scale-110 transition-transform">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422A12.083 12.083 0 0118 14.5c0 1.657-2.686 3-6 3s-6-1.343-6-3c0-1.337.693-2.571 1.84-3.922L12 14z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-text-primary mb-2">Experiencia</h3>
+          <p className="text-text-secondary text-sm mb-4">
+            Registra y organiza tu experiencia laboral para mostrar tu trayectoria profesional.
+          </p>
+          <Link to="/experience" className="text-violet-400 font-medium text-sm hover:underline flex items-center gap-1">
+            Ir a experiencia
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+
         {/* Card 3 */}
         <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
           <div className="w-12 h-12 bg-[#10B981]/10 rounded-xl flex items-center justify-center text-[#10B981] mb-4 group-hover:scale-110 transition-transform">

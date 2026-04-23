@@ -5,11 +5,12 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { LandingPage } from '@features/landing';
 import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
-import { ProfilePage } from '@/features/profile';
-import { DashboardPage } from '@/features/dashboard';
+import { ProfilePage } from '@features/profile';
+import { DashboardPage } from '@features/dashboard';
 import { HardSkillPage } from '@features/HardSkills';
-import { PhotoPage } from '@/features/photo/pages/PhotoPage';
+import { PhotoPage } from '@features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
+import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 
 export const AppRouter = () => {
   return (
@@ -26,14 +27,14 @@ export const AppRouter = () => {
 
       {/* Protected/Private Routes */}
       <Route element={<ProtectedRoute />}>
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/hardskills" element={<HardSkillPage />} />
-          <Route path="/professional-links" element={<ProfessionalLinksPage />} />
-          {/* Add more private routes here later like /projects */}
-        </Route>
-      </Route>
+  <Route element={<DashboardLayout />}>
+    <Route path="/dashboard" element={<DashboardPage />} />
+    <Route path="/profile" element={<ProfilePage />} />
+    <Route path="/experience" element={<ExperiencePage />} />
+    <Route path="/hardskills" element={<HardSkillPage />} />
+    <Route path="/professional-links" element={<ProfessionalLinksPage />} />
+  </Route>
+</Route>
     </Routes>
   );
 };
