@@ -8,6 +8,7 @@ import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
 import { HardSkillPage } from '@features/HardSkills';
+import { SkillsManagementPage } from '@/features/skills';
 import { PhotoPage } from '@/features/photo/pages/PhotoPage';
 
 export const AppRouter = () => {
@@ -29,6 +30,7 @@ export const AppRouter = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/hardskills" element={<HardSkillPage />} />
+          <Route path="/skills" element={<SkillsManagementPage />} />
           {/* Add more private routes here later like /projects */}
         </Route>
       </Route>

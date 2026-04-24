@@ -1,4 +1,4 @@
-import { DEFAULT_USERS } from "@core/api/mock-data";
+//import { DEFAULT_USERS } from "@core/api/mock-data";
 import { apiClient } from "@core/api/api-client";
 import type { User } from "../models/user.model";
 import type { 
@@ -21,6 +21,7 @@ interface UsuarioRespuestaDTO {
 
 export const loginService = {
   async login(email: string, pass: string): Promise<User> {
+    /*
     return new Promise((resolve, reject) => {
       // Simulamos la verificación local para probar sin Backend/BD
       setTimeout(() => {
@@ -39,8 +40,9 @@ export const loginService = {
         }
       }, 600);
     });
+    */
 
-    /*
+    
     // CÓDIGO ORIGINAL HACIA EL BACKEND
 
     // 2. Construimos el DTO que espera el Backend (LoginRequestDTO)
@@ -79,7 +81,7 @@ export const loginService = {
       fullName: data.usuario.nombre,
       token: data.token // Retornamos el token real del JWT
     };
-    */
+    
   },
 
   async sendPasswordResetEmail(correo: string): Promise<SendPasswordResetEmailResponseDTO> {

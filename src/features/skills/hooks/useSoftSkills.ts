@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@shared/hooks/useToast';
-import { hardSkillsService } from '../services/hardSkills.service';
-import type { HardSkillResponse, CreateHardSkillRequest, UpdateHardSkillRequest } from '../models/hardSkill.model';
+import { softSkillsService } from '../services/softSkills.service';
+import type { SoftSkillResponse, CreateSoftSkillRequest, UpdateSoftSkillRequest } from '../models/softSkill.model';
 
-export const useHardSkills = () => {
+export const useSoftSkills = () => {
   const [nombre, setNombre] = useState('');
-  const [nivelDominio, setNivelDominio] = useState<'BASICO' | 'INTERMEDIO' | 'AVANZADO' | 'EXPERTO'>('BASICO');
   const [idCategoria, setIdCategoria] = useState<number | ''>('');
-  const [anosExperiencia, setAnosExperiencia] = useState<number | ''>('');
-  const [descripcion, setDescripcion] = useState('');
-  const [certificadoUrl, setCertificadoUrl] = useState('');
+  const [evidenciaUrl, setEvidenciaUrl] = useState('');
   
-  const [skills, setSkills] = useState<HardSkillResponse[]>([]);
+  const [skills, setSkills] = useState<SoftSkillResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSkills, setIsLoadingSkills] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -25,7 +22,7 @@ export const useHardSkills = () => {
   const loadSkills = async () => {
     try {
       setIsLoadingSkills(true);
-      const response = await hardSkillsService.getMyHardSkills();
+      const response = await softSkillsService.getMySoftSkills();
       setSkills(response);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error al cargar las habilidades';
@@ -42,28 +39,22 @@ export const useHardSkills = () => {
     try {
       if (editingId) {
         // Actualizar habilidad
-        const updateData: UpdateHardSkillRequest = {
+        const updateData: UpdateSoftSkillRequest = {
           id: editingId,
           nombre,
-          nivelDominio,
-          anosExperiencia: anosExperiencia ? Number(anosExperiencia) : undefined,
-          descripcion: descripcion || undefined,
-          certificadoUrl: certificadoUrl || undefined,
+          evidenciaUrl: evidenciaUrl || undefined,
           idCategoria: Number(idCategoria),
         };
-        await hardSkillsService.updateHardSkill(updateData);
+        await softSkillsService.updateSoftSkill(updateData);
         showToast('Habilidad actualizada con éxito.', 'success');
       } else {
         // Registrar nueva habilidad
-        const newSkillData: CreateHardSkillRequest = {
+        const newSkillData: CreateSoftSkillRequest = {
           nombre,
-          nivelDominio,
-          anosExperiencia: anosExperiencia ? Number(anosExperiencia) : undefined,
-          descripcion: descripcion || undefined,
-          certificadoUrl: certificadoUrl || undefined,
+          evidenciaUrl: evidenciaUrl || undefined,
           idCategoria: Number(idCategoria),
         };
-        await hardSkillsService.registerHardSkill(newSkillData);
+        await softSkillsService.registerSoftSkill(newSkillData);
         showToast(`Habilidad ${nombre} registrada con éxito.`, 'success');
       }
       
@@ -78,21 +69,18 @@ export const useHardSkills = () => {
     }
   };
 
-  const handleEdit = (skill: HardSkillResponse) => {
+  const handleEdit = (skill: SoftSkillResponse) => {
     setEditingId(skill.id);
     setNombre(skill.nombre);
-    setNivelDominio(skill.nivelDominio);
-    setAnosExperiencia(skill.anosExperiencia);
-    setDescripcion(skill.descripcion);
-    setCertificadoUrl(skill.certificadoUrl || '');
     setIdCategoria(skill.categoria.idCategoria);
+    setEvidenciaUrl(skill.evidenciaUrl || '');
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('¿Estás seguro de que quieres eliminar esta habilidad?')) return;
     
     try {
-      await hardSkillsService.deleteHardSkill(id);
+      await softSkillsService.deleteSoftSkill(id);
       showToast('Habilidad eliminada con éxito.', 'success');
       await loadSkills();
     } catch (error) {
@@ -103,22 +91,16 @@ export const useHardSkills = () => {
 
   const resetForm = () => {
     setNombre('');
-    setNivelDominio('BASICO');
     setIdCategoria('');
-    setAnosExperiencia('');
-    setDescripcion('');
-    setCertificadoUrl('');
+    setEvidenciaUrl('');
     setEditingId(null);
   };
 
   return {
     // Formulario
     nombre, setNombre,
-    nivelDominio, setNivelDominio,
     idCategoria, setIdCategoria,
-    anosExperiencia, setAnosExperiencia,
-    descripcion, setDescripcion,
-    certificadoUrl, setCertificadoUrl,
+    evidenciaUrl, setEvidenciaUrl,
     // Estado
     isLoading,
     isLoadingSkills,

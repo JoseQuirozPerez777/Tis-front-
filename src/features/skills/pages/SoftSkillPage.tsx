@@ -1,7 +1,7 @@
-import { HardSkillForm } from '../components/HardSkillForm';
-import { HardSkillsList } from '../components/HardSkillsList';
+import { SoftSkillForm } from '../components/SoftSkillForm';
+import { SoftSkillsList } from '../components/SoftSkillsList';
 
-export const HardSkillPage = () => {
+export const SoftSkillPage = () => {
   return (
     <div className="relative min-h-screen bg-brand-azul-profundo/5 py-16 overflow-hidden">
       {/* Decorative elements */}
@@ -11,12 +11,12 @@ export const HardSkillPage = () => {
       <div className="relative z-10 px-4">
         {/* Formulario */}
         <div className="mb-16">
-          <HardSkillForm />
+          <SoftSkillForm />
         </div>
 
         {/* Lista de habilidades */}
         <div className="mt-12">
-          <HardSkillsList />
+          <SoftSkillsList />
         </div>
       </div>
     </div>
