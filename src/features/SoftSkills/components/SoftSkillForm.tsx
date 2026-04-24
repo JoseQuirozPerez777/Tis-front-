@@ -5,8 +5,6 @@ import { useSoftSkills } from '../hooks/useSoftSkills';
 export const SoftSkillForm = () => {
   const {
     name, setName,
-    level, setLevel,
-    type, setType,
     evidenceContext, setEvidenceContext,
     description, setDescription,
     setCertificateTest,
