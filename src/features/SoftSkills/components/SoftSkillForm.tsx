@@ -8,6 +8,8 @@ export const SoftSkillForm = () => {
     level, setLevel,
     type, setType,
     evidenceContext, setEvidenceContext,
+    description, setDescription,
+    setCertificateTest,
     isLoading,
     handleAddSkill,
     handleCancel
@@ -38,43 +40,7 @@ export const SoftSkillForm = () => {
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium text-text-secondary ml-1">
-              Nivel
-            </label>
-            <select
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-              className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
-            >
-              <option value="Seleccionar" className="bg-brand-azul-profundo text-white">Seleccionar</option>
-              <option value="Básico" className="bg-brand-azul-profundo text-white">Básico</option>
-              <option value="Intermedio" className="bg-brand-azul-profundo text-white">Intermedio</option>
-              <option value="Avanzado" className="bg-brand-azul-profundo text-white">Avanzado</option>
-              <option value="Experto" className="bg-brand-azul-profundo text-white">Experto</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium text-text-secondary ml-1">
-              Tipo
-            </label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
-            >
-              <option value="Seleccionar" className="bg-brand-azul-profundo text-white">Seleccionar</option>
-              <option value="Comunicación" className="bg-brand-azul-profundo text-white">Comunicación</option>
-              <option value="Trabajo en equipo" className="bg-brand-azul-profundo text-white">Trabajo en equipo</option>
-              <option value="Liderazgo" className="bg-brand-azul-profundo text-white">Liderazgo</option>
-              <option value="Pensamiento crítico" className="bg-brand-azul-profundo text-white">Pensamiento crítico</option>
-              <option value="Gestión del tiempo" className="bg-brand-azul-profundo text-white">Gestión del tiempo</option>
-              <option value="Adaptabilidad" className="bg-brand-azul-profundo text-white">Adaptabilidad</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium text-text-secondary ml-1">
-              Evidencia Contexto
+              Contexto de Aplicación
             </label>
             <select
               value={evidenceContext}
@@ -82,11 +48,35 @@ export const SoftSkillForm = () => {
               className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
               <option value="Seleccionar" className="bg-brand-azul-profundo text-white">Seleccionar</option>
-              <option value="Académico" className="bg-brand-azul-profundo text-white">Académico</option>
+              <option value="Academico" className="bg-brand-azul-profundo text-white">Académico</option>
               <option value="Laboral" className="bg-brand-azul-profundo text-white">Laboral</option>
               <option value="Personal" className="bg-brand-azul-profundo text-white">Personal</option>
               <option value="Proyecto" className="bg-brand-azul-profundo text-white">Proyecto</option>
             </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5 w-full">
+            <label className="text-sm font-medium text-text-secondary ml-1">
+              Descripción
+            </label>
+            <textarea
+              placeholder="Breve descripción de tu experiencia con esta habilidad..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className="flex w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200 resize-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5 w-full">
+            <label className="text-sm font-medium text-text-secondary ml-1">
+              Prueba o Evidencia (Opcional)
+            </label>
+            <input
+              type="file"
+              onChange={(e) => setCertificateTest(e.target.files ? e.target.files[0] : null)}
+              className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-accent-neon/10 file:text-brand-accent-neon hover:file:bg-brand-accent-neon/20 transition-all cursor-pointer"
+            />
           </div>
         </div>
 
