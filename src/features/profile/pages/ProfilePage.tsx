@@ -14,7 +14,8 @@ export const ProfilePage = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+      {/* Quick Access Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
         <Link to="/hardskills" className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-5 rounded-2xl hover:border-brand-morado/50 transition-colors group flex items-center gap-4">
           <div className="w-12 h-12 bg-brand-morado/10 rounded-xl flex items-center justify-center text-brand-morado group-hover:scale-110 transition-transform shrink-0">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,8 +23,20 @@ export const ProfilePage = () => {
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-text-primary">Mis Habilidades</h3>
-            <p className="text-text-secondary text-sm">Gestiona tus habilidades duras y blandas</p>
+            <h3 className="text-lg font-semibold text-text-primary">Skills Técnicos</h3>
+            <p className="text-text-secondary text-sm">Gestiona tus habilidades duras</p>
+          </div>
+        </Link>
+        
+        <Link to="/softskills" className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-5 rounded-2xl hover:border-brand-azul-brillante/50 transition-colors group flex items-center gap-4">
+          <div className="w-12 h-12 bg-brand-azul-brillante/10 rounded-xl flex items-center justify-center text-brand-azul-brillante group-hover:scale-110 transition-transform shrink-0">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-text-primary">Skills Blandos</h3>
+            <p className="text-text-secondary text-sm">Gestiona tus habilidades interpersonales</p>
           </div>
         </Link>
 

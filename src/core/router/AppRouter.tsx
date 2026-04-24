@@ -8,6 +8,7 @@ import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@features/profile';
 import { DashboardPage } from '@features/dashboard';
 import { HardSkillPage } from '@features/HardSkills';
+import { SoftSkillPage } from '@features/SoftSkills';
 import { PhotoPage } from '@features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
@@ -27,14 +28,15 @@ export const AppRouter = () => {
 
       {/* Protected/Private Routes */}
       <Route element={<ProtectedRoute />}>
-  <Route element={<DashboardLayout />}>
-    <Route path="/dashboard" element={<DashboardPage />} />
-    <Route path="/profile" element={<ProfilePage />} />
-    <Route path="/experience" element={<ExperiencePage />} />
-    <Route path="/hardskills" element={<HardSkillPage />} />
-    <Route path="/professional-links" element={<ProfessionalLinksPage />} />
-  </Route>
-</Route>
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/experience" element={<ExperiencePage />} />
+          <Route path="/hardskills" element={<HardSkillPage />} />
+          <Route path="/softskills" element={<SoftSkillPage />} />
+          <Route path="/professional-links" element={<ProfessionalLinksPage />} />
+        </Route>
+      </Route>
     </Routes>
   );
 };
