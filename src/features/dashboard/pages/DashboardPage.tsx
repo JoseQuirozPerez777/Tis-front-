@@ -37,8 +37,7 @@ export const DashboardPage = () => {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header Section */}
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">
@@ -48,13 +47,53 @@ export const DashboardPage = () => {
             Bienvenido a tu panel de control de Portafolios TIS.
           </p>
         </div>
-
       </div>
 
-      {/* Feed de Publicaciones */}
-      <div className="mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/50 transition-colors group">
+          <h3 className="text-xl font-semibold text-text-primary mb-2">Tu Perfil</h3>
+          <p className="text-text-secondary text-sm mb-4">
+            Mantén tu información personal y de contacto actualizada.
+          </p>
+          <Link to="/profile" className="text-brand-azul-brillante font-medium text-sm hover:underline">
+            Revisar perfil →
+          </Link>
+        </div>
+
+        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-morado/50 transition-colors group">
+          <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades</h3>
+          <p className="text-text-secondary text-sm mb-4">
+            Añade y organiza tus habilidades técnicas y blandas.
+          </p>
+          <Link to="/hardskills" className="text-brand-morado font-medium text-sm hover:underline">
+            Gestionar habilidades →
+          </Link>
+        </div>
+
+        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-violet-500/50 transition-colors group">
+          <h3 className="text-xl font-semibold text-text-primary mb-2">Experiencia</h3>
+          <p className="text-text-secondary text-sm mb-4">
+            Registra y organiza tu experiencia laboral.
+          </p>
+          <Link to="/experience" className="text-violet-400 font-medium text-sm hover:underline">
+            Ir a experiencia →
+          </Link>
+        </div>
+
+        <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
+          <h3 className="text-xl font-semibold text-text-primary mb-2">Proyectos</h3>
+          <p className="text-text-secondary text-sm mb-4">
+            Muestra tus mejores trabajos y casos de éxito.
+          </p>
+          <Link to="/projects" className="text-[#10B981] font-medium text-sm hover:underline">
+            Ir a proyectos →
+          </Link>
+        </div>
+      </div>
+
+      <div>
         <h2 className="text-xl font-bold text-text-primary mb-6">Publicaciones Recientes</h2>
-        
+
         <div className="space-y-6">
           {mockPosts.map((post) => (
             <div key={post.id} className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/30 transition-colors">
@@ -67,24 +106,21 @@ export const DashboardPage = () => {
                   <p className="text-text-secondary text-sm">{post.timestamp}</p>
                 </div>
               </div>
+
               <p className="text-text-primary mb-4 leading-relaxed">{post.content}</p>
+
               {post.image && (
                 <div className="mb-4 rounded-xl overflow-hidden border border-card-border">
                   <img src={post.image} alt="Publicación" className="w-full h-auto object-cover max-h-96" />
                 </div>
               )}
+
               <div className="flex items-center gap-6 text-text-secondary border-t border-card-border pt-4">
-                <button className="flex items-center gap-2 hover:text-brand-azul-brillante transition-colors group">
-                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <span className="text-sm font-medium">{post.likes}</span>
+                <button className="flex items-center gap-2 hover:text-brand-azul-brillante transition-colors">
+                  <span className="text-sm font-medium">♡ {post.likes}</span>
                 </button>
-                <button className="flex items-center gap-2 hover:text-brand-azul-brillante transition-colors group">
-                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <span className="text-sm font-medium">{post.comments}</span>
+                <button className="flex items-center gap-2 hover:text-brand-azul-brillante transition-colors">
+                  <span className="text-sm font-medium">💬 {post.comments}</span>
                 </button>
               </div>
             </div>
