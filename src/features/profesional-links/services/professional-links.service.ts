@@ -2,12 +2,11 @@ import type {
   GetRedesSocialesResponse,
   SaveRedSocialResponse,
   RedSocialRequestDTO,
-  RedSocialResponseDTO,
 } from './professional-links.dto';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081';
 
-const getToken = () => {
+const getToken = (): string => {
   const token = sessionStorage.getItem('jwt');
 
   if (!token) {
@@ -20,14 +19,16 @@ const getToken = () => {
 const buildHeaders = (withJson = true): HeadersInit => {
   const token = getToken();
 
-  return withJson
-    ? {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }
-    : {
-        Authorization: `Bearer ${token}`,
-      };
+  if (withJson) {
+    return {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
 };
 
 const handleJsonResponse = async <T>(response: Response): Promise<T> => {
@@ -35,14 +36,13 @@ const handleJsonResponse = async <T>(response: Response): Promise<T> => {
 
   if (!response.ok) {
     throw new Error(
-      (data as { message?: string }).message || 'Ocurrió un error en la petición.'
+      (data as { message?: string }).message ||
+        'Ocurrió un error en la petición.'
     );
   }
 
   return data as T;
 };
-
-const normalizeNombreRed = (value: string) => value.trim().toLowerCase();
 
 export const professionalLinksService = {
   async getProfessionalLinks(): Promise<GetRedesSocialesResponse> {
@@ -79,31 +79,14 @@ export const professionalLinksService = {
     return handleJsonResponse<SaveRedSocialResponse>(response);
   },
 
-  async deleteProfessionalLink(idRed: number): Promise<SaveRedSocialResponse> {
+  async deleteProfessionalLink(
+    idRed: number
+  ): Promise<SaveRedSocialResponse> {
     const response = await fetch(`${API_URL}/api/redes-sociales/${idRed}`, {
       method: 'DELETE',
       headers: buildHeaders(false),
     });
 
     return handleJsonResponse<SaveRedSocialResponse>(response);
-  },
-
-  getVisibleProfessionalLinks(redes: RedSocialResponseDTO[]) {
-    const linkedin = redes.find(
-      (red) =>
-        normalizeNombreRed(red.nombreRed) === 'linkedin' && red.esPublico
-    );
-
-    const github = redes.find(
-      (red) =>
-        normalizeNombreRed(red.nombreRed) === 'github' && red.esPublico
-    );
-
-    return {
-      linkedin: linkedin?.urlPerfil ?? '',
-      linkedinPublic: linkedin?.esPublico ?? true,
-      github: github?.urlPerfil ?? '',
-      githubPublic: github?.esPublico ?? true,
-    };
   },
 };
