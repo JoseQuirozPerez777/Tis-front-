@@ -54,6 +54,7 @@ export const LoginForm = () => {
         <Button 
           type="submit" 
           isLoading={isLoading} 
+          disabled={isLoading}
           className="w-full h-14 text-lg font-bold tracking-wide mt-4 shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
           Iniciar Sesión

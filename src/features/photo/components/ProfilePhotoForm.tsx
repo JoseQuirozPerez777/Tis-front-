@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { useProfilePhoto } from '../hooks/useProfilePhoto';
 
 export const ProfilePhotoForm = () => {
+  const navigate = useNavigate();
+
   const {
     perfilData,
     previewUrl,
@@ -13,7 +16,20 @@ export const ProfilePhotoForm = () => {
     handleCancel,
   } = useProfilePhoto();
 
-  const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  const DEFAULT_AVATAR =
+    'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+  const handleCancelAndGoProfile = () => {
+    handleCancel();
+    navigate('/profile');
+  };
+  const handleSaveAndGoProfile = async () => {
+  await handleUploadPhoto();
+
+  setTimeout(() => {
+    navigate('/profile');
+  }, 1000);
+};
 
   return (
     <div className="w-full max-w-2xl mx-auto p-8 md:p-10 bg-brand-azul-profundo/40 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] animate-in fade-in slide-in-from-bottom-8 duration-1000">
@@ -60,7 +76,9 @@ export const ProfilePhotoForm = () => {
 
             <div className="text-center">
               <p className="text-[#E5E7EB] text-sm font-medium">
-                {perfilData?.nombre ? `Usuario: ${perfilData.nombre}` : 'Selecciona una nueva foto'}
+                {perfilData?.nombre
+                  ? `Usuario: ${perfilData.nombre}`
+                  : 'Selecciona una nueva foto'}
               </p>
               <p className="text-[#9CA3AF] text-xs mt-1">
                 Formatos permitidos: JPG y PNG. Tamaño máximo: 1MB.
@@ -82,7 +100,7 @@ export const ProfilePhotoForm = () => {
         <div className="flex flex-col md:flex-row md:justify-end space-y-3 md:space-y-0 md:space-x-4 pt-4 border-t border-white/10">
           <button
             type="button"
-            onClick={handleCancel}
+            onClick={handleCancelAndGoProfile}
             className="px-6 py-2 border border-[#4ADE80] text-[#4ADE80] rounded hover:bg-[#4ADE80]/10 transition-colors"
           >
             Cancelar
@@ -90,7 +108,7 @@ export const ProfilePhotoForm = () => {
 
           <button
             type="button"
-            onClick={handleUploadPhoto}
+            onClick={handleSaveAndGoProfile}
             disabled={!selectedFile || isUploading || isLoadingPerfil}
             className={`px-6 py-2 rounded shadow-lg font-bold transition-colors ${
               !selectedFile || isUploading || isLoadingPerfil

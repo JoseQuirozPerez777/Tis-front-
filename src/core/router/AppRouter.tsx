@@ -7,9 +7,13 @@ import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/lo
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
+import { HardSkillPage } from '@features/HardSkills';
+import { SoftSkillPage } from '@features/SoftSkills';
 import { HardSkillPageList } from '@features/HardSkillsList';
 import { SkillsManagementPage } from '@/features/skills';
 import { PhotoPage } from '@/features/photo/pages/PhotoPage';
+import { ProfessionalLinksPage } from '@features/profesional-links';
+import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 
 export const AppRouter = () => {
   return (
@@ -29,9 +33,12 @@ export const AppRouter = () => {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/hardskills" element={<HardSkillPageList />} />
           <Route path="/skills" element={<SkillsManagementPage />} />
-          {/* Add more private routes here later like /projects */}
+          <Route path="/softskills" element={<SoftSkillPage />} />
+          <Route path="/hardskills" element={<HardSkillPage />} />
+          <Route path="/professional-links" element={<ProfessionalLinksPage />} />
         </Route>
       </Route>
     </Routes>

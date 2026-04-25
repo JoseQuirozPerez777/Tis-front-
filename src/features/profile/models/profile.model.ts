@@ -2,6 +2,7 @@ export interface ProfileUser {
   fullName: string;
   profession: string;
   bio: string;
+  fotoPerfil?: string;
 }
 
 export interface ProfileResponse {
@@ -11,5 +12,6 @@ export interface ProfileResponse {
     fullName: string;
     profession: string;
     bio: string;
+    fotoPerfil?: string;
   };
 }

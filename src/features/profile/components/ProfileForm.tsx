@@ -13,6 +13,7 @@ interface PerfilResponse {
   nombre: string;
   biografia: string;
   idProfesion: number | null;
+  foto?: string;
 }
 
 export const ProfileForm = () => {
@@ -97,6 +98,21 @@ export const ProfileForm = () => {
             {serverError}
           </div>
         )}
+        <div className="flex items-center gap-4 mb-6">
+  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#64ffda]">
+    <img
+      src={perfilData?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+      alt="Foto de perfil"
+      className="w-full h-full object-cover"
+    />
+  </div>
+
+  <div>
+    <h3 className="text-lg text-white font-semibold">
+      {perfilData?.nombre || 'Usuario'}
+    </h3>
+  </div>
+</div>
 
         <section>
           <h3 className="text-lg font-semibold mb-4 flex items-center text-[#E5E7EB]">

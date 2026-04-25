@@ -13,8 +13,11 @@ export const useLogin = () => {
   const { login } = useAuth();
   
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+
+  if (isLoading) return; // 🚨 evita múltiples requests
+
+  setIsLoading(true);
 
     try {
       const user = await loginService.login(email, password);
@@ -43,4 +46,4 @@ export const useLogin = () => {
     isLoading,
     handleLogin
   };
-};
+};

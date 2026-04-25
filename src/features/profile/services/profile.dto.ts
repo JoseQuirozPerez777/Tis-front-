@@ -9,5 +9,6 @@ export interface ProfileResponseDto {
     fullName: string;
     profession: string;
     bio: string;
+    fotoPerfil?: string;
   };
 }
