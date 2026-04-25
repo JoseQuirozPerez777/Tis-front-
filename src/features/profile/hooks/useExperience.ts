@@ -99,41 +99,57 @@ export const useExperience = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: ExperienceErrors = {};
+  const newErrors: ExperienceErrors = {};
 
-    if (!formData.empresa.trim()) {
-      newErrors.empresa = 'La empresa es obligatoria.';
-    }
+  const onlyNumbersRegex = /^\d+$/;
+  const currentMonth = new Date().toISOString().slice(0, 7);
 
-    if (!formData.cargo.trim()) {
-      newErrors.cargo = 'El cargo es obligatorio.';
-    }
+  if (!formData.empresa.trim()) {
+    newErrors.empresa = 'La empresa es obligatoria.';
+  } else if (onlyNumbersRegex.test(formData.empresa.trim())) {
+    newErrors.empresa = 'La empresa no puede contener solo números.';
+  }
 
-    if (!formData.fechaInicio.trim()) {
-      newErrors.fechaInicio = 'La fecha de inicio es obligatoria.';
-    }
+  if (!formData.cargo.trim()) {
+    newErrors.cargo = 'El cargo es obligatorio.';
+  } else if (onlyNumbersRegex.test(formData.cargo.trim())) {
+    newErrors.cargo = 'El cargo no puede contener solo números.';
+  }
 
-    if (!formData.esTrabajoActual && !formData.fechaFin.trim()) {
-      newErrors.fechaFin = 'La fecha de fin es obligatoria.';
-    }
+  if (!formData.fechaInicio.trim()) {
+    newErrors.fechaInicio = 'La fecha de inicio es obligatoria.';
+  } else if (formData.fechaInicio > currentMonth) {
+    newErrors.fechaInicio = 'La fecha de inicio no puede ser mayor a la fecha actual.';
+  }
 
-    if (
-      formData.fechaInicio &&
-      formData.fechaFin &&
-      !formData.esTrabajoActual &&
-      formData.fechaInicio > formData.fechaFin
-    ) {
-      newErrors.fechaFin =
-        'La fecha de fin no puede ser menor que la fecha de inicio.';
-    }
+  if (!formData.esTrabajoActual && !formData.fechaFin.trim()) {
+    newErrors.fechaFin = 'La fecha de fin es obligatoria.';
+  }
 
-    if (!formData.descripcion.trim()) {
-      newErrors.descripcion = 'La descripción es obligatoria.';
-    }
+  if (
+    formData.fechaFin &&
+    !formData.esTrabajoActual &&
+    formData.fechaFin > currentMonth
+  ) {
+    newErrors.fechaFin = 'La fecha de fin no puede ser mayor a la fecha actual.';
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  if (
+    formData.fechaInicio &&
+    formData.fechaFin &&
+    !formData.esTrabajoActual &&
+    formData.fechaInicio > formData.fechaFin
+  ) {
+    newErrors.fechaFin = 'La fecha de fin no puede ser menor que la fecha de inicio.';
+  }
+
+  if (!formData.descripcion.trim()) {
+    newErrors.descripcion = 'La descripción es obligatoria.';
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const submitExperience = async (): Promise<boolean> => {
     const isValid = validateForm();
