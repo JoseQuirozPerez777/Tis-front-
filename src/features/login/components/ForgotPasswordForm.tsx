@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useToast } from '@shared/hooks/useToast';
+import { loginService } from '../services/login.service';
 
 export const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
@@ -14,10 +15,22 @@ export const ForgotPasswordForm = () => {
     if (!email.trim()) return;
 
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 700));
-    setIsLoading(false);
-
-    showToast('Se ha enviado un correo de verificación. Revisa tu bandeja de entrada.', 'success');
+    
+    try {
+      const result = await loginService.sendPasswordResetEmail(email);
+      
+      if (result.success || result.message) {
+        showToast(result.message ||'Se ha enviado un correo de verificación. Revisa tu bandeja de entrada.', 'success');
+        setEmail('');
+      } else {
+        showToast(result.message || 'Error al enviar el correo de recuperación', 'error');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al enviar el correo de recuperación';
+      showToast(errorMessage, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -38,7 +51,7 @@ export const ForgotPasswordForm = () => {
       <Button
         type="submit"
         isLoading={isLoading}
-        disabled={!email.trim()}
+        disabled={!email.trim() || isLoading}
         className="w-full h-14 text-lg font-bold tracking-wide mt-4 shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
       >
         Verificar
