@@ -183,7 +183,7 @@ export const ProfessionalLinksForm =( {
                 
             <button
               type="button"
-              onClick={onCancel}   // ⭐ AHORA FUNCIONA
+              onClick={onCancel}  
               className="rounded-xl bg-[#173255] px-8 py-3"
             >
               Cancelar
