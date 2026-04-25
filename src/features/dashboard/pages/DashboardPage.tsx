@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAuth } from '@/core/context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -65,7 +64,7 @@ export const DashboardPage = () => {
           <p className="text-text-secondary text-sm mb-4">
             Añade y organiza tus habilidades técnicas y blandas.
           </p>
-          <Link to="/hardskills" className="text-brand-morado font-medium text-sm hover:underline">
+          <Link to="/skills" className="text-brand-morado font-medium text-sm hover:underline">
             Gestionar habilidades →
           </Link>
         </div>
