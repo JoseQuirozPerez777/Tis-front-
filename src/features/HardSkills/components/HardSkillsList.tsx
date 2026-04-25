@@ -15,8 +15,11 @@ const getLevelColor = (level: string) => {
       return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
   }
 };
+interface HardSkillsListProps {
+  onEditSkill?: (skill: HardSkillResponse) => void;
+}
 
-export const HardSkillsList = () => {
+export const HardSkillsList = ({ onEditSkill }: HardSkillsListProps) => {
   const { skills, isLoadingSkills, handleEdit, handleDelete } = useHardSkills();
 
   if (isLoadingSkills) {
@@ -82,7 +85,7 @@ export const HardSkillsList = () => {
 
             <div className="flex gap-2">
               <button
-                onClick={() => handleEdit(skill)}
+                onClick={() => onEditSkill ? onEditSkill(skill) : handleEdit(skill)}
                 className="flex-1 py-2 px-3 bg-brand-accent-neon/20 hover:bg-brand-accent-neon/30 text-brand-accent-neon rounded text-sm font-medium transition-all"
               >
                 Editar

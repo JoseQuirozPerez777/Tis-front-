@@ -1,31 +1,47 @@
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useSoftSkills } from '../hooks/useSoftSkills';
+import { useEffect } from 'react';
+import type { SoftSkillResponse } from '../models/softSkill.model';
 
 const CATEGORIES = [
   { id: 2, nombre: 'Laboral' },
-  { id: 3, nombre: 'Comunicación' },
-  { id: 4, nombre: 'Liderazgo' },
-  { id: 5, nombre: 'Creatividad' },
+  { id: 2, nombre: 'Comunicación' },
+  { id: 2, nombre: 'Liderazgo' },
+  { id: 2, nombre: 'Creatividad' },
 ];
+
+interface SoftSkillFormProps {
+  compact?: boolean;
+  editingSkill?: SoftSkillResponse | null;
+  onCancelEdit?: () => void;
+}
 
 interface SoftSkillFormProps {
   compact?: boolean;
 }
 
-export const SoftSkillForm = ({ compact = false }: SoftSkillFormProps) => {
-  const {
+export const SoftSkillForm = ({ compact = false, editingSkill = null, onCancelEdit }: SoftSkillFormProps) => {  const {
     nombre, setNombre,
     idCategoria, setIdCategoria,
     evidenciaUrl, setEvidenciaUrl,
     isLoading,
-    editingId,
+    editingId, setEditingId,
     handleSubmit,
     resetForm
   } = useSoftSkills();
+  useEffect(() => {
+  if (editingSkill) {
+    setEditingId(editingSkill.id);
+    setNombre(editingSkill.nombre);
+    setIdCategoria(editingSkill.categoria.idCategoria);
+    setEvidenciaUrl(editingSkill.evidenciaUrl || '');
+  }
+  }, [editingSkill]);
 
   const handleCancel = () => {
     resetForm();
+    onCancelEdit?.();
   };
 
   if (compact) {
@@ -50,11 +66,13 @@ export const SoftSkillForm = ({ compact = false }: SoftSkillFormProps) => {
               value={idCategoria}
               onChange={(e) => setIdCategoria(e.target.value !== '' ? Number(e.target.value) : '')}
               required
-              className="flex h-11 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all"
+              className="flex h-11 w-full rounded-lg border border-white/10 bg-brand-azul-profundo px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
-              <option value="">Seleccionar</option>
+              <option value="" className="bg-brand-azul-profundo text-white">Seleccionar</option>
               {CATEGORIES.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                <option key={cat.id} value={cat.id}>
+                  {cat.nombre}
+                </option>
               ))}
             </select>
           </div>

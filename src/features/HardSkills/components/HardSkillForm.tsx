@@ -1,21 +1,24 @@
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useHardSkills } from '../hooks/useHardSkills';
+import type { HardSkillResponse } from '../models/hardSkill.model';
+import { useEffect } from 'react';
 
 const CATEGORIES = [
   { id: 1, nombre: 'Backend' },
-  { id: 2, nombre: 'Frontend' },
-  { id: 3, nombre: 'Base de Datos' },
-  { id: 4, nombre: 'DevOps' },
-  { id: 5, nombre: 'Móvil' },
+  { id: 1, nombre: 'Frontend' },
+  { id: 1, nombre: 'Base de Datos' },
+  { id: 1, nombre: 'DevOps' },
+  { id: 1, nombre: 'Móvil' },
 ];
 
 interface HardSkillFormProps {
   compact?: boolean;
+  editingSkill?: HardSkillResponse | null;
+  onCancelEdit?: () => void;
 }
 
-export const HardSkillForm = ({ compact = false }: HardSkillFormProps) => {
-  const {
+export const HardSkillForm = ({ compact = false, editingSkill = null, onCancelEdit }: HardSkillFormProps) => {  const {
     nombre, setNombre,
     nivelDominio, setNivelDominio,
     idCategoria, setIdCategoria,
@@ -23,13 +26,26 @@ export const HardSkillForm = ({ compact = false }: HardSkillFormProps) => {
     descripcion, setDescripcion,
     certificadoUrl, setCertificadoUrl,
     isLoading,
-    editingId,
+    editingId, setEditingId,
     handleSubmit,
     resetForm
   } = useHardSkills();
 
+  useEffect(() => {
+  if (editingSkill) {
+    setEditingId(editingSkill.id);
+    setNombre(editingSkill.nombre);
+    setNivelDominio(editingSkill.nivelDominio);
+    setAnosExperiencia(editingSkill.anosExperiencia || '');
+    setDescripcion(editingSkill.descripcion || '');
+    setCertificadoUrl(editingSkill.certificadoUrl || '');
+    setIdCategoria(editingSkill.categoria.idCategoria);
+  }
+}, [editingSkill]);
+
   const handleCancel = () => {
     resetForm();
+    onCancelEdit?.();
   };
 
   if (compact) {
@@ -54,12 +70,12 @@ export const HardSkillForm = ({ compact = false }: HardSkillFormProps) => {
               value={nivelDominio}
               onChange={(e) => setNivelDominio(e.target.value as any)}
               required
-              className="flex h-11 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all"
+              className="flex h-11 w-full rounded-lg border border-white/10 bg-brand-azul-profundo px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
-              <option value="BASICO">Básico</option>
-              <option value="INTERMEDIO">Intermedio</option>
-              <option value="AVANZADO">Avanzado</option>
-              <option value="EXPERTO">Experto</option>
+              <option value="BASICO" className="bg-brand-azul-profundo text-white">Básico</option>
+              <option value="INTERMEDIO" className="bg-brand-azul-profundo text-white">Intermedio</option>
+              <option value="AVANZADO" className="bg-brand-azul-profundo text-white">Avanzado</option>
+              <option value="EXPERTO" className="bg-brand-azul-profundo text-white">Experto</option>
             </select>
           </div>
 
@@ -71,11 +87,13 @@ export const HardSkillForm = ({ compact = false }: HardSkillFormProps) => {
               value={idCategoria}
               onChange={(e) => setIdCategoria(e.target.value !== '' ? Number(e.target.value) : '')}
               required
-              className="flex h-11 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all"
+              className="flex h-11 w-full rounded-lg border border-white/10 bg-brand-azul-profundo px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
-              <option value="">Seleccionar</option>
+              <option value="" className="bg-brand-azul-profundo text-white">Seleccionar</option>
               {CATEGORIES.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                <option key={cat.id} value={cat.id}>
+                  {cat.nombre}
+                </option>
               ))}
             </select>
           </div>

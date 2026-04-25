@@ -1,7 +1,11 @@
 import { useSoftSkills } from '../hooks/useSoftSkills';
 import type { SoftSkillResponse } from '../models/softSkill.model';
 
-export const SoftSkillsList = () => {
+interface SoftSkillsListProps {
+  onEditSkill?: (skill: SoftSkillResponse) => void;
+}
+
+export const SoftSkillsList = ({ onEditSkill }: SoftSkillsListProps) => {
   const { skills, isLoadingSkills, handleEdit, handleDelete } = useSoftSkills();
 
   if (isLoadingSkills) {
@@ -52,7 +56,7 @@ export const SoftSkillsList = () => {
 
             <div className="flex gap-2">
               <button
-                onClick={() => handleEdit(skill)}
+                onClick={() => onEditSkill ? onEditSkill(skill) : handleEdit(skill)}
                 className="flex-1 py-2 px-3 bg-brand-accent-neon/20 hover:bg-brand-accent-neon/30 text-brand-accent-neon rounded text-sm font-medium transition-all"
               >
                 Editar
