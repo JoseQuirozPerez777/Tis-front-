@@ -1,7 +1,7 @@
 import { HardSkillForm } from '../components/HardSkillForm';
 import { HardSkillsList } from '../components/HardSkillsList';
 
-export const HardSkillPage = () => {
+export const HardSkillPageList = () => {
   return (
     <div className="relative min-h-screen bg-brand-azul-profundo/5 py-16 overflow-hidden">
       {/* Decorative elements */}
