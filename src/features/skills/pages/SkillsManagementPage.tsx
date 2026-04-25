@@ -1,10 +1,10 @@
 import { useState,useEffect } from 'react';
 import { Button } from '@shared/components/ui/Button';
-import { HardSkillForm } from '@features/HardSkills/components/HardSkillForm';
-import { HardSkillsList } from '@features/HardSkills/components/HardSkillsList';
+import { HardSkillForm } from '@features/HardSkillsList/components/HardSkillForm';
+import { HardSkillsList } from '@features/HardSkillsList/components/HardSkillsList';
 import { SoftSkillForm } from '@features/skills/components/SoftSkillForm';
 import { SoftSkillsList } from '@features/skills/components/SoftSkillsList';
-import type { HardSkillResponse } from '@features/HardSkills/models/hardSkill.model';
+import type { HardSkillResponse } from '@features/HardSkillsList/models/hardSkill.model';
 import type { SoftSkillResponse } from '@features/skills/models/softSkill.model';
 
 type SkillType = 'none' | 'hard' | 'soft';

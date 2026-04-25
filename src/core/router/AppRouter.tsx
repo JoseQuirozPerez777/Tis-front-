@@ -7,7 +7,7 @@ import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/lo
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
-import { HardSkillPage } from '@features/HardSkills';
+import { HardSkillPage } from '@features/HardSkillsList';
 import { SkillsManagementPage } from '@/features/skills';
 import { PhotoPage } from '@/features/photo/pages/PhotoPage';
 
