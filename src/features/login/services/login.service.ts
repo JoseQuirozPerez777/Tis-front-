@@ -15,6 +15,7 @@ interface UsuarioRespuestaDTO {
     nombre: string;
     correo: string;
     roles: string[];
+    foto?: string;
   };
 }
 
@@ -45,11 +46,12 @@ export const loginService = {
     }
 
     return {
-      id: data.usuario.id.toString(),
-      email: data.usuario.correo,
-      fullName: data.usuario.nombre,
-      token: data.token
-    };
+  id: data.usuario.id.toString(),
+  email: data.usuario.correo,
+  fullName: data.usuario.nombre,
+  token: data.token,
+  foto: data.usuario.foto
+};
   },
 
   async sendPasswordResetEmail(correo: string): Promise<SendPasswordResetEmailResponseDTO> {

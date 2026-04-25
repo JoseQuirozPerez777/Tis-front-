@@ -5,6 +5,7 @@ import { photoService } from '../services/photo.service';
 export const useProfilePhoto = () => {
   const [perfilData, setPerfilData] = useState<{
     nombre?: string;
+    ffoto?: string;
     fotoPerfil?: string;
   } | null>(null);
 
@@ -29,7 +30,7 @@ export const useProfilePhoto = () => {
         const data = await photoService.getProfilePhoto();
 
         setPerfilData(data);
-        setPreviewUrl(data.fotoPerfil || DEFAULT_AVATAR);
+        setPreviewUrl(data.foto || data.fotoPerfil || DEFAULT_AVATAR);
       } catch (error) {
         console.error('Error al cargar la foto de perfil:', error);
         setPreviewUrl(DEFAULT_AVATAR);
@@ -127,7 +128,7 @@ export const useProfilePhoto = () => {
   const handleCancel = () => {
     setSelectedFile(null);
     setServerError(null);
-    setPreviewUrl(perfilData?.fotoPerfil || DEFAULT_AVATAR);
+    ssetPreviewUrl(perfilData?.foto || perfilData?.fotoPerfil || DEFAULT_AVATAR);
   };
 
   return {

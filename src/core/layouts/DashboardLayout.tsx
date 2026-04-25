@@ -7,6 +7,7 @@ export const DashboardLayout = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menu when clicking outside
@@ -19,7 +20,30 @@ export const DashboardLayout = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  useEffect(() => {
+  const loadProfilePhoto = async () => {
+    try {
+      const token = sessionStorage.getItem('jwt');
 
+      const response = await fetch('http://localhost:8081/api/usuarios/perfil', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+      setProfilePhoto(data.foto || '');
+    } catch (error) {
+      console.error('Error al cargar foto en navbar:', error);
+    }
+  };
+
+  loadProfilePhoto();
+}, [location.pathname]);
   const navLinks = [
     { name: 'Mi Perfil', path: '/profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
     { name: 'Habilidades', path: '/hardskills', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
@@ -66,9 +90,13 @@ export const DashboardLayout = () => {
                 <p className="font-semibold text-text-primary">{user?.fullName || 'Usuario'}</p>
                 <p className="text-text-secondary text-xs">{user?.email}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-brand-azul-brillante/20 border border-brand-azul-brillante/30 flex items-center justify-center text-brand-azul-brillante font-bold shrink-0">
-                {user?.fullName?.charAt(0).toUpperCase() || 'U'}
-              </div>
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-brand-azul-brillante/30 bg-brand-azul-brillante/20 shrink-0">
+  <img
+    src={profilePhoto || user?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+    alt="Foto de perfil"
+    className="w-full h-full object-cover"
+  />
+</div>
             </button>
 
             {/* Dropdown Menu */}

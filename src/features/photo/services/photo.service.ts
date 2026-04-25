@@ -22,7 +22,7 @@ export const photoService = {
   },
 
   uploadToCloudinary: async (file: File): Promise<string> => {
-    const CLOUD_NAME = 'dhvhvro3n';
+    const CLOUD_NAME = 'ddzmot3te';
     const UPLOAD_PRESET = 'profile_photos_unsigned';
 
     const formData = new FormData();
