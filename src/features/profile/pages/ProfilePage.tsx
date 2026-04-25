@@ -1,18 +1,23 @@
 import { ProfileForm } from '../components/ProfileForm';
 import { Link } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { ProfessionalLinksPage } from '../../profesional-links/pages/ProfessionalLinksPage';
 import { useProfilePhoto } from "../../photo/hooks/useProfilePhoto";
 
 export const ProfilePage = () => {
 
    const profileFormRef = useRef<HTMLDivElement>(null);
+   const [showProfileForm, setShowProfileForm] = useState(false);
 
 const handleEditProfile = () => {
-  profileFormRef.current?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  });
+  setShowProfileForm(true);
+
+  setTimeout(() => {
+    profileFormRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, 100);
 };
 
   const { previewUrl, isLoadingPerfil } = useProfilePhoto();
@@ -145,12 +150,14 @@ const handleEditProfile = () => {
         </Link>
       </div>
 
-      <div
-  ref={profileFormRef}
-  className="w-full relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200"
->
-  <ProfileForm />
-</div>
+      {showProfileForm && (
+  <div
+    ref={profileFormRef}
+    className="w-full relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200"
+  >
+    <ProfileForm />
+  </div>
+)}
     </div>
   );
 };
