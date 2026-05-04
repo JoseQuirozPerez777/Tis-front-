@@ -8,11 +8,25 @@ import { loginService } from '../services/login.service';
 export const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); //Estado para error local
   const { showToast } = useToast();
+
+  // Regex para validación de correo profesional
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!email.trim()) return;
+    setError(null);
+    if (!email.trim()) {
+      setError('El correo electrónico es obligatorio');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError('Por favor, ingresa un correo electrónico válido');
+      return;
+    }
 
     setIsLoading(true);
     
@@ -42,10 +56,16 @@ export const ForgotPasswordForm = () => {
           placeholder="nombre@ejemplo.com"
           autoComplete="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (error) setError(null); // Limpiar error mientras escribe
+          }}
           required
-          className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
+          className={`bg-white/5 border-white/10 ${
+            error ? 'border-red-500 focus:border-red-500' : 'focus:border-brand-accent-neon/50'
+          }`}
         />
+        {error && <p className="text-red-500 text-xs mt-1 ml-1">{error}</p>}
       </div>
 
       <Button
