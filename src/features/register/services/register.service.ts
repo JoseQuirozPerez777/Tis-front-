@@ -25,14 +25,14 @@ export const registerService = {
       body: JSON.stringify(nuevoDato),
     });
     console.log(response)
+    if (!response.ok) {
+      // El backend devuelve un string en caso de error
+      const errorMsg = await response.text();
+      throw new Error(errorMsg || 'Error en el servidor');
+    }
+
     // 2. Le decimos a TS que la respuesta tiene el formato de Java
     const dataFromBack = (await response.json()) as UsuarioRespuestaDTO;
-
-    if (!response.ok) {
-      // Si el back manda un error, usualmente viene en un campo 'message' o similar
-      const errorData = dataFromBack as any; 
-      throw new Error(errorData.message || 'Error en el servidor');
-    }
     console.log(dataFromBack)
 
     // 3. GUARDAR EL TOKEN: Extraemos el JWT y lo guardamos

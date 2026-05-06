@@ -44,8 +44,8 @@ export const useRegister = () => {
         setServerError(response.message);
         showToast(response.message, 'error');
       }
-    } catch {
-      const msg = 'Ocurrió un error inesperado. Por favor intenta de nuevo.';
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Ocurrió un error inesperado. Por favor intenta de nuevo.';
       setServerError(msg);
       showToast(msg, 'error');
     } finally {

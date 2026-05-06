@@ -11,7 +11,7 @@ export const useSoftSkills = () => {
   const [evidenceContext, setEvidenceContext] = useState('Seleccionar');
   const [description, setDescription] = useState('');
   const [certificateTest, setCertificateTest] = useState<File | null>(null);
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
 
@@ -41,8 +41,6 @@ export const useSoftSkills = () => {
 
   const handleCancel = () => {
     setName('');
-    setLevel('Seleccionar');
-    setType('Seleccionar');
     setEvidenceContext('Seleccionar');
     setDescription('');
     setCertificateTest(null);
@@ -51,8 +49,6 @@ export const useSoftSkills = () => {
 
   return {
     name, setName,
-    level, setLevel,
-    type, setType,
     evidenceContext, setEvidenceContext,
     description, setDescription,
     certificateTest, setCertificateTest,

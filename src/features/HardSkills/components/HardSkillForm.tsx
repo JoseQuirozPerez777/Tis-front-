@@ -6,12 +6,14 @@ export const HardSkillForm = () => {
   const {
     name, setName,
     masteryLevel, setMasteryLevel,
-    category, setCategory,
+    categoryId, setCategoryId,
+    categorias,
     yearsOfExperience, setYearsOfExperience,
     description, setDescription,
     setCertificateTest,
     isLoading,
-    handleAddSkill
+    handleAddSkill,
+    handleCancel
   } = useHardSkills();
 
   return (
@@ -46,11 +48,11 @@ export const HardSkillForm = () => {
               onChange={(e) => setMasteryLevel(e.target.value)}
               className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
-              <option value="Selecciona" className="bg-brand-azul-profundo text-white">Selecciona</option>
-              <option value="Básico" className="bg-brand-azul-profundo text-white">Básico</option>
-              <option value="Intermedio" className="bg-brand-azul-profundo text-white">Intermedio</option>
-              <option value="Avanzado" className="bg-brand-azul-profundo text-white">Avanzado</option>
-              <option value="Experto" className="bg-brand-azul-profundo text-white">Experto</option>
+              <option value="" className="bg-brand-azul-profundo text-white">Selecciona</option>
+              <option value="BASICO" className="bg-brand-azul-profundo text-white">Básico</option>
+              <option value="INTERMEDIO" className="bg-brand-azul-profundo text-white">Intermedio</option>
+              <option value="AVANZADO" className="bg-brand-azul-profundo text-white">Avanzado</option>
+              <option value="EXPERTO" className="bg-brand-azul-profundo text-white">Experto</option>
             </select>
           </div>
 
@@ -59,15 +61,16 @@ export const HardSkillForm = () => {
               Categoría
             </label>
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value ? Number(e.target.value) : '')}
               className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
-              <option value="Seleccionar" className="bg-brand-azul-profundo text-white">Seleccionar</option>
-              <option value="Programación" className="bg-brand-azul-profundo text-white">Programación</option>
-              <option value="Base de Datos" className="bg-brand-azul-profundo text-white">Base de Datos</option>
-              <option value="Desarrollo Web" className="bg-brand-azul-profundo text-white">Desarrollo Web</option>
-              <option value="DevOps" className="bg-brand-azul-profundo text-white">DevOps</option>
+              <option value="" className="bg-brand-azul-profundo text-white">Seleccionar</option>
+              {categorias.map((cat) => (
+                <option key={cat.idCategoria} value={cat.idCategoria} className="bg-brand-azul-profundo text-white">
+                  {cat.nombre}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -108,13 +111,23 @@ export const HardSkillForm = () => {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          isLoading={isLoading}
-          className="w-full h-14 text-lg font-bold tracking-wide mt-4 shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
-        >
-          Guardar Habilidad
-        </Button>
+        <div className="flex items-center gap-4 pt-2">
+          <Button
+            type="button"
+            onClick={handleCancel}
+            variant="outline"
+            className="flex-1 h-14 text-lg font-bold tracking-wide transition-all border-white/20 hover:bg-white/5"
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            className="flex-1 h-14 text-lg font-bold tracking-wide shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            Guardar
+          </Button>
+        </div>
       </form>
     </div>
   );
