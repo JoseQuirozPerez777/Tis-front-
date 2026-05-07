@@ -5,9 +5,10 @@ import { useSoftSkills } from '../hooks/useSoftSkills';
 export const SoftSkillForm = () => {
   const {
     name, setName,
-    evidenceContext, setEvidenceContext,
+    idCategoria, setIdCategoria,
     description, setDescription,
     setCertificateTest,
+    categorias,
     isLoading,
     handleAddSkill,
     handleCancel
@@ -38,18 +39,20 @@ export const SoftSkillForm = () => {
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium text-text-secondary ml-1">
-              Contexto de Aplicación
+              Contexto de Aplicación (Categoría)
             </label>
             <select
-              value={evidenceContext}
-              onChange={(e) => setEvidenceContext(e.target.value)}
+              value={idCategoria}
+              onChange={(e) => setIdCategoria(e.target.value !== '' ? Number(e.target.value) : '')}
+              required
               className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
-              <option value="Seleccionar" className="bg-brand-azul-profundo text-white">Seleccionar</option>
-              <option value="Academico" className="bg-brand-azul-profundo text-white">Académico</option>
-              <option value="Laboral" className="bg-brand-azul-profundo text-white">Laboral</option>
-              <option value="Personal" className="bg-brand-azul-profundo text-white">Personal</option>
-              <option value="Proyecto" className="bg-brand-azul-profundo text-white">Proyecto</option>
+              <option value="" className="bg-brand-azul-profundo text-white">Seleccionar</option>
+              {categorias.map(cat => (
+                <option key={cat.idCategoria} value={cat.idCategoria} className="bg-brand-azul-profundo text-white">
+                  {cat.nombre}
+                </option>
+              ))}
             </select>
           </div>
 
