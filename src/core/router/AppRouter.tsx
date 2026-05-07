@@ -15,6 +15,7 @@ import { SkillsManagementPage } from '@/features/skills';
 import { PhotoPage } from '@/features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
+import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
 
 export const AppRouter = () => {
   return (
@@ -40,6 +41,7 @@ export const AppRouter = () => {
           <Route path="/softskills" element={<SoftSkillPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/buscar-portafolios" element={<FiltrosBusquedaPage />} />
         </Route>
       </Route>
     </Routes>

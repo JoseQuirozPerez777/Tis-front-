@@ -1,0 +1,80 @@
+import { FiltrosBusquedaBar } from "../components/FiltrosBusquedaBar";
+import { FiltrosBusquedaList } from "../components/FiltrosBusquedaList";
+import { FiltrosBusquedaPagination } from "../components/FiltrosBusquedaPagination";
+import { FiltrosBusquedaPanel } from "../components/FiltrosBusquedaPanel";
+import { FiltrosBusquedaSort } from "../components/FiltrosBusquedaSort";
+import { useFiltrosBusqueda } from "../hooks/useFiltrosBusqueda";
+
+export const FiltrosBusquedaPage = () => {
+  const {
+    filtros,
+    resultados,
+    total,
+    totalPaginas,
+    cargando,
+    error,
+    actualizarFiltro,
+    cambiarOrden,
+    cambiarPagina,
+    alternarIdioma,
+    aplicarFiltros,
+    limpiarFiltros,
+  } = useFiltrosBusqueda();
+
+  return (
+    <main className="min-h-screen bg-gray-50 px-4 py-8">
+      <section className="mx-auto max-w-7xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+            Buscar portafolios
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Encuentra profesionales usando filtros por profesión, tecnología,
+            experiencia, idioma, ubicación y modalidad de trabajo.
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <FiltrosBusquedaBar
+            valor={filtros.buscar}
+            cargando={cargando}
+            onChange={(valor) => actualizarFiltro("buscar", valor)}
+            onBuscar={aplicarFiltros}
+          />
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+          <FiltrosBusquedaPanel
+            filtros={filtros}
+            cargando={cargando}
+            onActualizarFiltro={actualizarFiltro}
+            onAlternarIdioma={alternarIdioma}
+            onAplicarFiltros={aplicarFiltros}
+            onLimpiarFiltros={limpiarFiltros}
+          />
+
+          <section className="space-y-4">
+            <FiltrosBusquedaSort
+              valor={filtros.ordenarPor}
+              total={total}
+              onCambiarOrden={cambiarOrden}
+            />
+
+            <FiltrosBusquedaList
+              resultados={resultados}
+              cargando={cargando}
+              error={error}
+            />
+
+            <FiltrosBusquedaPagination
+              paginaActual={filtros.pagina}
+              totalPaginas={totalPaginas}
+              cargando={cargando}
+              onCambiarPagina={cambiarPagina}
+            />
+          </section>
+        </div>
+      </section>
+    </main>
+  );
+};
