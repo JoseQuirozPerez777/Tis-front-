@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@shared/hooks/useToast';
-import { softSkillsService, CategoriaResponse } from '../services/softSkills.service';
+import { softSkillsService } from '../services/softSkills.service';
+import type { CategoriaDto } from '../models/softSkill.model';
 
 export const useSoftSkills = () => {
   const navigate = useNavigate();
@@ -9,8 +10,8 @@ export const useSoftSkills = () => {
   const [idCategoria, setIdCategoria] = useState<number | ''>('');
   const [description, setDescription] = useState('');
   const [certificateTest, setCertificateTest] = useState<File | null>(null);
-  
-  const [categorias, setCategorias] = useState<CategoriaResponse[]>([]);
+
+  const [categorias, setCategorias] = useState<CategoriaDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
 

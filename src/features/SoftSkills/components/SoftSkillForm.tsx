@@ -39,7 +39,7 @@ export const SoftSkillForm = () => {
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium text-text-secondary ml-1">
-              Contexto de Aplicación (Categoría)
+              Contexto de Aplicación
             </label>
             <select
               value={idCategoria}
