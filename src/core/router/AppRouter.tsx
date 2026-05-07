@@ -9,9 +9,11 @@ import { ProfilePage } from '@features/profile';
 import { DashboardPage } from '@features/dashboard';
 import { HardSkillPage } from '@features/HardSkills';
 import { SoftSkillPage } from '@features/SoftSkills';
+import { AcademicTrainingPage } from '@features/AcademicTraining';
 import { PhotoPage } from '@features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
+import { DashMyPerfilPage } from '@features/DashMyPerfil';
 
 export const AppRouter = () => {
   return (
@@ -30,11 +32,14 @@ export const AppRouter = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/DashMyPerfil" element={<DashMyPerfilPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/hardskills" element={<HardSkillPage />} />
           <Route path="/softskills" element={<SoftSkillPage />} />
+          <Route path="/academic-training" element={<AcademicTrainingPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
+          <Route path="/AcademicTraining" element={<AcademicTrainingPage />} />
         </Route>
       </Route>
     </Routes>

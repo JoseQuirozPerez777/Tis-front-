@@ -21,29 +21,29 @@ export const DashboardLayout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   useEffect(() => {
-  const loadProfilePhoto = async () => {
-    try {
-      const token = sessionStorage.getItem('jwt');
+    const loadProfilePhoto = async () => {
+      try {
+        const token = sessionStorage.getItem('jwt');
 
-      const response = await fetch('http://localhost:8081/api/usuarios/perfil', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const response = await fetch('http://localhost:8081/api/usuarios/perfil', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (!response.ok) return;
+        if (!response.ok) return;
 
-      const data = await response.json();
-      setProfilePhoto(data.foto || '');
-    } catch (error) {
-      console.error('Error al cargar foto en navbar:', error);
-    }
-  };
+        const data = await response.json();
+        setProfilePhoto(data.foto || '');
+      } catch (error) {
+        console.error('Error al cargar foto en navbar:', error);
+      }
+    };
 
-  loadProfilePhoto();
-}, [location.pathname]);
+    loadProfilePhoto();
+  }, [location.pathname]);
   const navLinks = [
     { name: 'Mi Perfil', path: '/profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
     { name: 'Habilidades', path: '/hardskills', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
@@ -66,15 +66,15 @@ export const DashboardLayout = () => {
           <div className="flex items-center gap-6">
             {/* Top Navigation Links */}
             <nav className="hidden md:flex items-center gap-6">
-              <Link 
-                to="/dashboard" 
+              <Link
+                to="/dashboard"
                 className={`text-sm font-medium transition-colors ${location.pathname === '/dashboard' ? 'text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary'}`}
               >
                 Inicio
               </Link>
-              <Link 
-                to="/profile" 
-                className={`text-sm font-medium transition-colors ${location.pathname === '/profile' ? 'text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary'}`}
+              <Link
+                to="/DashMyPerfil"
+                className={`text-sm font-medium transition-colors ${location.pathname === '/DashMyPerfil' ? 'text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary'}`}
               >
                 Mi Perfil
               </Link>
@@ -82,68 +82,68 @@ export const DashboardLayout = () => {
 
             {/* User Profile / Menu Toggle */}
             <div className="relative" ref={menuRef}>
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center gap-4 focus:outline-none transition-opacity hover:opacity-80 p-1 rounded-lg"
-            >
-              <div className="text-sm text-right hidden sm:block">
-                <p className="font-semibold text-text-primary">{user?.fullName || 'Usuario'}</p>
-                <p className="text-text-secondary text-xs">{user?.email}</p>
-              </div>
-              <div className="w-9 h-9 rounded-full overflow-hidden border border-brand-azul-brillante/30 bg-brand-azul-brillante/20 shrink-0">
-  <img
-    src={profilePhoto || user?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
-    alt="Foto de perfil"
-    className="w-full h-full object-cover"
-  />
-</div>
-            </button>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="flex items-center gap-4 focus:outline-none transition-opacity hover:opacity-80 p-1 rounded-lg"
+              >
+                <div className="text-sm text-right hidden sm:block">
+                  <p className="font-semibold text-text-primary">{user?.fullName || 'Usuario'}</p>
+                  <p className="text-text-secondary text-xs">{user?.email}</p>
+                </div>
+                <div className="w-9 h-9 rounded-full overflow-hidden border border-brand-azul-brillante/30 bg-brand-azul-brillante/20 shrink-0">
+                  <img
+                    src={profilePhoto || user?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+                    alt="Foto de perfil"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </button>
 
-            {/* Dropdown Menu */}
-            <div className={`
+              {/* Dropdown Menu */}
+              <div className={`
               absolute top-full right-0 mt-2 w-64 bg-bg-dark border border-card-border rounded-xl shadow-lg border shadow-[0_4px_24px_rgba(0,0,0,0.4)] transition-all duration-200 origin-top-right
               ${isMenuOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}
             `}>
-              <div className="p-3 border-b border-card-border/50 sm:hidden">
-                <p className="font-semibold text-text-primary truncate">{user?.fullName || 'Usuario'}</p>
-                <p className="text-text-secondary text-xs truncate">{user?.email}</p>
-              </div>
-              <nav className="p-2 space-y-1">
-                {navLinks.map((link) => {
-                  const isActive = location.pathname === link.path;
-                  return (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium
-                        ${isActive 
-                          ? 'bg-brand-azul-brillante/10 text-brand-azul-brillante' 
-                          : 'text-text-secondary hover:text-text-primary hover:bg-card-border/30'
-                        }`}
-                    >
-                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={link.icon} />
-                      </svg>
-                      {link.name}
-                    </Link>
-                  );
-                })}
-              </nav>
-              <div className="p-2 border-t border-card-border/50">
-                <button 
-                  onClick={() => { logout(); setIsMenuOpen(false); }}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-text-secondary hover:text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors font-medium"
-                >
-                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Cerrar Sesión
-                </button>
+                <div className="p-3 border-b border-card-border/50 sm:hidden">
+                  <p className="font-semibold text-text-primary truncate">{user?.fullName || 'Usuario'}</p>
+                  <p className="text-text-secondary text-xs truncate">{user?.email}</p>
+                </div>
+                <nav className="p-2 space-y-1">
+                  {navLinks.map((link) => {
+                    const isActive = location.pathname === link.path;
+                    return (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium
+                        ${isActive
+                            ? 'bg-brand-azul-brillante/10 text-brand-azul-brillante'
+                            : 'text-text-secondary hover:text-text-primary hover:bg-card-border/30'
+                          }`}
+                      >
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={link.icon} />
+                        </svg>
+                        {link.name}
+                      </Link>
+                    );
+                  })}
+                </nav>
+                <div className="p-2 border-t border-card-border/50">
+                  <button
+                    onClick={() => { logout(); setIsMenuOpen(false); }}
+                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-text-secondary hover:text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Cerrar Sesión
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </header>
 
