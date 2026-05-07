@@ -10,7 +10,7 @@ export const useSoftSkills = () => {
   const [idCategoria, setIdCategoria] = useState<number | ''>('');
   const [description, setDescription] = useState('');
   const [certificateTest, setCertificateTest] = useState<File | null>(null);
-
+  const [categorias, setCategorias] = useState<CategoriaDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
 

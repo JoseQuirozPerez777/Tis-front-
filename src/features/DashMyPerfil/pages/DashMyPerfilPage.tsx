@@ -68,6 +68,16 @@ export const DashMyPerfilPage = () => {
                         Ir a formacion academica →
                     </Link>
                 </div>
+
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades Blandas</h3>
+                    <p className="text-text-secondary text-sm mb-4">
+                        Muestra tus habilidades blandas.
+                    </p>
+                    <Link to="/softskills" className="text-[#10B981] font-medium text-sm hover:underline">
+                        Ir a habilidades blandas →
+                    </Link>
+                </div>
             </div>
         </div>
     );
