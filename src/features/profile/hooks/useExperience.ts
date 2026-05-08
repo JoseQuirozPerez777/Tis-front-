@@ -15,10 +15,24 @@ import {
 const initialForm: ExperienceFormData = {
   empresa: '',
   cargo: '',
+
+  areaProfesional: '',
+  especializacion: '',
+
   fechaInicio: '',
   fechaFin: '',
   esTrabajoActual: false,
+
+  modalidadTrabajo: '',
+  ubicacion: '',
+  tipoContrato: '',
+
+  tecnologiasHerramientas: [],
+
   descripcion: '',
+
+  evidenciaLaboralPdfUrl: '',
+  proyectoRelacionadoUrl: '',
 };
 
 export const useExperience = () => {
@@ -54,7 +68,7 @@ export const useExperience = () => {
 
   const handleChange = (
     field: keyof ExperienceFormData,
-    value: string | boolean
+    value: string | boolean | string[]
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -71,13 +85,37 @@ export const useExperience = () => {
   const startEditing = (experience: Experience) => {
     setEditingExperience(experience);
     setFormData({
-      empresa: experience.empresa,
-      cargo: experience.cargo,
-      fechaInicio: experience.fechaInicio ? experience.fechaInicio.slice(0, 7) : '',
-      fechaFin: experience.fechaFin ? experience.fechaFin.slice(0, 7) : '',
-      esTrabajoActual: experience.esTrabajoActual,
-      descripcion: experience.descripcion,
-    });
+  empresa: experience.empresa,
+  cargo: experience.cargo,
+
+  areaProfesional: experience.areaProfesional,
+  especializacion: experience.especializacion,
+
+  fechaInicio: experience.fechaInicio
+    ? experience.fechaInicio.slice(0, 7)
+    : '',
+
+  fechaFin: experience.fechaFin
+    ? experience.fechaFin.slice(0, 7)
+    : '',
+
+  esTrabajoActual: experience.esTrabajoActual,
+
+  modalidadTrabajo: experience.modalidadTrabajo,
+  ubicacion: experience.ubicacion,
+  tipoContrato: experience.tipoContrato,
+
+  tecnologiasHerramientas:
+    experience.tecnologiasHerramientas || [],
+
+  descripcion: experience.descripcion,
+
+  evidenciaLaboralPdfUrl:
+    experience.evidenciaLaboralPdfUrl || '',
+
+  proyectoRelacionadoUrl:
+    experience.proyectoRelacionadoUrl || '',
+});
     setErrors({});
     setMessage(null);
   };
@@ -115,6 +153,37 @@ export const useExperience = () => {
   } else if (onlyNumbersRegex.test(formData.cargo.trim())) {
     newErrors.cargo = 'El cargo no puede contener solo números.';
   }
+  if (!formData.areaProfesional.trim()) {
+  newErrors.areaProfesional =
+    'El área profesional es obligatoria.';
+}
+
+if (!formData.especializacion.trim()) {
+  newErrors.especializacion =
+    'La especialización es obligatoria.';
+}
+
+if (!formData.modalidadTrabajo.trim()) {
+  newErrors.modalidadTrabajo =
+    'La modalidad de trabajo es obligatoria.';
+}
+
+if (!formData.ubicacion.trim()) {
+  newErrors.ubicacion =
+    'La ubicación es obligatoria.';
+}
+
+if (!formData.tipoContrato.trim()) {
+  newErrors.tipoContrato =
+    'El tipo de contrato es obligatorio.';
+}
+
+if (
+  formData.tecnologiasHerramientas.length === 0
+) {
+  newErrors.tecnologiasHerramientas =
+    'Debes agregar al menos una tecnología.';
+}
 
   if (!formData.fechaInicio.trim()) {
     newErrors.fechaInicio = 'La fecha de inicio es obligatoria.';

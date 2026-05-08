@@ -57,7 +57,7 @@ export const loginService = {
   async sendPasswordResetEmail(correo: string): Promise<SendPasswordResetEmailResponseDTO> {
     const payload: SendPasswordResetEmailRequestDTO = { correo };
     const response = await apiClient.post<SendPasswordResetEmailResponseDTO>(
-      '/api/password/email',
+      '/password/email',
       payload
     );
     return response;
@@ -67,11 +67,13 @@ export const loginService = {
     const payload: ResetPasswordRequestDTO = { password };
     const config = {
       headers: {
-        Authorization: `Bearer ${token}`
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+        //Authorization: `Bearer ${token}`
       }
     };
     const response = await apiClient.post<ResetPasswordResponseDTO>(
-      '/api/password/reset-password',
+      '/password/reset-password',
       payload,
       config
     );

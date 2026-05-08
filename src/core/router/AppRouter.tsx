@@ -3,14 +3,17 @@ import { MainLayout } from '../layouts/MainLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { LandingPage } from '@features/landing';
-import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
+import { LoginPage, ForgotPasswordPage, CambiarPasswordPage, ChangePasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
-import { ProfilePage } from '@features/profile';
-import { DashboardPage } from '@features/dashboard';
-import { HardSkillPage } from '@features/HardSkills';
+import { ProfilePage } from '@/features/profile';
+import { DashboardPage } from '@/features/dashboard';
+//import { HardSkillPage } from '@features/HardSkills';
+//          <Route path="/hardskills" element={<HardSkillPage />} />
 import { SoftSkillPage } from '@features/SoftSkills';
+import { HardSkillPageList } from '@features/HardSkillsList';
+import { SkillsManagementPage } from '@/features/skills';
 import { AcademicTrainingPage } from '@features/AcademicTraining';
-import { PhotoPage } from '@features/photo/pages/PhotoPage';
+import { PhotoPage } from '@/features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
@@ -24,7 +27,7 @@ export const AppRouter = () => {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="cambiar-password" element={<CambiarPasswordPage />} />
+        <Route path="reset-password" element={<CambiarPasswordPage />} />
         <Route path="Photo" element={<PhotoPage />} />
       </Route>
 
@@ -35,11 +38,11 @@ export const AppRouter = () => {
           <Route path="/DashMyPerfil" element={<DashMyPerfilPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/experience" element={<ExperiencePage />} />
-          <Route path="/hardskills" element={<HardSkillPage />} />
+          <Route path="/hardskills" element={<HardSkillPageList />} />
+          <Route path="/skills" element={<SkillsManagementPage />} />
           <Route path="/softskills" element={<SoftSkillPage />} />
           <Route path="/academic-training" element={<AcademicTrainingPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
-          <Route path="/AcademicTraining" element={<AcademicTrainingPage />} />
         </Route>
       </Route>
     </Routes>
