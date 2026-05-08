@@ -7,10 +7,9 @@ import { LoginPage, ForgotPasswordPage, CambiarPasswordPage, ChangePasswordPage 
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
-//import { HardSkillPage } from '@features/HardSkills';
-//          <Route path="/hardskills" element={<HardSkillPage />} />
+
 import { SoftSkillPage } from '@features/SoftSkills';
-import { HardSkillPageList } from '@features/HardSkillsList';
+import { HardSkillPage } from '@features/HardSkills/pages/HardSkillsPage';
 import { SkillsManagementPage } from '@/features/skills';
 import { AcademicTrainingPage } from '@features/AcademicTraining';
 import { PhotoPage } from '@/features/photo/pages/PhotoPage';
@@ -38,7 +37,7 @@ export const AppRouter = () => {
           <Route path="/DashMyPerfil" element={<DashMyPerfilPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/experience" element={<ExperiencePage />} />
-          <Route path="/hardskills" element={<HardSkillPageList />} />
+          <Route path="/HardSkills" element={<HardSkillPage />} />
           <Route path="/skills" element={<SkillsManagementPage />} />
           <Route path="/softskills" element={<SoftSkillPage />} />
           <Route path="/academic-training" element={<AcademicTrainingPage />} />

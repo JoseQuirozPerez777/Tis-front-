@@ -35,7 +35,7 @@ export const DashMyPerfilPage = () => {
                     <p className="text-text-secondary text-sm mb-4">
                         Añade y organiza tus habilidades técnicas y blandas.
                     </p>
-                    <Link to="/hardskills" className="text-brand-morado font-medium text-sm hover:underline">
+                    <Link to="/HardSkills" className="text-brand-morado font-medium text-sm hover:underline">
                         Gestionar habilidades →
                     </Link>
                 </div>
