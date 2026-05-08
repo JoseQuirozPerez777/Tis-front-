@@ -64,7 +64,7 @@ export const DashMyPerfilPage = () => {
                     <p className="text-text-secondary text-sm mb-4">
                         Muestra tu formacion academica.
                     </p>
-                    <Link to="/AcademicTraining" className="text-[#10B981] font-medium text-sm hover:underline">
+                    <Link to="/academic-training" className="text-[#10B981] font-medium text-sm hover:underline">
                         Ir a formacion academica →
                     </Link>
                 </div>
