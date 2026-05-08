@@ -1,19 +1,62 @@
-import type { ProfileResponse } from '../models/profile.model';
-import type { ProfileRequestDto } from './profile.dto';
+import type {
+  PerfilBackendResponse,
+  Profesion,
+  ProfileResponse,
+} from '../models/profile.model';
+import type { ProfilePhotoRequestDto, ProfileRequestDto } from './profile.dto';
 
-export interface ProfesionesResponseDto {
-  idProfesion: number;
-  nombreProfesion: string;
-}
+const API_URL = 'http://localhost:8081/api';
+
+const getToken = (): string | null => {
+  return (
+    sessionStorage.getItem('jwt') ||
+    sessionStorage.getItem('token') ||
+    localStorage.getItem('jwt') ||
+    localStorage.getItem('token')
+  );
+};
+
+const authHeaders = (): HeadersInit => {
+  const token = getToken();
+
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
+
+const getErrorMessage = async (response: Response): Promise<string> => {
+  const text = await response.text();
+
+  try {
+    const data = JSON.parse(text);
+    return data.message || data.msg || text || 'Error en la petición';
+  } catch {
+    return text || 'Error en la petición';
+  }
+};
 
 export const profileService = {
-  getProfile: (): ProfileRequestDto | null => {
+  getProfileLocal: (): ProfileRequestDto | null => {
     const profileJson = localStorage.getItem('profile');
     return profileJson ? JSON.parse(profileJson) : null;
   },
 
-  getProfesiones: async (): Promise<ProfesionesResponseDto[]> => {
-    const response = await fetch('http://localhost:8081/api/profesiones', {
+  getProfile: async (): Promise<PerfilBackendResponse> => {
+    const response = await fetch(`${API_URL}/usuarios/perfil`, {
+      method: 'GET',
+      headers: authHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(await getErrorMessage(response));
+    }
+
+    return await response.json();
+  },
+
+  getProfesiones: async (): Promise<Profesion[]> => {
+    const response = await fetch(`${API_URL}/profesiones`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -21,35 +64,43 @@ export const profileService = {
     });
 
     if (!response.ok) {
-      throw new Error('No se pudo obtener la lista de profesiones');
+      throw new Error(await getErrorMessage(response));
     }
 
     return await response.json();
   },
 
-  // Método actualizado para hacer POST al backend
   updateProfile: async (dto: ProfileRequestDto): Promise<ProfileResponse> => {
-    console.log(dto)
-     //LÓGICA DE TOKEN (Comentada por ahora):
-       const token = sessionStorage.getItem('jwt'); 
-    const response = await fetch('http://localhost:8081/api/usuarios/perfil', { // Ajusta esta URL a tu endpoint de Spring Boot
+    const response = await fetch(`${API_URL}/usuarios/perfil`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Si tuvieras el token, se agregaría así:
-           'Authorization': `Bearer ${token}` 
-        
-      },
+      headers: authHeaders(),
       body: JSON.stringify(dto),
     });
 
     if (!response.ok) {
-      // Manejo de errores si el servidor responde con 4xx o 5xx
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Error al actualizar el perfil en el servidor');
+      throw new Error(await getErrorMessage(response));
     }
+
+    const data = await response.json();
+
     localStorage.setItem('profile', JSON.stringify(dto));
-    // Retornamos la respuesta del backend (ProfileResponse)
+
+    return data;
+  },
+
+  updateProfilePhoto: async (
+    dto: ProfilePhotoRequestDto
+  ): Promise<{ success: boolean; message: string }> => {
+    const response = await fetch(`${API_URL}/usuarios/foto-perfil`, {
+      method: 'PATCH',
+      headers: authHeaders(),
+      body: JSON.stringify(dto),
+    });
+
+    if (!response.ok) {
+      throw new Error(await getErrorMessage(response));
+    }
+
     return await response.json();
   },
 };

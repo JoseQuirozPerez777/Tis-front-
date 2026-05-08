@@ -6,5 +6,7 @@ export const profileAdapter = (user: ProfileUser): ProfileRequestDto => {
     fullName: user.fullName.trim(),
     profession: user.profession.trim(),
     bio: user.bio.trim(),
+    telefono: user.telefono.trim(),
+    direccion: user.direccion.trim(),
   };
 };
