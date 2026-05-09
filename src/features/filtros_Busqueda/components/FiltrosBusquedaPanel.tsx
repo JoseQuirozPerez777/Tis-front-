@@ -13,7 +13,7 @@ interface FiltrosBusquedaPanelProps {
     campo: keyof FiltrosBusqueda,
     valor: string | number | string[],
   ) => void;
-  onAlternarIdioma: (idioma: string) => void;
+  
   onAplicarFiltros: () => void;
   onLimpiarFiltros: () => void;
 }
@@ -22,7 +22,7 @@ export const FiltrosBusquedaPanel = ({
   filtros,
   cargando,
   onActualizarFiltro,
-  onAlternarIdioma,
+  
   onAplicarFiltros,
   onLimpiarFiltros,
 }: FiltrosBusquedaPanelProps) => {

@@ -16,7 +16,6 @@ export const FiltrosBusquedaPage = () => {
     actualizarFiltro,
     cambiarOrden,
     cambiarPagina,
-    alternarIdioma,
     aplicarFiltros,
     limpiarFiltros,
   } = useFiltrosBusqueda();
@@ -48,7 +47,6 @@ export const FiltrosBusquedaPage = () => {
     filtros={filtros}
     cargando={cargando}
     onActualizarFiltro={actualizarFiltro}
-    onAlternarIdioma={alternarIdioma}
     onAplicarFiltros={aplicarFiltros}
     onLimpiarFiltros={limpiarFiltros}
   />
