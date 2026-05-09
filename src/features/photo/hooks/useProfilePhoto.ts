@@ -98,7 +98,7 @@ const [perfilData, setPerfilData] = useState<{
       const imageUrl = await photoService.uploadToCloudinary(selectedFile);
 
         const response = await photoService.updateProfilePhoto({
-          foto: imageUrl,
+          fotoPerfil: imageUrl,
         } as UpdatePhotoRequestDto);
 
       setPerfilData((prev) => ({
