@@ -40,8 +40,8 @@ export const adaptExperience = (dto: ExperienceDto): Experience => {
     ubicacion: dto.ubicacion,
     tipoContrato: dto.tipoContrato,
 
-    tecnologiasIds: [],
-    tecnologiasHerramientas: dto.nombresTecnologias ?? [],
+    tecnologiasIds: dto.tecnologiasIds ?? [],
+tecnologiasHerramientas: dto.nombresTecnologias ?? [],
 
     descripcion: dto.descripcionProyecto,
 

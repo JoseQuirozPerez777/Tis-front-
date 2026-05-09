@@ -1,9 +1,10 @@
-import type { ExperienceErrors, ExperienceFormData } from '../models/experience.model';
+import type { ExperienceErrors, ExperienceFormData, Technology } from '../models/experience.model';
 
 interface ExperienceFormProps {
   formData: ExperienceFormData;
   errors: ExperienceErrors;
   saving: boolean;
+  technologies: Technology[];
   onChange: (
   field: keyof ExperienceFormData,
   value: string | boolean | string[] | number[]
@@ -16,6 +17,7 @@ const ExperienceForm = ({
   formData,
   errors,
   saving,
+  technologies,
   onChange,
   onSubmit,
   onCancel,
@@ -241,35 +243,35 @@ const ExperienceForm = ({
 
   <select
     onChange={(e) => {
-      const selectedId = Number(e.target.value);
+  const selectedId = Number(e.target.value);
 
-      if (
-        selectedId &&
-        !formData.tecnologiasIds.includes(selectedId)
-      ) {
-        const selectedName =
-          e.target.options[e.target.selectedIndex].text;
+  if (!selectedId) return;
 
-        onChange('tecnologiasIds', [
-          ...formData.tecnologiasIds,
-          selectedId,
-        ]);
+  if (formData.tecnologiasIds.includes(selectedId)) {
+    e.target.value = '';
+    return;
+  }
 
-        onChange('tecnologiasHerramientas', [
-          ...formData.tecnologiasHerramientas,
-          selectedName,
-        ]);
-      }
+  const selectedName = e.target.options[e.target.selectedIndex].text;
 
-      e.target.value = '';
-    }}
+  onChange('tecnologiasIds', [...formData.tecnologiasIds, selectedId]);
+  onChange('tecnologiasHerramientas', [
+    ...formData.tecnologiasHerramientas,
+    selectedName,
+  ]);
+
+  setTimeout(() => {
+    e.target.value = '';
+  }, 0);
+}}
     className="w-full rounded-xl border border-[#1E3A5F] bg-[#0F223D] px-4 py-3 text-[#E5E7EB] outline-none transition focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/30"
   >
     <option value="">Selecciona tecnología</option>
-    <option value="1">React</option>
-    <option value="2">Spring Boot</option>
-    <option value="3">PostgreSQL</option>
-    <option value="4">Angular</option>
+   {technologies.map((tech) => (
+  <option key={tech.id} value={tech.id}>
+    {tech.nombre}
+  </option>
+))}
   </select>
 
   <div className="mt-3 flex flex-wrap gap-2">

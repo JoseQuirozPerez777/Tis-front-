@@ -30,6 +30,7 @@ export interface ExperienceDto {
   evidenciaLaboralPdfUrl: string | null;
   proyectoRelacionadoUrl: string | null;
 
+  tecnologiasIds?: number[];
   nombresTecnologias: string[];
 }
 

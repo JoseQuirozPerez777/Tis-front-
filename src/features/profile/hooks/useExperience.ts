@@ -4,13 +4,18 @@ import type {
   ExperienceErrors,
   ExperienceFormData,
   ExperienceMessage,
+  Technology,
 } from '../models/experience.model';
+
 import {
   createExperience,
   getExperiences,
   updateExperience,
   deleteExperience,
+  getTechnologies,
 } from '../services/experience.service';
+
+
 
 const initialForm: ExperienceFormData = {
   empresa: '',
@@ -28,7 +33,7 @@ const initialForm: ExperienceFormData = {
   tipoContrato: '',
 
   tecnologiasIds: [],
-tecnologiasHerramientas: [],
+  tecnologiasHerramientas: [],
 
   descripcion: '',
 
@@ -37,6 +42,7 @@ tecnologiasHerramientas: [],
 };
 
 export const useExperience = () => {
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [formData, setFormData] = useState<ExperienceFormData>(initialForm);
   const [errors, setErrors] = useState<ExperienceErrors>({});
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -46,7 +52,7 @@ export const useExperience = () => {
   const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
 
   const loadExperiences = async () => {
-    try {
+  try {
       setLoading(true);
       const data = await getExperiences();
       setExperiences(data);
@@ -63,9 +69,20 @@ export const useExperience = () => {
     }
   };
 
-  useEffect(() => {
-    void loadExperiences();
-  }, []);
+const loadTechnologies = async () => {
+  try {
+    const data = await getTechnologies();
+    setTechnologies(data);
+  } catch {
+    setTechnologies([]);
+  }
+};
+
+useEffect(() => {
+  void loadExperiences();
+  void loadTechnologies();
+}, []);
+  
 
   const handleChange = (
     field: keyof ExperienceFormData,
@@ -288,5 +305,6 @@ if (
     startEditing,
     removeExperience,
     cancelEditing,
+    technologies,
   };
 };

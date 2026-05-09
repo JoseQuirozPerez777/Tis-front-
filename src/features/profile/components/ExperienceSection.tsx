@@ -12,6 +12,7 @@ const ExperienceSection = () => {
     loading,
     saving,
     message,
+    technologies,
     handleChange,
     submitExperience,
     closeMessage,
@@ -81,6 +82,7 @@ const ExperienceSection = () => {
           formData={formData}
           errors={errors}
           saving={saving}
+          technologies={technologies}
           onChange={handleChange}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
