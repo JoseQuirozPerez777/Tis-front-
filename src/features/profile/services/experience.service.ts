@@ -90,7 +90,7 @@ export const updateExperience = async (
     ...adaptExperienceToCreateDto(formData),
   };
 
-  const response = await fetch(`${API_URL}/api/experiencias/actualizar`, {
+  const response = await fetch(`${API_URL}/api/experiencias/actualizar/${id}`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
