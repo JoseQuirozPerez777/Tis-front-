@@ -1,6 +1,6 @@
 export interface UpdatePhotoRequestDto {
-  fullName: string;
-  profession: string;
-  bio: string;
-  fotoPerfil: string;
+  foto?: string;
+  fullName?: string;
+  profession?: string;
+  bio?: string;
 }
