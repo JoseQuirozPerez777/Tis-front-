@@ -42,11 +42,20 @@ export const AcademicTrainingForm = () => {
           />
 
           <Input
-            label="Título / Carrera"
+            label="Carrera"
             type="text"
             placeholder="Ej. Ingeniería de Sistemas"
             value={degree}
             onChange={(e) => setDegree(e.target.value)}
+            required
+            className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
+          />
+          <Input
+            label="Área de estudio"
+            type="text"
+            placeholder="Ej. Desarrollo de Software"
+            value={fieldOfStudy}
+            onChange={(e) => setFieldOfStudy(e.target.value)}
             required
             className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
           />
@@ -68,16 +77,6 @@ export const AcademicTrainingForm = () => {
               <option value="DOCTORADO" className="bg-brand-azul-profundo text-white">Doctorado</option>
             </select>
           </div>
-
-          <Input
-            label="Área de estudio"
-            type="text"
-            placeholder="Ej. Desarrollo de Software"
-            value={fieldOfStudy}
-            onChange={(e) => setFieldOfStudy(e.target.value)}
-            required
-            className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
-          />
 
           <div className="grid grid-cols-2 gap-4">
             <Input

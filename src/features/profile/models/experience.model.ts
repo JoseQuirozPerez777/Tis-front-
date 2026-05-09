@@ -1,5 +1,13 @@
+export interface Technology {
+  id: number;
+  nombre: string;
+  categoria: string;
+  logoUrl: string | null;
+}
+
 export interface Experience {
   id: number;
+
   empresa: string;
   cargo: string;
 
@@ -14,6 +22,7 @@ export interface Experience {
   ubicacion: string;
   tipoContrato: string;
 
+  tecnologiasIds: number[];
   tecnologiasHerramientas: string[];
 
   descripcion: string;
@@ -39,6 +48,7 @@ export interface ExperienceFormData {
   ubicacion: string;
   tipoContrato: string;
 
+  tecnologiasIds: number[];
   tecnologiasHerramientas: string[];
 
   descripcion: string;
@@ -61,6 +71,7 @@ export interface ExperienceErrors {
   ubicacion?: string;
   tipoContrato?: string;
 
+  tecnologiasIds?: string;
   tecnologiasHerramientas?: string;
 
   descripcion?: string;

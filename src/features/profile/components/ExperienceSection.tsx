@@ -12,6 +12,7 @@ const ExperienceSection = () => {
     loading,
     saving,
     message,
+    technologies,
     handleChange,
     submitExperience,
     closeMessage,
@@ -68,7 +69,7 @@ const ExperienceSection = () => {
         )}
       </div>
 
-      {message && message.type === 'success' && (
+      {message && (
         <ExperienceMessage
           type={message.type}
           text={message.text}
@@ -81,6 +82,7 @@ const ExperienceSection = () => {
           formData={formData}
           errors={errors}
           saving={saving}
+          technologies={technologies}
           onChange={handleChange}
           onSubmit={handleSubmit}
           onCancel={handleCancel}

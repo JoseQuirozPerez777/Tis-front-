@@ -4,13 +4,18 @@ import type {
   ExperienceErrors,
   ExperienceFormData,
   ExperienceMessage,
+  Technology,
 } from '../models/experience.model';
+
 import {
   createExperience,
   getExperiences,
   updateExperience,
   deleteExperience,
+  getTechnologies,
 } from '../services/experience.service';
+
+
 
 const initialForm: ExperienceFormData = {
   empresa: '',
@@ -27,6 +32,7 @@ const initialForm: ExperienceFormData = {
   ubicacion: '',
   tipoContrato: '',
 
+  tecnologiasIds: [],
   tecnologiasHerramientas: [],
 
   descripcion: '',
@@ -36,6 +42,7 @@ const initialForm: ExperienceFormData = {
 };
 
 export const useExperience = () => {
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [formData, setFormData] = useState<ExperienceFormData>(initialForm);
   const [errors, setErrors] = useState<ExperienceErrors>({});
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -45,7 +52,7 @@ export const useExperience = () => {
   const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
 
   const loadExperiences = async () => {
-    try {
+  try {
       setLoading(true);
       const data = await getExperiences();
       setExperiences(data);
@@ -62,13 +69,24 @@ export const useExperience = () => {
     }
   };
 
-  useEffect(() => {
-    void loadExperiences();
-  }, []);
+const loadTechnologies = async () => {
+  try {
+    const data = await getTechnologies();
+    setTechnologies(data);
+  } catch {
+    setTechnologies([]);
+  }
+};
+
+useEffect(() => {
+  void loadExperiences();
+  void loadTechnologies();
+}, []);
+  
 
   const handleChange = (
     field: keyof ExperienceFormData,
-    value: string | boolean | string[]
+    value: string | boolean | string[] | number[]
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -105,8 +123,11 @@ export const useExperience = () => {
   ubicacion: experience.ubicacion,
   tipoContrato: experience.tipoContrato,
 
-  tecnologiasHerramientas:
-    experience.tecnologiasHerramientas || [],
+  tecnologiasIds:
+  experience.tecnologiasIds || [],
+
+tecnologiasHerramientas:
+  experience.tecnologiasHerramientas || [],
 
   descripcion: experience.descripcion,
 
@@ -179,9 +200,9 @@ if (!formData.tipoContrato.trim()) {
 }
 
 if (
-  formData.tecnologiasHerramientas.length === 0
+  formData.tecnologiasIds.length === 0
 ) {
-  newErrors.tecnologiasHerramientas =
+  newErrors.tecnologiasIds =
     'Debes agregar al menos una tecnología.';
 }
 
@@ -284,5 +305,6 @@ if (
     startEditing,
     removeExperience,
     cancelEditing,
+    technologies,
   };
 };
