@@ -3,7 +3,7 @@ import { MainLayout } from '../layouts/MainLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { LandingPage } from '@features/landing';
-import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
+import { LoginPage, ForgotPasswordPage, CambiarPasswordPage, ChangePasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@/features/profile';
 import { DashboardPage } from '@/features/dashboard';
@@ -16,11 +16,11 @@ import { PhotoPage } from '@/features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
+import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
 
 export const AppRouter = () => {
   return (
     <Routes>
-      {/* Public Routes */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="login" element={<LoginPage />} />
@@ -30,7 +30,6 @@ export const AppRouter = () => {
         <Route path="Photo" element={<PhotoPage />} />
       </Route>
 
-      {/* Protected/Private Routes */}
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -42,6 +41,8 @@ export const AppRouter = () => {
           <Route path="/softskills" element={<SoftSkillPage />} />
           <Route path="/academic-training" element={<AcademicTrainingPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/buscar-portafolios" element={<FiltrosBusquedaPage />} />
         </Route>
       </Route>
     </Routes>
