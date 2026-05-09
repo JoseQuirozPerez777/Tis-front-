@@ -27,7 +27,8 @@ const initialForm: ExperienceFormData = {
   ubicacion: '',
   tipoContrato: '',
 
-  tecnologiasHerramientas: [],
+  tecnologiasIds: [],
+tecnologiasHerramientas: [],
 
   descripcion: '',
 
@@ -68,7 +69,7 @@ export const useExperience = () => {
 
   const handleChange = (
     field: keyof ExperienceFormData,
-    value: string | boolean | string[]
+    value: string | boolean | string[] | number[]
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -105,8 +106,11 @@ export const useExperience = () => {
   ubicacion: experience.ubicacion,
   tipoContrato: experience.tipoContrato,
 
-  tecnologiasHerramientas:
-    experience.tecnologiasHerramientas || [],
+  tecnologiasIds:
+  experience.tecnologiasIds || [],
+
+tecnologiasHerramientas:
+  experience.tecnologiasHerramientas || [],
 
   descripcion: experience.descripcion,
 
@@ -179,9 +183,9 @@ if (!formData.tipoContrato.trim()) {
 }
 
 if (
-  formData.tecnologiasHerramientas.length === 0
+  formData.tecnologiasIds.length === 0
 ) {
-  newErrors.tecnologiasHerramientas =
+  newErrors.tecnologiasIds =
     'Debes agregar al menos una tecnología.';
 }
 

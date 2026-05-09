@@ -68,7 +68,7 @@ const ExperienceSection = () => {
         )}
       </div>
 
-      {message && message.type === 'success' && (
+      {message && (
         <ExperienceMessage
           type={message.type}
           text={message.text}

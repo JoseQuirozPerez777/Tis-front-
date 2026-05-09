@@ -4,7 +4,10 @@ interface ExperienceFormProps {
   formData: ExperienceFormData;
   errors: ExperienceErrors;
   saving: boolean;
-  onChange: (field: keyof ExperienceFormData, value: string | boolean | string[]) => void;
+  onChange: (
+  field: keyof ExperienceFormData,
+  value: string | boolean | string[] | number[]
+) => void;
   onSubmit: () => void;
   onCancel: () => void;
 }
@@ -172,9 +175,9 @@ const ExperienceForm = ({
       className="w-full rounded-xl border border-[#1E3A5F] bg-[#0F223D] px-4 py-3 text-[#E5E7EB] outline-none transition focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/30"
     >
       <option value="">Selecciona modalidad</option>
-      <option value="Remoto">Remoto</option>
-      <option value="Presencial">Presencial</option>
-      <option value="Híbrido">Híbrido</option>
+<option value="REMOTO">Remoto</option>
+<option value="PRESENCIAL">Presencial</option>
+<option value="HIBRIDO">Híbrido</option>
     </select>
     {errors.modalidadTrabajo && (
       <p className="mt-1 text-sm text-rose-400">
@@ -211,11 +214,11 @@ const ExperienceForm = ({
       className="w-full rounded-xl border border-[#1E3A5F] bg-[#0F223D] px-4 py-3 text-[#E5E7EB] outline-none transition focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/30"
     >
       <option value="">Selecciona tipo</option>
-      <option value="Tiempo completo">Tiempo completo</option>
-      <option value="Medio tiempo">Medio tiempo</option>
-      <option value="Freelance">Freelance</option>
-      <option value="Pasantía">Pasantía</option>
-      <option value="Contrato temporal">Contrato temporal</option>
+<option value="TIEMPO_COMPLETO">Tiempo completo</option>
+<option value="MEDIO_TIEMPO">Medio tiempo</option>
+<option value="FREELANCE">Freelance</option>
+<option value="PASANTIA">Pasantía</option>
+<option value="CONTRATO_TEMPORAL">Contrato temporal</option>
     </select>
     {errors.tipoContrato && (
       <p className="mt-1 text-sm text-rose-400">
@@ -229,59 +232,48 @@ const ExperienceForm = ({
   4. Tecnologías y herramientas
 </h3>
 
+
+
 <div>
   <label className="mb-2 block text-sm font-medium text-[#9CA3AF]">
     Tecnologías / herramientas utilizadas *
   </label>
 
-  <div className="flex gap-2">
-    <input
-      id="tech-input"
-      type="text"
-      placeholder="Ej. React, Node.js"
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
+  <select
+    onChange={(e) => {
+      const selectedId = Number(e.target.value);
 
-          const value = e.currentTarget.value.trim();
+      if (
+        selectedId &&
+        !formData.tecnologiasIds.includes(selectedId)
+      ) {
+        const selectedName =
+          e.target.options[e.target.selectedIndex].text;
 
-          if (value && !formData.tecnologiasHerramientas.includes(value)) {
-            onChange('tecnologiasHerramientas', [
-              ...formData.tecnologiasHerramientas,
-              value,
-            ]);
+        onChange('tecnologiasIds', [
+          ...formData.tecnologiasIds,
+          selectedId,
+        ]);
 
-            e.currentTarget.value = '';
-          }
-        }
-      }}
-      className="w-full rounded-xl border border-[#1E3A5F] bg-[#0F223D] px-4 py-3 text-[#E5E7EB] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/30"
-    />
+        onChange('tecnologiasHerramientas', [
+          ...formData.tecnologiasHerramientas,
+          selectedName,
+        ]);
+      }
 
-    <button
-      type="button"
-      onClick={() => {
-        const input = document.getElementById('tech-input') as HTMLInputElement;
-        const value = input.value.trim();
-
-        if (value && !formData.tecnologiasHerramientas.includes(value)) {
-          onChange('tecnologiasHerramientas', [
-            ...formData.tecnologiasHerramientas,
-            value,
-          ]);
-
-          input.value = '';
-        }
-      }}
-      className="rounded-xl bg-[#3B82F6] px-4 py-3 font-bold text-white transition hover:bg-[#60A5FA] active:scale-95"
-      title="Agregar tecnología"
-    >
-      Agregar
-    </button>
-  </div>
+      e.target.value = '';
+    }}
+    className="w-full rounded-xl border border-[#1E3A5F] bg-[#0F223D] px-4 py-3 text-[#E5E7EB] outline-none transition focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/30"
+  >
+    <option value="">Selecciona tecnología</option>
+    <option value="1">React</option>
+    <option value="2">Spring Boot</option>
+    <option value="3">PostgreSQL</option>
+    <option value="4">Angular</option>
+  </select>
 
   <div className="mt-3 flex flex-wrap gap-2">
-    {formData.tecnologiasHerramientas.map((tech) => (
+    {formData.tecnologiasHerramientas.map((tech, index) => (
       <span
         key={tech}
         className="flex items-center gap-2 rounded-full bg-[#1E3A5F] px-3 py-1 text-sm text-[#E5E7EB]"
@@ -290,14 +282,22 @@ const ExperienceForm = ({
 
         <button
           type="button"
-          onClick={() =>
+          onClick={() => {
             onChange(
               'tecnologiasHerramientas',
-              formData.tecnologiasHerramientas.filter((item) => item !== tech)
-            )
-          }
+              formData.tecnologiasHerramientas.filter(
+                (_, i) => i !== index,
+              ),
+            );
+
+            onChange(
+              'tecnologiasIds',
+              formData.tecnologiasIds.filter(
+                (_, i) => i !== index,
+              ),
+            );
+          }}
           className="text-[#9CA3AF] hover:text-red-400"
-          title="Eliminar tecnología"
         >
           ×
         </button>
@@ -305,12 +305,15 @@ const ExperienceForm = ({
     ))}
   </div>
 
-  {errors.tecnologiasHerramientas && (
+  {errors.tecnologiasIds && (
     <p className="mt-1 text-sm text-rose-400">
-      {errors.tecnologiasHerramientas}
+      {errors.tecnologiasIds}
     </p>
   )}
 </div>
+
+
+
 
 <h3 className="mb-3 mt-5 text-sm font-bold text-[#38BDF8]">
   5. Descripción del proyecto
