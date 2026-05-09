@@ -70,6 +70,7 @@ export const useHardSkills = () => {
       showToast(message, 'error');
     } finally {
       setIsLoading(false);
+      navigate(-1);
     }
   };
 
