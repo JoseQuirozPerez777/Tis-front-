@@ -17,6 +17,9 @@ import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
 import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
+import { ProjectsPage } from '@features/projects/pages/ProjectsPage';
+
+
 
 export const AppRouter = () => {
   return (
@@ -43,6 +46,8 @@ export const AppRouter = () => {
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/buscar-portafolios" element={<FiltrosBusquedaPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+
         </Route>
       </Route>
     </Routes>
