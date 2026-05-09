@@ -7,9 +7,7 @@ interface Props {
 }
 
 export const ProfessionalLinksForm =( {
-  selectedLink,
   onCancel,
-  onSuccess,
 }: Props) => {
   const { 
     form, 
@@ -17,7 +15,7 @@ export const ProfessionalLinksForm =( {
     isLoadingLinks, 
     serverError, 
     onSubmit, } =
-    useProfessionalLinks(selectedLink, onSuccess);
+    useProfessionalLinks();
   const {
     register,
     watch,
