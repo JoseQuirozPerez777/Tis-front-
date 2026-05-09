@@ -16,7 +16,7 @@ export const FiltrosBusquedaPagination = ({
   }
 
   return (
-    <div className="flex items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="flex items-center justify-center gap-3 rounded-2xl border border-card-border bg-bg-dark/80 p-4 shadow-sm">
       <button
         type="button"
         disabled={cargando || paginaActual <= 1}
