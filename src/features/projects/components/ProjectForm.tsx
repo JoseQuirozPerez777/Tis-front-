@@ -9,10 +9,13 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useProjects } from "../hooks/useProjects";
 import "../styles/projects.css";
 
 export function ProjectForm() {
+  const navigate = useNavigate();
+
   const {
     form,
     loading,
@@ -27,6 +30,15 @@ export function ProjectForm() {
     removeImage,
     saveProject,
   } = useProjects();
+
+  const minDate = "1970-01-01";
+  const today = new Date().toISOString().split("T")[0];
+
+  const isFinalizado = form.estadoProyecto === "FINALIZADO";
+
+  function handleCancel() {
+    navigate(-1);
+  }
 
   return (
     <div className="project-form-container">
@@ -234,6 +246,8 @@ export function ProjectForm() {
             <input
               type="date"
               value={form.fechaInicio}
+              min={minDate}
+              max={today}
               onChange={(e) => updateField("fechaInicio", e.target.value)}
               disabled={loading}
             />
@@ -244,9 +258,14 @@ export function ProjectForm() {
             <input
               type="date"
               value={form.fechaFinalizacion}
+              min={minDate}
+              max={today}
               onChange={(e) => updateField("fechaFinalizacion", e.target.value)}
-              disabled={loading}
+              disabled={loading || !isFinalizado}
             />
+            {!isFinalizado && (
+              <small>Solo se puede poner fecha fin si el proyecto está finalizado.</small>
+            )}
           </div>
 
           <div className="project-field">
@@ -285,7 +304,16 @@ export function ProjectForm() {
 
       {message && <p className="project-message">{message}</p>}
 
-      <div className="project-form-actions project-form-actions-only">
+      <div className="project-form-actions">
+        <button
+          type="button"
+          className="project-cancel-btn"
+          onClick={handleCancel}
+          disabled={loading}
+        >
+          Cancelar
+        </button>
+
         <button
           type="button"
           className="project-save-btn"
