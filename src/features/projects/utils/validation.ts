@@ -1,5 +1,11 @@
 import type { ProjectFormModel } from "../models/project.model";
 
+const MIN_DATE = "1970-01-01";
+
+function getToday(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
 export function isValidUrl(value: string): boolean {
   if (!value.trim()) return true;
 
@@ -12,6 +18,8 @@ export function isValidUrl(value: string): boolean {
 }
 
 export function validateProjectForm(form: ProjectFormModel): string | null {
+  const today = getToday();
+
   if (!form.nombreProyecto.trim()) {
     return "El nombre del proyecto es obligatorio.";
   }
@@ -54,6 +62,34 @@ export function validateProjectForm(form: ProjectFormModel): string | null {
 
   if (invalidAdditionalUrl) {
     return "Una de las URLs adicionales no es válida.";
+  }
+
+  if (form.fechaInicio) {
+    if (form.fechaInicio < MIN_DATE) {
+      return "La fecha de inicio no puede ser menor a 1970.";
+    }
+
+    if (form.fechaInicio > today) {
+      return "La fecha de inicio no puede ser mayor a la fecha de hoy.";
+    }
+  }
+
+  if (form.estadoProyecto !== "FINALIZADO" && form.fechaFinalizacion) {
+    return "Solo se puede registrar fecha de finalización si el proyecto está finalizado.";
+  }
+
+  if (form.estadoProyecto === "FINALIZADO" && form.fechaFinalizacion) {
+    if (form.fechaFinalizacion < MIN_DATE) {
+      return "La fecha de finalización no puede ser menor a 1970.";
+    }
+
+    if (form.fechaFinalizacion > today) {
+      return "La fecha de finalización no puede ser mayor a la fecha de hoy.";
+    }
+
+    if (form.fechaInicio && form.fechaFinalizacion < form.fechaInicio) {
+      return "La fecha de finalización no puede ser menor que la fecha de inicio.";
+    }
   }
 
   return null;

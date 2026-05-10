@@ -30,10 +30,20 @@ export function useProjects() {
     field: K,
     value: ProjectFormModel[K]
   ) {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setForm((prev) => {
+      if (field === "estadoProyecto" && value !== "FINALIZADO") {
+        return {
+          ...prev,
+          [field]: value,
+          fechaFinalizacion: "",
+        };
+      }
+
+      return {
+        ...prev,
+        [field]: value,
+      };
+    });
   }
 
   function addTechnology() {
@@ -153,7 +163,10 @@ export function useProjects() {
         rolProyecto: form.rolProyecto || undefined,
         urlsAdicionales: form.urlsAdicionales.filter((url) => url.trim() !== ""),
         fechaInicio: form.fechaInicio || undefined,
-        fechaFinalizacion: form.fechaFinalizacion || undefined,
+        fechaFinalizacion:
+          form.estadoProyecto === "FINALIZADO"
+            ? form.fechaFinalizacion || undefined
+            : undefined,
         estadoProyecto: form.estadoProyecto,
       });
 
