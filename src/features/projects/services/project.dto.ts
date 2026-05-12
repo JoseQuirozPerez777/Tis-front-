@@ -1,3 +1,14 @@
+export interface TechnologyDTO {
+  id: number;
+  nombre: string;
+  categoria: string;
+  logoUrl: string | null;
+}
+
+export interface TechnologiesResponseDTO {
+  data: TechnologyDTO[];
+}
+
 export interface CreateProjectDTO {
   titulo: string;
   descripcion: string;
@@ -21,7 +32,9 @@ export interface ProjectResponseDTO {
   idProyecto: number;
   titulo: string;
   descripcion: string;
+
   tecnologiaIds: number[];
+  nombresTecnologias?: string[];
 
   enlaceGithub?: string;
   enlaceDemo?: string;

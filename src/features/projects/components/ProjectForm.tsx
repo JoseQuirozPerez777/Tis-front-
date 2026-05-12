@@ -18,6 +18,8 @@ export function ProjectForm() {
 
   const {
     form,
+    technologies,
+    loadingTechnologies,
     loading,
     message,
     updateField,
@@ -99,28 +101,50 @@ export function ProjectForm() {
             Tecnologías usadas <span>*</span>
           </label>
 
-          <div className="project-chips">
-            {form.tecnologiasUsadas.map((tech) => (
-              <span className="project-chip" key={tech}>
-                ID {tech}
+          <select
+            value=""
+            onChange={(e) => {
+              const selectedId = Number(e.target.value);
+
+              if (!selectedId) return;
+
+              addTechnology(selectedId);
+
+              setTimeout(() => {
+                e.target.value = "";
+              }, 0);
+            }}
+            disabled={loading || loadingTechnologies}
+          >
+            <option value="">
+              {loadingTechnologies
+                ? "Cargando tecnologías..."
+                : "Selecciona tecnología"}
+            </option>
+
+            {technologies.map((tech) => (
+              <option key={tech.id} value={tech.id}>
+                {tech.nombre}
+              </option>
+            ))}
+          </select>
+
+          <div className="project-chips" style={{ marginTop: "12px" }}>
+            {form.tecnologiasIds.map((techId, index) => (
+              <span className="project-chip" key={techId}>
+                {form.tecnologiasHerramientas[index] ||
+                  technologies.find((tech) => tech.id === techId)?.nombre ||
+                  `Tecnología ${techId}`}
+
                 <button
                   type="button"
-                  onClick={() => removeTechnology(tech)}
+                  onClick={() => removeTechnology(techId)}
                   disabled={loading}
                 >
                   <X size={14} />
                 </button>
               </span>
             ))}
-
-            <button
-              type="button"
-              className="project-add-chip"
-              onClick={addTechnology}
-              disabled={loading}
-            >
-              <Plus size={16} />
-            </button>
           </div>
         </div>
       </section>
@@ -240,6 +264,24 @@ export function ProjectForm() {
           Información adicional
         </h2>
 
+          <div className="project-field">
+            <label>Estado del proyecto</label>
+            <select
+              value={form.estadoProyecto}
+              onChange={(e) =>
+                updateField(
+                  "estadoProyecto",
+                  e.target.value as typeof form.estadoProyecto
+                )
+              }
+              disabled={loading}
+            >
+              <option value="FINALIZADO">Finalizado</option>
+              <option value="EN_DESARROLLO">En desarrollo</option>
+              <option value="PAUSADO">Pausado</option>
+            </select>
+          </div>
+
         <div className="project-grid-4">
           <div className="project-field">
             <label>Fecha de inicio</label>
@@ -264,27 +306,12 @@ export function ProjectForm() {
               disabled={loading || !isFinalizado}
             />
             {!isFinalizado && (
-              <small>Solo se puede poner fecha fin si el proyecto está finalizado.</small>
+              <small>
+                Solo se puede poner fecha fin si el proyecto está finalizado.
+              </small>
             )}
           </div>
 
-          <div className="project-field">
-            <label>Estado del proyecto</label>
-            <select
-              value={form.estadoProyecto}
-              onChange={(e) =>
-                updateField(
-                  "estadoProyecto",
-                  e.target.value as typeof form.estadoProyecto
-                )
-              }
-              disabled={loading}
-            >
-              <option value="FINALIZADO">Finalizado</option>
-              <option value="EN_DESARROLLO">En desarrollo</option>
-              <option value="PAUSADO">Pausado</option>
-            </select>
-          </div>
 
           <div className="project-field">
             <label>Privacidad</label>

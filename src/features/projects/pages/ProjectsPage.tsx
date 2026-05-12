@@ -1,21 +1,35 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProjectForm } from "../components/ProjectForm";
-import { getProjects } from "../services/project.service";
+import { getProjects, getTechnologies } from "../services/project.service";
 import type { ProjectResponseDTO } from "../services/project.dto";
+import type { Technology } from "../models/project.model";
 import "../styles/projects.css";
 
 export function ProjectsPage() {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [proyectos, setProyectos] = useState<ProjectResponseDTO[]>([]);
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [loadingProyectos, setLoadingProyectos] = useState(false);
+
+  const technologyNameById = useMemo(() => {
+    return technologies.reduce<Record<number, string>>((acc, technology) => {
+      acc[technology.id] = technology.nombre;
+      return acc;
+    }, {});
+  }, [technologies]);
 
   const cargarProyectos = async () => {
     try {
       setLoadingProyectos(true);
-      const proyectosData = await getProjects();
+      const [proyectosData, technologiesData] = await Promise.all([
+        getProjects(),
+        getTechnologies(),
+      ]);
+
       setProyectos(proyectosData);
+      setTechnologies(technologiesData);
     } catch (error) {
       console.error("Error al cargar proyectos:", error);
     } finally {
@@ -33,7 +47,10 @@ export function ProjectsPage() {
         <div className="max-w-5xl mx-auto px-4 py-6">
           <button
             type="button"
-            onClick={() => setShowForm(false)}
+            onClick={() => {
+              setShowForm(false);
+              void cargarProyectos();
+            }}
             className="mb-5 bg-card-bg/60 border border-card-border text-text-primary px-5 py-3 rounded-xl hover:border-[#10B981]/50 transition"
           >
             ← Volver a mis proyectos
@@ -48,12 +65,13 @@ export function ProjectsPage() {
   return (
     <main className="relative min-h-[calc(100vh-100px)] py-8 px-4 max-w-5xl mx-auto">
       <button
-  type="button"
-  onClick={() => navigate("/profile")}
-  className="mb-5 bg-card-bg/60 border border-card-border text-text-primary px-5 py-3 rounded-xl hover:border-[#10B981]/50 transition"
->
-  ← Ir a perfil
-</button>
+        type="button"
+        onClick={() => navigate("/profile")}
+        className="mb-5 bg-card-bg/60 border border-card-border text-text-primary px-5 py-3 rounded-xl hover:border-[#10B981]/50 transition"
+      >
+        ← Ir a perfil
+      </button>
+
       <section className="bg-card-bg/60 backdrop-blur-md border border-card-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
@@ -127,12 +145,14 @@ export function ProjectsPage() {
                     </p>
 
                     <div className="flex flex-wrap gap-2 mt-4">
-                      {proyecto.tecnologiaIds?.map((id) => (
+                      {proyecto.tecnologiaIds?.map((id, index) => (
                         <span
                           key={id}
                           className="px-3 py-1 rounded-lg bg-brand-azul-brillante/10 text-brand-azul-brillante text-xs font-semibold"
                         >
-                          Tecnología ID {id}
+                          {proyecto.nombresTecnologias?.[index] ||
+                            technologyNameById[id] ||
+                            `Tecnología ${id}`}
                         </span>
                       ))}
                     </div>

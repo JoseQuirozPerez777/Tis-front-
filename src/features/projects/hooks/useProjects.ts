@@ -1,5 +1,5 @@
-import { useState } from "react";
-import type { ProjectFormModel } from "../models/project.model";
+import { useEffect, useState } from "react";
+import type { ProjectFormModel, Technology } from "../models/project.model";
 import { projectService } from "../services/project.service";
 import { validateProjectForm } from "../utils/validation";
 
@@ -7,7 +7,9 @@ const initialForm: ProjectFormModel = {
   nombreProyecto: "",
   rolProyecto: "Full Stack Developer",
   descripcionProyecto: "",
-  tecnologiasUsadas: [],
+
+  tecnologiasIds: [],
+  tecnologiasHerramientas: [],
 
   urlRepositorio: "",
   urlDemo: "",
@@ -23,8 +25,31 @@ const initialForm: ProjectFormModel = {
 
 export function useProjects() {
   const [form, setForm] = useState<ProjectFormModel>(initialForm);
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const [loadingTechnologies, setLoadingTechnologies] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  async function loadTechnologies() {
+    try {
+      setLoadingTechnologies(true);
+      const data = await projectService.getTechnologies();
+      setTechnologies(data);
+    } catch (error) {
+      setTechnologies([]);
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudieron cargar las tecnologías."
+      );
+    } finally {
+      setLoadingTechnologies(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadTechnologies();
+  }, []);
 
   function updateField<K extends keyof ProjectFormModel>(
     field: K,
@@ -46,21 +71,43 @@ export function useProjects() {
     });
   }
 
-  function addTechnology() {
-    const value = prompt("Ingrese el ID de la tecnología:");
-    if (!value?.trim()) return;
+  function addTechnology(technologyId: number) {
+    const selectedTechnology = technologies.find(
+      (technology) => technology.id === technologyId
+    );
 
-    setForm((prev) => ({
-      ...prev,
-      tecnologiasUsadas: [...prev.tecnologiasUsadas, value.trim()],
-    }));
+    if (!selectedTechnology) return;
+
+    setForm((prev) => {
+      if (prev.tecnologiasIds.includes(technologyId)) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        tecnologiasIds: [...prev.tecnologiasIds, selectedTechnology.id],
+        tecnologiasHerramientas: [
+          ...prev.tecnologiasHerramientas,
+          selectedTechnology.nombre,
+        ],
+      };
+    });
   }
 
-  function removeTechnology(value: string) {
-    setForm((prev) => ({
-      ...prev,
-      tecnologiasUsadas: prev.tecnologiasUsadas.filter((item) => item !== value),
-    }));
+  function removeTechnology(technologyId: number) {
+    setForm((prev) => {
+      const indexToRemove = prev.tecnologiasIds.findIndex(
+        (id) => id === technologyId
+      );
+
+      return {
+        ...prev,
+        tecnologiasIds: prev.tecnologiasIds.filter((id) => id !== technologyId),
+        tecnologiasHerramientas: prev.tecnologiasHerramientas.filter(
+          (_, index) => index !== indexToRemove
+        ),
+      };
+    });
   }
 
   function addAdditionalUrl() {
@@ -126,15 +173,6 @@ export function useProjects() {
       return;
     }
 
-    const tecnologiaIds = form.tecnologiasUsadas
-      .map((tech) => Number(tech))
-      .filter((id) => !Number.isNaN(id));
-
-    if (tecnologiaIds.length === 0) {
-      setMessage("Debe agregar al menos un ID de tecnología válido.");
-      return;
-    }
-
     try {
       setLoading(true);
       setMessage("Subiendo imagen a Cloudinary...");
@@ -154,7 +192,7 @@ export function useProjects() {
       await projectService.createProject({
         titulo: form.nombreProyecto,
         descripcion: form.descripcionProyecto,
-        tecnologiaIds,
+        tecnologiaIds: form.tecnologiasIds,
         enlaceGithub: form.urlRepositorio || undefined,
         enlaceDemo: form.urlDemo || undefined,
         urlsImagenes,
@@ -171,6 +209,7 @@ export function useProjects() {
       });
 
       setMessage("Proyecto registrado correctamente.");
+      setForm(initialForm);
     } catch (error) {
       const message =
         error instanceof Error
@@ -185,6 +224,8 @@ export function useProjects() {
 
   return {
     form,
+    technologies,
+    loadingTechnologies,
     loading,
     message,
     updateField,

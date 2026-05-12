@@ -1,4 +1,9 @@
-import type { CreateProjectDTO, ProjectResponseDTO } from "./project.dto";
+import type { Technology } from "../models/project.model";
+import type {
+  CreateProjectDTO,
+  ProjectResponseDTO,
+  TechnologiesResponseDTO,
+} from "./project.dto";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
 
@@ -25,6 +30,31 @@ function getAuthHeaders() {
 }
 
 export const projectService = {
+  getTechnologies: async (): Promise<Technology[]> => {
+    const response = await fetch(`${API_URL}/api/tecnologias`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    const result = (await response.json().catch(() => null)) as
+      | TechnologiesResponseDTO
+      | Technology[]
+      | null;
+
+    if (!response.ok) {
+      throw new Error("No se pudieron obtener las tecnologías.");
+    }
+
+    const data = Array.isArray(result) ? result : result?.data || [];
+
+    return data.map((tech) => ({
+      id: tech.id,
+      nombre: tech.nombre,
+      categoria: tech.categoria,
+      logoUrl: tech.logoUrl,
+    }));
+  },
+
   uploadToCloudinary: async (file: File): Promise<string> => {
     const CLOUD_NAME = "ddzmot3te";
     const UPLOAD_PRESET = "profile_photos_unsigned";
@@ -87,4 +117,5 @@ export const projectService = {
 
 export const createProject = projectService.createProject;
 export const getProjects = projectService.getProjects;
+export const getTechnologies = projectService.getTechnologies;
 export const uploadProjectImage = projectService.uploadToCloudinary;

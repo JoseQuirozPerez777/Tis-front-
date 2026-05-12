@@ -44,9 +44,11 @@ export function ProjectView({ project }: Props) {
       </div>
 
       <div className="project-preview-techs">
-        {project.tecnologiasUsadas.length > 0 ? (
-          project.tecnologiasUsadas.map((tech) => (
-            <span key={tech}>ID {tech}</span>
+        {project.tecnologiasHerramientas.length > 0 ? (
+          project.tecnologiasHerramientas.map((tech, index) => (
+            <span key={`${tech}-${project.tecnologiasIds[index] || index}`}>
+              {tech}
+            </span>
           ))
         ) : (
           <span>Sin tecnologías</span>
