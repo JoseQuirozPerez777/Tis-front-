@@ -4,9 +4,7 @@ interface FiltrosBusquedaCardProps {
   portafolio: PortafolioResultado;
 }
 
-export const FiltrosBusquedaCard = ({
-  portafolio,
-}: FiltrosBusquedaCardProps) => {
+export const FiltrosBusquedaCard = ({ portafolio }: FiltrosBusquedaCardProps) => {
   const iniciales = portafolio.nombreCompleto
     .split(" ")
     .slice(0, 2)
@@ -14,9 +12,9 @@ export const FiltrosBusquedaCard = ({
     .join("");
 
   return (
-    <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-      <div className="flex flex-col gap-4 md:flex-row">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-xl font-bold text-blue-700">
+    <article className="rounded-2xl border border-card-border bg-[#0B1F3A]/80 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition hover:border-brand-azul-brillante/60">
+      <div className="flex flex-col gap-5 md:flex-row">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-brand-azul-brillante/20 text-xl font-bold text-brand-azul-brillante">
           {portafolio.fotoPerfilUrl ? (
             <img
               src={portafolio.fotoPerfilUrl}
@@ -29,18 +27,18 @@ export const FiltrosBusquedaCard = ({
         </div>
 
         <div className="flex-1">
-          <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[#E2F0FF]">
                 {portafolio.nombreCompleto}
               </h3>
 
-              <p className="text-sm font-medium text-blue-700">
+              <p className="text-sm font-semibold text-brand-azul-brillante">
                 {portafolio.profesion}
               </p>
 
               {portafolio.especializacion && (
-                <p className="text-sm text-gray-500">
+                <p className="mt-1 text-sm text-text-secondary">
                   {portafolio.especializacion}
                 </p>
               )}
@@ -49,8 +47,8 @@ export const FiltrosBusquedaCard = ({
             <span
               className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
                 portafolio.disponibilidad === "Disponible"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-emerald-500/15 text-emerald-300"
+                  : "bg-yellow-500/15 text-yellow-300"
               }`}
             >
               {portafolio.disponibilidad || "Sin estado"}
@@ -58,46 +56,63 @@ export const FiltrosBusquedaCard = ({
           </div>
 
           {portafolio.resumen && (
-            <p className="mt-3 line-clamp-2 text-sm text-gray-600">
+            <p className="mt-4 line-clamp-2 text-sm leading-6 text-text-secondary">
               {portafolio.resumen}
             </p>
           )}
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {portafolio.tecnologias.length > 0 ? (
               portafolio.tecnologias.slice(0, 5).map((tecnologia) => (
                 <span
                   key={tecnologia}
-                  className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700"
+                  className="rounded-full bg-[#1E3A5F] px-3 py-1 text-xs font-medium text-[#E2F0FF]"
                 >
                   {tecnologia}
                 </span>
               ))
             ) : (
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-text-secondary">
                 Sin tecnologías registradas
               </span>
             )}
           </div>
 
-          <div className="mt-4 grid gap-2 text-sm text-gray-600 md:grid-cols-4">
-            <div>
-              <span className="block text-xs text-gray-400">Ubicación</span>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+  <span className="text-xs font-semibold text-text-secondary">Idiomas:</span>
+
+  {portafolio.idiomas.length > 0 ? (
+    portafolio.idiomas.map((idioma) => (
+      <span
+        key={idioma}
+        className="rounded-full border border-card-border bg-[#061327] px-3 py-1 text-xs font-medium text-[#E2F0FF]"
+      >
+        {idioma}
+      </span>
+    ))
+  ) : (
+    <span className="text-xs text-text-secondary">No registrados</span>
+  )}
+</div>
+
+          <div className="mt-5 grid gap-3 text-sm text-text-primary md:grid-cols-4">
+            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
+              <span className="block text-xs text-text-secondary">Ubicación</span>
               {portafolio.ubicacion}
             </div>
 
-            <div>
-              <span className="block text-xs text-gray-400">Modalidad</span>
+            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
+              <span className="block text-xs text-text-secondary">Modalidad</span>
               {portafolio.modalidadTrabajo || "No definida"}
             </div>
 
-            <div>
-              <span className="block text-xs text-gray-400">Experiencia</span>
+            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
+              <span className="block text-xs text-text-secondary">Experiencia</span>
               {portafolio.experienciaAnios} años
             </div>
 
-            <div>
-              <span className="block text-xs text-gray-400">Proyectos</span>
+            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
+              <span className="block text-xs text-text-secondary">Proyectos</span>
               {portafolio.cantidadProyectos}
             </div>
           </div>
@@ -105,7 +120,7 @@ export const FiltrosBusquedaCard = ({
           <div className="mt-5 flex justify-end">
             <a
               href={portafolio.urlPublica}
-              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+              className="rounded-xl bg-brand-azul-brillante px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
             >
               Ver perfil
             </a>
