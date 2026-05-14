@@ -33,9 +33,9 @@ export const DashMyPerfilPage = () => {
                 <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-morado/50 transition-colors group">
                     <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades</h3>
                     <p className="text-text-secondary text-sm mb-4">
-                        Añade y organiza tus habilidades técnicas y blandas.
+                        Añade y organiza tus habilidades técnicas .
                     </p>
-                    <Link to="/HardSkills" className="text-brand-morado font-medium text-sm hover:underline">
+                    <Link to="/habilidades-tecnicas" className="text-brand-morado font-medium text-sm hover:underline">
                         Gestionar habilidades →
                     </Link>
                 </div>
@@ -72,10 +72,10 @@ export const DashMyPerfilPage = () => {
                 <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
                     <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades Blandas</h3>
                     <p className="text-text-secondary text-sm mb-4">
-                        Muestra tus habilidades blandas.
+                        Añade y organiza tus habilidades blandas.
                     </p>
-                    <Link to="/softskills" className="text-[#10B981] font-medium text-sm hover:underline">
-                        Ir a habilidades blandas →
+                    <Link to="/habilidades-blandas" className="text-[#10B981] font-medium text-sm hover:underline">
+                        Gestionar habilidades →
                     </Link>
                 </div>
             </div>
