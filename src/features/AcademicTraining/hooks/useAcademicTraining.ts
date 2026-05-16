@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useToast } from '@shared/hooks/useToast';
 import { academicTrainingService } from '../services/academicTraining.service';
@@ -8,14 +8,14 @@ export const useAcademicTraining = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
-  
+
   const editingTraining = location.state?.training as AcademicTraining | undefined;
 
   const [institution, setInstitution] = useState(editingTraining?.institution || '');
   const [degree, setDegree] = useState(editingTraining?.degree || '');
   const [level, setLevel] = useState(editingTraining?.level || '');
   const [fieldOfStudy, setFieldOfStudy] = useState(editingTraining?.fieldOfStudy || '');
-  
+
   // Format date correctly for input type="date"
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';

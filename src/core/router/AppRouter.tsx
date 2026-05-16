@@ -4,19 +4,17 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 
 import { LandingPage } from '@features/landing';
-import { LoginPage, ForgotPasswordPage, CambiarPasswordPage, ChangePasswordPage } from '@features/login';
+import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
 import { ProfilePage } from '@features/profile';
 import { DashboardPage } from '@features/dashboard';
-import { HardSkillPage } from '@features/HardSkills';
-import { SoftSkillPage } from '@features/SoftSkills';
+
 import { AcademicTrainingPage, AcademicTrainingFormPage } from '@features/AcademicTraining';
 import { PhotoPage } from '@features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
-import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
-import { ProjectsPage } from '@features/projects/pages/ProjectsPage';
+
 import { HabilidadesTecnicasPage } from '@features/habilidades-tecnicas/pages/HabilidadesTecnicasPage';
 
 export const AppRouter = () => {
