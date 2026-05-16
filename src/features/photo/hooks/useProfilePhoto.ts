@@ -1,24 +1,26 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { useToast } from '@shared/hooks/useToast';
 import { photoService } from '../services/photo.service';
+import type { UpdatePhotoRequestDto } from '../services/photo.dto';
 
 export const useProfilePhoto = () => {
-  const [perfilData, setPerfilData] = useState<{
-    nombre?: string;
-    ffoto?: string;
-    fotoPerfil?: string;
-  } | null>(null);
+  const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+const [perfilData, setPerfilData] = useState<{
+  nombre?: string | null;
+  foto?: string | null;
+  fotoPerfil?: string | null;
+} | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(DEFAULT_AVATAR);
   const [isLoadingPerfil, setIsLoadingPerfil] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const { showToast } = useToast();
 
-  const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-  const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+  const MAX_SIZE = 1 * 1024 * 1024;
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/jpg'];
 
   useEffect(() => {
@@ -28,9 +30,10 @@ export const useProfilePhoto = () => {
         setServerError(null);
 
         const data = await photoService.getProfilePhoto();
+        console.log('PERFIL FOTO:', data);
 
         setPerfilData(data);
-        setPreviewUrl(data.foto || data.fotoPerfil || DEFAULT_AVATAR);
+        setPreviewUrl(data.foto ||  DEFAULT_AVATAR);
       } catch (error) {
         console.error('Error al cargar la foto de perfil:', error);
         setPreviewUrl(DEFAULT_AVATAR);
@@ -94,22 +97,21 @@ export const useProfilePhoto = () => {
 
       const imageUrl = await photoService.uploadToCloudinary(selectedFile);
 
-      const response = await photoService.updateProfilePhoto({
-        fotoPerfil: imageUrl,
-      });
+        const response = await photoService.updateProfilePhoto({
+          fotoPerfil: imageUrl,
+        } as UpdatePhotoRequestDto);
 
       setPerfilData((prev) => ({
         ...prev,
+        foto: imageUrl,
         fotoPerfil: imageUrl,
       }));
 
       setPreviewUrl(imageUrl);
-      setSelectedFile(null);
+window.dispatchEvent(new Event('profileUpdated'));
+setSelectedFile(null);
 
-      showToast(
-        response.message || 'Foto de perfil actualizada correctamente.',
-        'success'
-      );
+      showToast(response.message || 'Foto de perfil actualizada correctamente.', 'success');
     } catch (error) {
       console.error('Error al actualizar foto:', error);
 
@@ -128,7 +130,7 @@ export const useProfilePhoto = () => {
   const handleCancel = () => {
     setSelectedFile(null);
     setServerError(null);
-    ssetPreviewUrl(perfilData?.foto || perfilData?.fotoPerfil || DEFAULT_AVATAR);
+    setPreviewUrl(perfilData?.foto || perfilData?.fotoPerfil || DEFAULT_AVATAR);
   };
 
   return {

@@ -18,7 +18,6 @@ export const useProfessionalLinks = () => {
   const [isLoadingLinks, setIsLoadingLinks] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  // 🔹 React Hook Form + Zod
   const form = useForm<ProfessionalLinksFormData>({
     resolver: zodResolver(professionalLinksSchema),
     defaultValues: {
@@ -31,7 +30,6 @@ export const useProfessionalLinks = () => {
 
   const { handleSubmit } = form;
 
-  // 🔹 Cargar enlaces existentes (para validar duplicados)
   const loadProfessionalLinks = async (): Promise<RedSocialResponseDTO[]> => {
     try {
       setIsLoadingLinks(true);
@@ -48,7 +46,6 @@ export const useProfessionalLinks = () => {
     }
   };
 
-  // 🔹 Crear / editar enlace
   const submitSingleLink = async (
     data: ProfessionalLinksFormData,
     idRed?: number
@@ -98,6 +95,7 @@ export const useProfessionalLinks = () => {
         error instanceof Error
           ? error.message
           : 'Ocurrió un error inesperado.';
+
       setServerError(msg);
       showToast(msg, 'error');
       return false;
@@ -106,24 +104,30 @@ export const useProfessionalLinks = () => {
     }
   };
 
-  // 🔹 Submit REAL del formulario (controlado por RHF)
   const submitForm = async (data: ProfessionalLinksFormData) => {
     const ok = await submitSingleLink(data);
 
     if (ok) {
-      form.reset();
-      navigate('/professional-links'); // vuelve a la lista SOLO si guardó
+      form.reset({
+        nombreRed: 'LinkedIn',
+        urlPerfil: '',
+        esPublico: true,
+      });
+
+      navigate('/professional-links');
     }
   };
 
-  // 🔹 Eliminar enlace
   const deleteLink = async (idRed: number) => {
     try {
       setIsLoading(true);
+
       await professionalLinksService.deleteProfessionalLink(idRed);
+
       showToast('Enlace eliminado correctamente.', 'success');
       return true;
     } catch (error) {
+      console.error(error);
       showToast('No se pudo eliminar el enlace.', 'error');
       return false;
     } finally {
@@ -140,9 +144,8 @@ export const useProfessionalLinks = () => {
     serverError,
     deleteLink,
     loadProfessionalLinks,
+    submitSingleLink,
     onCancel,
-
-    // ⭐ ESTE ES EL IMPORTANTE
     onSubmit: handleSubmit(submitForm),
   };
 };

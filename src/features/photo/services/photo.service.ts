@@ -1,5 +1,5 @@
 import type { PerfilPhotoData, PhotoProfileResponse } from '../models/photo.model';
-import type { UpdatePhotoRequestDto } from './photo.dto';
+import type { UpdatePhotoRequestDto } from '../services/photo.dto';
 
 export const photoService = {
   getProfilePhoto: async (): Promise<PerfilPhotoData> => {

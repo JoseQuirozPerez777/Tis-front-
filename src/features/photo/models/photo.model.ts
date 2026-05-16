@@ -1,8 +1,8 @@
 export interface PerfilPhotoData {
-  fullName: string;
-  profession: string;
-  bio: string;
-  fotoPerfil?: string;
+  nombre: string;
+  idprofession: string;
+  biografia: string;
+  foto: string | null;
 }
 
 export interface PhotoProfileResponse {

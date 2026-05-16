@@ -4,24 +4,45 @@ import type {
   ExperienceErrors,
   ExperienceFormData,
   ExperienceMessage,
+  Technology,
 } from '../models/experience.model';
+
 import {
   createExperience,
   getExperiences,
   updateExperience,
   deleteExperience,
+  getTechnologies,
 } from '../services/experience.service';
+
+
 
 const initialForm: ExperienceFormData = {
   empresa: '',
   cargo: '',
+
+  areaProfesional: '',
+  especializacion: '',
+
   fechaInicio: '',
   fechaFin: '',
   esTrabajoActual: false,
+
+  modalidadTrabajo: '',
+  ubicacion: '',
+  tipoContrato: '',
+
+  tecnologiasIds: [],
+  tecnologiasHerramientas: [],
+
   descripcion: '',
+
+  evidenciaLaboralPdfUrl: '',
+  proyectoRelacionadoUrl: '',
 };
 
 export const useExperience = () => {
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [formData, setFormData] = useState<ExperienceFormData>(initialForm);
   const [errors, setErrors] = useState<ExperienceErrors>({});
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -31,7 +52,7 @@ export const useExperience = () => {
   const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
 
   const loadExperiences = async () => {
-    try {
+  try {
       setLoading(true);
       const data = await getExperiences();
       setExperiences(data);
@@ -48,13 +69,24 @@ export const useExperience = () => {
     }
   };
 
-  useEffect(() => {
-    void loadExperiences();
-  }, []);
+const loadTechnologies = async () => {
+  try {
+    const data = await getTechnologies();
+    setTechnologies(data);
+  } catch {
+    setTechnologies([]);
+  }
+};
+
+useEffect(() => {
+  void loadExperiences();
+  void loadTechnologies();
+}, []);
+  
 
   const handleChange = (
     field: keyof ExperienceFormData,
-    value: string | boolean
+    value: string | boolean | string[] | number[]
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -71,13 +103,40 @@ export const useExperience = () => {
   const startEditing = (experience: Experience) => {
     setEditingExperience(experience);
     setFormData({
-      empresa: experience.empresa,
-      cargo: experience.cargo,
-      fechaInicio: experience.fechaInicio ? experience.fechaInicio.slice(0, 7) : '',
-      fechaFin: experience.fechaFin ? experience.fechaFin.slice(0, 7) : '',
-      esTrabajoActual: experience.esTrabajoActual,
-      descripcion: experience.descripcion,
-    });
+  empresa: experience.empresa,
+  cargo: experience.cargo,
+
+  areaProfesional: experience.areaProfesional,
+  especializacion: experience.especializacion,
+
+  fechaInicio: experience.fechaInicio
+    ? experience.fechaInicio.slice(0, 7)
+    : '',
+
+  fechaFin: experience.fechaFin
+    ? experience.fechaFin.slice(0, 7)
+    : '',
+
+  esTrabajoActual: experience.esTrabajoActual,
+
+  modalidadTrabajo: experience.modalidadTrabajo,
+  ubicacion: experience.ubicacion,
+  tipoContrato: experience.tipoContrato,
+
+  tecnologiasIds:
+  experience.tecnologiasIds || [],
+
+tecnologiasHerramientas:
+  experience.tecnologiasHerramientas || [],
+
+  descripcion: experience.descripcion,
+
+  evidenciaLaboralPdfUrl:
+    experience.evidenciaLaboralPdfUrl || '',
+
+  proyectoRelacionadoUrl:
+    experience.proyectoRelacionadoUrl || '',
+});
     setErrors({});
     setMessage(null);
   };
@@ -115,6 +174,37 @@ export const useExperience = () => {
   } else if (onlyNumbersRegex.test(formData.cargo.trim())) {
     newErrors.cargo = 'El cargo no puede contener solo números.';
   }
+  if (!formData.areaProfesional.trim()) {
+  newErrors.areaProfesional =
+    'El área profesional es obligatoria.';
+}
+
+if (!formData.especializacion.trim()) {
+  newErrors.especializacion =
+    'La especialización es obligatoria.';
+}
+
+if (!formData.modalidadTrabajo.trim()) {
+  newErrors.modalidadTrabajo =
+    'La modalidad de trabajo es obligatoria.';
+}
+
+if (!formData.ubicacion.trim()) {
+  newErrors.ubicacion =
+    'La ubicación es obligatoria.';
+}
+
+if (!formData.tipoContrato.trim()) {
+  newErrors.tipoContrato =
+    'El tipo de contrato es obligatorio.';
+}
+
+if (
+  formData.tecnologiasIds.length === 0
+) {
+  newErrors.tecnologiasIds =
+    'Debes agregar al menos una tecnología.';
+}
 
   if (!formData.fechaInicio.trim()) {
     newErrors.fechaInicio = 'La fecha de inicio es obligatoria.';
@@ -215,5 +305,6 @@ export const useExperience = () => {
     startEditing,
     removeExperience,
     cancelEditing,
+    technologies,
   };
 };

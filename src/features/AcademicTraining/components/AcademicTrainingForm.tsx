@@ -12,7 +12,7 @@ export const AcademicTrainingForm = () => {
     endDate, setEndDate,
     status, setStatus,
     description, setDescription,
-    certificateTest, setCertificateTest,
+    setCertificateTest,
     isLoading,
     isEditing,
     handleAddTraining,

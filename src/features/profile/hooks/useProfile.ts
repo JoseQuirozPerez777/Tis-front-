@@ -7,9 +7,9 @@ import { profileService } from '../services/profile.service';
 import { profileAdapter } from '../services/profile.adapter';
 import { useToast } from '@shared/hooks/useToast';
 
-const storedProfile = profileService.getProfile();
+const storedProfile = profileService.getProfileLocal();
 
-export const useProfile = () => {
+export const useProfile = (onProfileUpdated?: () => void) => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const { showToast } = useToast();
@@ -17,11 +17,13 @@ export const useProfile = () => {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: storedProfile?.fullName || 'Juan Pérez',
+      fullName: storedProfile?.fullName || '',
       profession: storedProfile?.profession || '',
       bio: storedProfile?.bio || '',
+      telefono: storedProfile?.telefono || '',
+      direccion: storedProfile?.direccion || '',
     },
-    mode: 'onTouched'
+    mode: 'onTouched',
   });
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -30,17 +32,25 @@ export const useProfile = () => {
 
     try {
       const dto = profileAdapter(data);
-
       const response = await profileService.updateProfile(dto);
 
       if (response.success) {
-        showToast(response.message, 'success');
+        showToast(response.message || 'Perfil actualizado correctamente', 'success');
+
+        if (onProfileUpdated) {
+          onProfileUpdated();
+        }
       } else {
-        setServerError(response.message);
-        showToast(response.message, 'error');
+        const msg = response.message || 'No se pudo actualizar el perfil';
+        setServerError(msg);
+        showToast(msg, 'error');
       }
-    } catch {
-      const msg = 'Ocurrió un error inesperado. Por favor intenta de nuevo.';
+    } catch (error) {
+      const msg =
+        error instanceof Error
+          ? error.message
+          : 'Ocurrió un error inesperado. Por favor intenta de nuevo.';
+
       setServerError(msg);
       showToast(msg, 'error');
     } finally {
@@ -50,9 +60,11 @@ export const useProfile = () => {
 
   const onCancel = () => {
     form.reset({
-      fullName: storedProfile?.fullName || 'Juan Pérez',
+      fullName: storedProfile?.fullName || '',
       profession: storedProfile?.profession || '',
       bio: storedProfile?.bio || '',
+      telefono: storedProfile?.telefono || '',
+      direccion: storedProfile?.direccion || '',
     });
 
     setServerError(null);

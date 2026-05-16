@@ -1,23 +1,18 @@
+import { useEffect, useState } from 'react';
 import { useProfile } from '../hooks/useProfile';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
-import { useEffect, useState } from 'react';
 import { profileService } from '../services/profile.service';
+import type { PerfilBackendResponse, Profesion } from '../models/profile.model';
 
-interface Profesion {
-  idProfesion: number;
-  nombreProfesion: string;
+interface ProfileFormProps {
+  onProfileUpdated?: () => void;
 }
 
-interface PerfilResponse {
-  nombre: string;
-  biografia: string;
-  idProfesion: number | null;
-  foto?: string;
-}
+export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
+  const { form, isLoading, serverError, onSubmit, onCancel } =
+    useProfile(onProfileUpdated);
 
-export const ProfileForm = () => {
-  const { form, isLoading, serverError, onSubmit, onCancel } = useProfile();
   const {
     register,
     reset,
@@ -26,13 +21,13 @@ export const ProfileForm = () => {
 
   const [profesiones, setProfesiones] = useState<Profesion[]>([]);
   const [loadingProfesiones, setLoadingProfesiones] = useState(false);
-  const [perfilData, setPerfilData] = useState<PerfilResponse | null>(null);
+  const [perfilData, setPerfilData] = useState<PerfilBackendResponse | null>(null);
+  const [loadingPerfil, setLoadingPerfil] = useState(false);
 
   useEffect(() => {
     const cargarProfesiones = async () => {
       try {
         setLoadingProfesiones(true);
-
         const data = await profileService.getProfesiones();
         setProfesiones(data);
       } catch (error) {
@@ -48,24 +43,13 @@ export const ProfileForm = () => {
   useEffect(() => {
     const cargarPerfil = async () => {
       try {
-        const token = sessionStorage.getItem('jwt');
-
-        const response = await fetch('http://localhost:8081/api/usuarios/perfil', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('No se pudo obtener el perfil');
-        }
-
-        const data = await response.json();
+        setLoadingPerfil(true);
+        const data = await profileService.getProfile();
         setPerfilData(data);
       } catch (error) {
         console.error('Error al cargar perfil:', error);
+      } finally {
+        setLoadingPerfil(false);
       }
     };
 
@@ -83,36 +67,48 @@ export const ProfileForm = () => {
       fullName: perfilData.nombre ?? '',
       profession: profesionSeleccionada?.nombreProfesion ?? '',
       bio: perfilData.biografia ?? '',
+      telefono: perfilData.telefono ?? '',
+      direccion: perfilData.direccion ?? '',
     });
   }, [perfilData, profesiones, reset]);
 
   return (
     <div className="w-full max-w-2xl mx-auto p-8 md:p-10 bg-brand-azul-profundo/40 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-brand-azul-profundo">
-        <h2 className="text-xl font-bold text-[#64ffda]">Configuración del Perfil</h2>
+      <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-brand-azul-profundo rounded-t-2xl">
+        <h2 className="text-xl font-bold text-[#64ffda]">
+          Configuración del Perfil
+        </h2>
       </div>
 
       <form onSubmit={onSubmit} className="p-6 space-y-8">
         {serverError && (
-          <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm font-medium animate-shake">
+          <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm font-medium">
             {serverError}
           </div>
         )}
-        <div className="flex items-center gap-4 mb-6">
-  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#64ffda]">
-    <img
-      src={perfilData?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
-      alt="Foto de perfil"
-      className="w-full h-full object-cover"
-    />
-  </div>
 
-  <div>
-    <h3 className="text-lg text-white font-semibold">
-      {perfilData?.nombre || 'Usuario'}
-    </h3>
-  </div>
-</div>
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#64ffda] bg-[#0F223D]">
+            <img
+              src={
+                perfilData?.foto ||
+                'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              }
+              alt="Foto de perfil"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-lg text-white font-semibold">
+              {loadingPerfil ? 'Cargando perfil...' : perfilData?.nombre || ''}
+            </h3>
+
+            <p className="text-sm text-[#9CA3AF]">
+              {perfilData?.correo || ''}
+            </p>
+          </div>
+        </div>
 
         <section>
           <h3 className="text-lg font-semibold mb-4 flex items-center text-[#E5E7EB]">
@@ -134,13 +130,16 @@ export const ProfileForm = () => {
               <label className="block text-sm text-[#9CA3AF] mb-2">
                 Profesión / Título
               </label>
+
               <select
                 {...register('profession')}
                 className="w-full bg-[#0F223D] border border-white/10 rounded px-4 py-2 focus:border-[#3B82F6] outline-none text-[#E5E7EB]"
                 disabled={loadingProfesiones}
               >
                 <option value="">
-                  {loadingProfesiones ? 'Cargando profesiones...' : 'Selecciona una opción'}
+                  {loadingProfesiones
+                    ? 'Cargando profesiones...'
+                    : 'Selecciona una opción'}
                 </option>
 
                 {profesiones.map((profesion) => (
@@ -154,22 +153,46 @@ export const ProfileForm = () => {
               </select>
 
               {errors.profession?.message && (
-                <p className="mt-2 text-sm text-red-400">{errors.profession.message}</p>
+                <p className="mt-2 text-sm text-red-400">
+                  {errors.profession.message}
+                </p>
               )}
             </div>
+
+            <Input
+              label="Teléfono"
+              placeholder="77498561"
+              {...register('telefono')}
+              error={errors.telefono?.message}
+              autoComplete="tel"
+              className="bg-[#0F223D] border-white/10 focus:border-[#3B82F6] text-[#E5E7EB]"
+            />
+
+            <Input
+              label="Dirección"
+              placeholder="Tiquipaya calle los lirios "
+              {...register('direccion')}
+              error={errors.direccion?.message}
+              autoComplete="street-address"
+              className="bg-[#0F223D] border-white/10 focus:border-[#3B82F6] text-[#E5E7EB]"
+            />
 
             <div className="md:col-span-2">
               <label className="block text-sm text-[#9CA3AF] mb-2">
                 Biografía Profesional
               </label>
+
               <textarea
                 rows={4}
                 placeholder="Describe tu experiencia y metas..."
                 {...register('bio')}
                 className="w-full bg-[#0F223D] border border-white/10 rounded px-4 py-2 focus:border-[#3B82F6] outline-none text-[#E5E7EB] resize-none"
               />
+
               {errors.bio?.message && (
-                <p className="mt-2 text-sm text-red-400">{errors.bio.message}</p>
+                <p className="mt-2 text-sm text-red-400">
+                  {errors.bio.message}
+                </p>
               )}
             </div>
           </div>

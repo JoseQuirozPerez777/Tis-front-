@@ -1,14 +1,17 @@
-import type { ProfileUser } from '../models/profile.model';
+export interface ProfileRequestDto {
+  fullName: string;
+  profession: string;
+  bio: string;
+  telefono: string;
+  direccion: string;
+}
 
-export type ProfileRequestDto = ProfileUser;
+export interface ProfilePhotoRequestDto {
+  fotoPerfil: string;
+}
 
 export interface ProfileResponseDto {
-  ok: boolean;
-  msg: string;
-  profile?: {
-    fullName: string;
-    profession: string;
-    bio: string;
-    fotoPerfil?: string;
-  };
+  success: boolean;
+  message: string;
+  data?: ProfileRequestDto;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Logo } from '@shared/components/ui/Logo';
@@ -7,7 +7,7 @@ export const DashboardLayout = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menu when clicking outside
@@ -48,7 +48,10 @@ export const DashboardLayout = () => {
     { name: 'Mi Perfil', path: '/profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
     { name: 'Habilidades', path: '/hardskills', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
     { name: 'Proyectos', path: '/projects', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-    { name: 'Experiencia', path: '/experience', icon: 'M12 14l9-5-9-5-9 5 9 5z' }
+    { name: 'Cambiar Contraseña', path: '/change-password', icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 1114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z' },
+    { name: 'Experiencia', path: '/experience', icon: 'M12 14l9-5-9-5-9 5 9 5z' },
+    {name: 'Buscar Portafolios',path: '/buscar-portafolios', icon: 'M21 21l-4.35-4.35m1.35-5.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z',
+},
   ];
 
   return (

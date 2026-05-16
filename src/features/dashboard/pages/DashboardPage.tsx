@@ -1,6 +1,4 @@
-import React from 'react';
 import { useAuth } from '@/core/context/AuthContext';
-import { Link } from 'react-router-dom';
 
 const mockPosts = [
   {
