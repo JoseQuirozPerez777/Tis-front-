@@ -1,18 +1,35 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useToast } from '@shared/hooks/useToast';
 import { academicTrainingService } from '../services/academicTraining.service';
+import type { AcademicTraining } from '../models/academicTraining.model';
 
 export const useAcademicTraining = () => {
   const navigate = useNavigate();
-  const [institution, setInstitution] = useState('');
-  const [degree, setDegree] = useState('');
-  const [level, setLevel] = useState('');
-  const [fieldOfStudy, setFieldOfStudy] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [status, setStatus] = useState('');
-  const [description, setDescription] = useState('');
+  const location = useLocation();
+  const { id } = useParams<{ id: string }>();
+  
+  const editingTraining = location.state?.training as AcademicTraining | undefined;
+
+  const [institution, setInstitution] = useState(editingTraining?.institution || '');
+  const [degree, setDegree] = useState(editingTraining?.degree || '');
+  const [level, setLevel] = useState(editingTraining?.level || '');
+  const [fieldOfStudy, setFieldOfStudy] = useState(editingTraining?.fieldOfStudy || '');
+  
+  // Format date correctly for input type="date"
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    try {
+      return new Date(dateString).toISOString().split('T')[0];
+    } catch (e) {
+      return '';
+    }
+  };
+
+  const [startDate, setStartDate] = useState(formatDate(editingTraining?.startDate) || '');
+  const [endDate, setEndDate] = useState(formatDate(editingTraining?.endDate) || '');
+  const [status, setStatus] = useState(editingTraining?.status || '');
+  const [description, setDescription] = useState(editingTraining?.description || '');
   const [certificateTest, setCertificateTest] = useState<File | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +58,7 @@ export const useAcademicTraining = () => {
     }
 
     try {
-      const newTraining = await academicTrainingService.addAcademicTraining({
+      const trainingData = {
         institution,
         degree,
         level,
@@ -51,11 +68,18 @@ export const useAcademicTraining = () => {
         status,
         description,
         certificateTest,
-      });
-      showToast(`Formación "${newTraining.degree}" añadida con éxito.`, 'success');
+      };
+
+      if (id) {
+        await academicTrainingService.updateAcademicTraining(id, trainingData);
+        showToast(`Formación "${degree}" actualizada con éxito.`, 'success');
+      } else {
+        await academicTrainingService.addAcademicTraining(trainingData);
+        showToast(`Formación "${degree}" añadida con éxito.`, 'success');
+      }
       handleCancel();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error al añadir la formación académica';
+      const message = error instanceof Error ? error.message : `Error al ${id ? 'actualizar' : 'añadir'} la formación académica`;
       showToast(message, 'error');
     } finally {
       setIsLoading(false);
@@ -86,6 +110,7 @@ export const useAcademicTraining = () => {
     description, setDescription,
     certificateTest, setCertificateTest,
     isLoading,
+    isEditing: !!id,
     handleAddTraining,
     handleCancel,
   };

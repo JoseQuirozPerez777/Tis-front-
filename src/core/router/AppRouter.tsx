@@ -9,7 +9,7 @@ import { ProfilePage } from '@features/profile';
 import { DashboardPage } from '@features/dashboard';
 import { HardSkillPage } from '@features/HardSkills';
 import { SoftSkillPage } from '@features/SoftSkills';
-import { AcademicTrainingPage } from '@features/AcademicTraining';
+import { AcademicTrainingPage, AcademicTrainingFormPage } from '@features/AcademicTraining';
 import { PhotoPage } from '@features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
@@ -40,6 +40,8 @@ export const AppRouter = () => {
           <Route path="/academic-training" element={<AcademicTrainingPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
           <Route path="/AcademicTraining" element={<AcademicTrainingPage />} />
+          <Route path="/AcademicTraining/new" element={<AcademicTrainingFormPage />} />
+          <Route path="/AcademicTraining/edit/:id" element={<AcademicTrainingFormPage />} />
         </Route>
       </Route>
     </Routes>
