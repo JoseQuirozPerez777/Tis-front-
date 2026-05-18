@@ -9,19 +9,28 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useProjects } from "../hooks/useProjects";
+import type { ProjectResponseDTO } from "../services/project.dto";
 import "../styles/projects.css";
 
-export function ProjectForm() {
-  const navigate = useNavigate();
+interface Props {
+  projectToEdit?: ProjectResponseDTO | null;
+  onCancel?: () => void;
+  onSaved?: () => void;
+}
 
+export function ProjectForm({
+  projectToEdit = null,
+  onCancel,
+  onSaved,
+}: Props) {
   const {
     form,
     technologies,
     loadingTechnologies,
     loading,
     message,
+    isEditMode,
     updateField,
     addTechnology,
     removeTechnology,
@@ -31,7 +40,10 @@ export function ProjectForm() {
     addImages,
     removeImage,
     saveProject,
-  } = useProjects();
+  } = useProjects({
+    projectToEdit,
+    onSaved,
+  });
 
   const minDate = "1970-01-01";
   const today = new Date().toISOString().split("T")[0];
@@ -39,7 +51,7 @@ export function ProjectForm() {
   const isFinalizado = form.estadoProyecto === "FINALIZADO";
 
   function handleCancel() {
-    navigate(-1);
+    onCancel?.();
   }
 
   return (
@@ -47,7 +59,7 @@ export function ProjectForm() {
       <section className="project-card">
         <h2>
           <ShieldCheck size={20} />
-          Información principal
+          {isEditMode ? "Editar proyecto" : "Información principal"}
         </h2>
 
         <div className="project-grid-2">
@@ -264,23 +276,23 @@ export function ProjectForm() {
           Información adicional
         </h2>
 
-          <div className="project-field">
-            <label>Estado del proyecto</label>
-            <select
-              value={form.estadoProyecto}
-              onChange={(e) =>
-                updateField(
-                  "estadoProyecto",
-                  e.target.value as typeof form.estadoProyecto
-                )
-              }
-              disabled={loading}
-            >
-              <option value="FINALIZADO">Finalizado</option>
-              <option value="EN_DESARROLLO">En desarrollo</option>
-              <option value="PAUSADO">Pausado</option>
-            </select>
-          </div>
+        <div className="project-field">
+          <label>Estado del proyecto</label>
+          <select
+            value={form.estadoProyecto}
+            onChange={(e) =>
+              updateField(
+                "estadoProyecto",
+                e.target.value as typeof form.estadoProyecto
+              )
+            }
+            disabled={loading}
+          >
+            <option value="FINALIZADO">Finalizado</option>
+            <option value="EN_DESARROLLO">En desarrollo</option>
+            <option value="PAUSADO">Pausado</option>
+          </select>
+        </div>
 
         <div className="project-grid-4">
           <div className="project-field">
@@ -311,7 +323,6 @@ export function ProjectForm() {
               </small>
             )}
           </div>
-
 
           <div className="project-field">
             <label>Privacidad</label>
@@ -348,7 +359,11 @@ export function ProjectForm() {
           disabled={loading}
         >
           <Save size={18} />
-          {loading ? message || "Guardando..." : "Guardar proyecto"}
+          {loading
+            ? message || "Guardando..."
+            : isEditMode
+              ? "Guardar cambios"
+              : "Guardar proyecto"}
         </button>
       </div>
     </div>

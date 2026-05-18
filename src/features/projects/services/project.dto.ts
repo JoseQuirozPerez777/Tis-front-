@@ -20,6 +20,7 @@ export interface CreateProjectDTO {
   urlsImagenes: string[];
 
   esPublico: boolean;
+  destacado?: boolean;
 
   rolProyecto?: string;
   urlsAdicionales?: string[];
@@ -27,6 +28,8 @@ export interface CreateProjectDTO {
   fechaFinalizacion?: string;
   estadoProyecto?: string;
 }
+
+export type UpdateProjectDTO = CreateProjectDTO;
 
 export interface ProjectResponseDTO {
   idProyecto: number;
@@ -41,6 +44,7 @@ export interface ProjectResponseDTO {
   urlsImagenes?: string[];
 
   esPublico: boolean;
+  destacado?: boolean;
   idUsuario?: number;
 
   rolProyecto?: string;

@@ -3,6 +3,7 @@ import type {
   CreateProjectDTO,
   ProjectResponseDTO,
   TechnologiesResponseDTO,
+  UpdateProjectDTO,
 } from "./project.dto";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
@@ -99,6 +100,58 @@ export const projectService = {
     return result;
   },
 
+  updateProject: async (idProyecto: number, data: UpdateProjectDTO) => {
+    const response = await fetch(`${API_URL}/api/proyectos/${idProyecto}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(result?.message || "Error al actualizar el proyecto");
+    }
+
+    return result;
+  },
+
+  deleteProject: async (idProyecto: number) => {
+    const response = await fetch(`${API_URL}/api/proyectos/${idProyecto}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(result?.message || "Error al eliminar el proyecto");
+    }
+
+    return result;
+  },
+
+  toggleFeaturedProject: async (idProyecto: number, destacado: boolean) => {
+    const response = await fetch(
+      `${API_URL}/api/proyectos/${idProyecto}/destacado`,
+      {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ destacado }),
+      }
+    );
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(
+        result?.message || "No se pudo actualizar el estado destacado."
+      );
+    }
+
+    return result;
+  },
+
   getProjects: async (): Promise<ProjectResponseDTO[]> => {
     const response = await fetch(`${API_URL}/api/proyectos`, {
       method: "GET",
@@ -116,6 +169,9 @@ export const projectService = {
 };
 
 export const createProject = projectService.createProject;
+export const updateProject = projectService.updateProject;
+export const deleteProject = projectService.deleteProject;
+export const toggleFeaturedProject = projectService.toggleFeaturedProject;
 export const getProjects = projectService.getProjects;
 export const getTechnologies = projectService.getTechnologies;
 export const uploadProjectImage = projectService.uploadToCloudinary;

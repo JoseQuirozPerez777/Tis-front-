@@ -1,17 +1,42 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { ProjectForm } from "../components/ProjectForm";
-import { getProjects, getTechnologies } from "../services/project.service";
+import {
+  deleteProject,
+  getProjects,
+  getTechnologies,
+  toggleFeaturedProject,
+} from "../services/project.service";
 import type { ProjectResponseDTO } from "../services/project.dto";
 import type { Technology } from "../models/project.model";
 import "../styles/projects.css";
 
 export function ProjectsPage() {
   const navigate = useNavigate();
+
   const [showForm, setShowForm] = useState(false);
+  const [projectToEdit, setProjectToEdit] = useState<ProjectResponseDTO | null>(
+    null
+  );
+
   const [proyectos, setProyectos] = useState<ProjectResponseDTO[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [loadingProyectos, setLoadingProyectos] = useState(false);
+
+  const [deleteMessage, setDeleteMessage] = useState("");
+  const [deletingProjectId, setDeletingProjectId] = useState<number | null>(
+    null
+  );
+
+  const [featuredMessage, setFeaturedMessage] = useState("");
+  const [updatingFeaturedId, setUpdatingFeaturedId] = useState<number | null>(
+    null
+  );
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+const [projectPendingDelete, setProjectPendingDelete] =
+  useState<ProjectResponseDTO | null>(null);
 
   const technologyNameById = useMemo(() => {
     return technologies.reduce<Record<number, string>>((acc, technology) => {
@@ -20,9 +45,17 @@ export function ProjectsPage() {
     }, {});
   }, [technologies]);
 
+  const sortedProjects = useMemo(() => {
+    return [...proyectos].sort((a, b) => {
+      if (a.destacado === b.destacado) return 0;
+      return a.destacado ? -1 : 1;
+    });
+  }, [proyectos]);
+
   const cargarProyectos = async () => {
     try {
       setLoadingProyectos(true);
+
       const [proyectosData, technologiesData] = await Promise.all([
         getProjects(),
         getTechnologies(),
@@ -38,8 +71,85 @@ export function ProjectsPage() {
   };
 
   useEffect(() => {
-    cargarProyectos();
+    void cargarProyectos();
   }, []);
+useEffect(() => {
+  if (!deleteMessage) return;
+
+  const timer = setTimeout(() => {
+    setDeleteMessage("");
+  }, 3000);
+
+  return () => clearTimeout(timer);
+}, [deleteMessage]);
+
+const handleOpenDeleteModal = (proyecto: ProjectResponseDTO) => {
+  setProjectPendingDelete(proyecto);
+};
+
+const handleConfirmDeleteProject = async () => {
+  if (!projectPendingDelete) return;
+
+  try {
+    setDeletingProjectId(projectPendingDelete.idProyecto);
+    setDeleteMessage("");
+    setFeaturedMessage("");
+
+    await deleteProject(projectPendingDelete.idProyecto);
+
+    setProyectos((prev) =>
+      prev.filter(
+        (item) => item.idProyecto !== projectPendingDelete.idProyecto
+      )
+    );
+
+    setDeleteMessage("Proyecto eliminado.");
+    setProjectPendingDelete(null);
+  } catch (error) {
+    setDeleteMessage(
+      error instanceof Error
+        ? error.message
+        : "No se pudo eliminar el proyecto."
+    );
+  } finally {
+    setDeletingProjectId(null);
+  }
+};
+
+
+  const handleToggleFeatured = async (proyecto: ProjectResponseDTO) => {
+    try {
+      setUpdatingFeaturedId(proyecto.idProyecto);
+      setFeaturedMessage("");
+      setDeleteMessage("");
+
+      const nextValue = !proyecto.destacado;
+
+      await toggleFeaturedProject(proyecto.idProyecto, nextValue);
+
+      setProyectos((prev) =>
+        prev.map((item) =>
+          item.idProyecto === proyecto.idProyecto
+            ? { ...item, destacado: nextValue }
+            : item
+        )
+      );
+
+      setFeaturedMessage(
+        nextValue
+          ? "Proyecto marcado como destacado."
+          : "Proyecto quitado de destacados."
+      );
+    } catch (error) {
+      setFeaturedMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudo actualizar el destacado."
+      );
+    } finally {
+      setUpdatingFeaturedId(null);
+    }
+  };
 
   if (showForm) {
     return (
@@ -49,6 +159,7 @@ export function ProjectsPage() {
             type="button"
             onClick={() => {
               setShowForm(false);
+              setProjectToEdit(null);
               void cargarProyectos();
             }}
             className="mb-5 bg-card-bg/60 border border-card-border text-text-primary px-5 py-3 rounded-xl hover:border-[#10B981]/50 transition"
@@ -56,7 +167,18 @@ export function ProjectsPage() {
             ← Volver a mis proyectos
           </button>
 
-          <ProjectForm />
+          <ProjectForm
+            projectToEdit={projectToEdit}
+            onCancel={() => {
+              setShowForm(false);
+              setProjectToEdit(null);
+            }}
+            onSaved={() => {
+              setShowForm(false);
+              setProjectToEdit(null);
+              void cargarProyectos();
+            }}
+          />
         </div>
       </main>
     );
@@ -85,12 +207,27 @@ export function ProjectsPage() {
 
           <button
             type="button"
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setProjectToEdit(null);
+              setShowForm(true);
+            }}
             className="bg-[#10B981] hover:opacity-90 text-white px-5 py-3 rounded-xl shadow-lg text-center font-semibold"
           >
             Agregar proyecto
           </button>
         </div>
+
+        {deleteMessage && (
+          <p className="project-message" style={{ marginBottom: "18px" }}>
+            {deleteMessage}
+          </p>
+        )}
+
+        {featuredMessage && (
+          <p className="project-message" style={{ marginBottom: "18px" }}>
+            {featuredMessage}
+          </p>
+        )}
 
         {loadingProyectos ? (
           <p className="text-text-secondary">Cargando proyectos...</p>
@@ -105,123 +242,255 @@ export function ProjectsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {proyectos.map((proyecto) => (
+            {sortedProjects.map((proyecto) => (
               <article
                 key={proyecto.idProyecto}
-                className="bg-card-bg/50 backdrop-blur-sm border border-card-border rounded-2xl p-5 hover:border-[#10B981]/50 transition-colors"
+                className={`bg-card-bg/50 backdrop-blur-sm border rounded-2xl p-5 transition-colors ${
+                  proyecto.destacado
+                    ? "border-yellow-400 shadow-[0_0_0_1px_rgba(250,204,21,0.35),0_12px_32px_rgba(250,204,21,0.12)]"
+                    : "border-card-border hover:border-[#10B981]/50"
+                }`}
               >
-                <div className="flex flex-col md:flex-row gap-5">
-                  {proyecto.urlsImagenes && proyecto.urlsImagenes.length > 0 && (
-                    <div className="w-full md:w-48 h-36 rounded-xl overflow-hidden bg-[#0F223D] shrink-0">
-                      <img
-                        src={proyecto.urlsImagenes[0]}
-                        alt={proyecto.titulo}
-                        className="w-full h-full object-cover"
-                      />
+                <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div>
+                      <h3 className="text-xl font-bold text-text-primary">
+                        {proyecto.titulo}
+                      </h3>
+
+                      {proyecto.destacado && (
+                        <span className="inline-flex w-fit mt-2 bg-yellow-400/10 border border-yellow-400 text-yellow-200 px-3 py-1 rounded-full text-xs font-extrabold">
+                          ★ Destacado
+                        </span>
+                      )}
+
+                      {proyecto.rolProyecto && (
+                        <p className="text-brand-morado font-semibold mt-2">
+                          {proyecto.rolProyecto}
+                        </p>
+                      )}
                     </div>
-                  )}
 
-                  <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                      <div>
-                        <h3 className="text-xl font-bold text-text-primary">
-                          {proyecto.titulo}
-                        </h3>
-
-                        {proyecto.rolProyecto && (
-                          <p className="text-brand-morado font-semibold mt-1">
-                            {proyecto.rolProyecto}
-                          </p>
-                        )}
-                      </div>
-
+                    <div className="flex sm:justify-end">
                       <span className="w-fit px-3 py-1 rounded-full text-xs font-bold bg-[#10B981]/10 text-[#10B981]">
                         {proyecto.estadoProyecto || "Registrado"}
                       </span>
                     </div>
+                  </div>
 
-                    <p className="text-text-secondary text-sm mt-3">
-                      {proyecto.descripcion}
-                    </p>
+                  <p className="text-text-secondary text-sm mt-3">
+                    {proyecto.descripcion}
+                  </p>
 
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {proyecto.tecnologiaIds?.map((id, index) => (
-                        <span
-                          key={id}
-                          className="px-3 py-1 rounded-lg bg-brand-azul-brillante/10 text-brand-azul-brillante text-xs font-semibold"
-                        >
-                          {proyecto.nombresTecnologias?.[index] ||
-                            technologyNameById[id] ||
-                            `Tecnología ${id}`}
-                        </span>
-                      ))}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {proyecto.tecnologiaIds?.map((id, index) => (
+                      <span
+                        key={id}
+                        className="px-3 py-1 rounded-lg bg-brand-azul-brillante/10 text-brand-azul-brillante text-xs font-semibold"
+                      >
+                        {proyecto.nombresTecnologias?.[index] ||
+                          technologyNameById[id] ||
+                          `Tecnología ${id}`}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-sm">
+                    <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
+                      <p className="text-text-secondary">Visibilidad</p>
+                      <p className="font-semibold text-text-primary">
+                        {proyecto.esPublico ? "Público" : "Privado"}
+                      </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-sm">
-                      <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
-                        <p className="text-text-secondary">Privacidad</p>
-                        <p className="font-semibold text-text-primary">
-                          {proyecto.esPublico ? "Público" : "Privado"}
-                        </p>
-                      </div>
-
-                      <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
-                        <p className="text-text-secondary">Inicio</p>
-                        <p className="font-semibold text-text-primary">
-                          {proyecto.fechaInicio || "Sin fecha"}
-                        </p>
-                      </div>
-
-                      <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
-                        <p className="text-text-secondary">Finalización</p>
-                        <p className="font-semibold text-text-primary">
-                          {proyecto.fechaFinalizacion || "Sin fecha"}
-                        </p>
-                      </div>
+                    <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
+                      <p className="text-text-secondary">Inicio</p>
+                      <p className="font-semibold text-text-primary">
+                        {proyecto.fechaInicio || "Sin fecha"}
+                      </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-3 mt-4">
-                      {proyecto.enlaceGithub && (
-                        <a
-                          href={proyecto.enlaceGithub}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-brand-azul-brillante hover:underline font-semibold text-sm"
-                        >
-                          Repositorio
-                        </a>
-                      )}
-
-                      {proyecto.enlaceDemo && (
-                        <a
-                          href={proyecto.enlaceDemo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-brand-azul-brillante hover:underline font-semibold text-sm"
-                        >
-                          Demo
-                        </a>
-                      )}
-
-                      {proyecto.urlsAdicionales?.map((url, index) => (
-                        <a
-                          key={`${url}-${index}`}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-brand-azul-brillante hover:underline font-semibold text-sm"
-                        >
-                          Enlace adicional {index + 1}
-                        </a>
-                      ))}
+                    <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
+                      <p className="text-text-secondary">Finalización</p>
+                      <p className="font-semibold text-text-primary">
+                        {proyecto.fechaFinalizacion || "Sin fecha"}
+                      </p>
                     </div>
                   </div>
+
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    {proyecto.enlaceGithub && (
+                      <a
+                        href={proyecto.enlaceGithub}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-azul-brillante hover:underline font-semibold text-sm"
+                      >
+                        Repositorio
+                      </a>
+                    )}
+
+                    {proyecto.enlaceDemo && (
+                      <a
+                        href={proyecto.enlaceDemo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-azul-brillante hover:underline font-semibold text-sm"
+                      >
+                        Demo
+                      </a>
+                    )}
+
+                    {proyecto.urlsAdicionales?.map((url, index) => (
+                      <a
+                        key={`${url}-${index}`}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-azul-brillante hover:underline font-semibold text-sm"
+                      >
+                        Enlace adicional {index + 1}
+                      </a>
+                    ))}
+                  </div>
+
+                  {proyecto.urlsImagenes && proyecto.urlsImagenes.length > 0 && (
+                    <div className="mt-6">
+                      <p className="text-text-secondary text-sm font-semibold mb-3">
+                        Imágenes del proyecto
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {proyecto.urlsImagenes.map((imagenUrl, index) => (
+                          <button
+                            key={`${imagenUrl}-${index}`}
+                            type="button"
+                            onClick={() => setSelectedImage(imagenUrl)}
+                            className="w-full h-56 sm:h-64 rounded-2xl overflow-hidden bg-[#0F223D] border border-card-border cursor-pointer"
+                          >
+                            <img
+                              src={imagenUrl}
+                              alt={`${proyecto.titulo} imagen ${index + 1}`}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-card-border">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleFeatured(proyecto)}
+                    disabled={updatingFeaturedId === proyecto.idProyecto}
+                    className="border border-yellow-400 bg-yellow-400/10 text-yellow-200 px-5 py-2.5 rounded-xl font-bold hover:bg-yellow-400/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {updatingFeaturedId === proyecto.idProyecto
+                      ? "Actualizando..."
+                      : proyecto.destacado
+                        ? "Quitar destacado"
+                        : "Destacar"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProjectToEdit(proyecto);
+                      setShowForm(true);
+                    }}
+                    className="bg-[#0D8CFF] hover:bg-[#0077E6] text-white px-5 py-2.5 rounded-xl font-bold"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+onClick={() => handleOpenDeleteModal(proyecto)}                    disabled={deletingProjectId === proyecto.idProyecto}
+                    className="border border-red-500 bg-red-500/10 text-red-300 px-5 py-2.5 rounded-xl font-bold hover:bg-red-500/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {deletingProjectId === proyecto.idProyecto
+                      ? "Eliminando..."
+                      : "Eliminar"}
+                  </button>
                 </div>
               </article>
             ))}
           </div>
         )}
       </section>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl font-bold"
+            >
+              Cerrar
+            </button>
+
+            <img
+              src={selectedImage}
+              alt="Imagen ampliada del proyecto"
+              className="w-full max-h-[85vh] object-contain rounded-2xl bg-black"
+            />
+          </div>
+        </div>
+      )}
+
+{projectPendingDelete && (
+  <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+    <div className="w-full max-w-md bg-[#102B4C] border border-red-500/40 rounded-2xl shadow-2xl p-6">
+      <h3 className="text-xl font-bold text-white">
+        Eliminar proyecto
+      </h3>
+
+      <p className="text-slate-300 text-sm mt-3 leading-relaxed">
+        ¿Estás seguro de eliminar definitivamente el proyecto{" "}
+        <span className="font-bold text-white">
+          "{projectPendingDelete.titulo}"
+        </span>
+        ?
+      </p>
+
+      <p className="text-red-300 text-sm mt-3">
+        Esta acción no se puede deshacer.
+      </p>
+
+      <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+        <button
+          type="button"
+          onClick={() => setProjectPendingDelete(null)}
+          disabled={deletingProjectId === projectPendingDelete.idProyecto}
+          className="px-5 py-2.5 rounded-xl font-bold border border-slate-500 text-slate-200 hover:bg-white/10 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          onClick={handleConfirmDeleteProject}
+          disabled={deletingProjectId === projectPendingDelete.idProyecto}
+          className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {deletingProjectId === projectPendingDelete.idProyecto
+            ? "Eliminando..."
+            : "Sí, eliminar"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </main>
   );
 }

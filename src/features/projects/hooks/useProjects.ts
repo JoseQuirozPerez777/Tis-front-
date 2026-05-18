@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import type { ProjectFormModel, Technology } from "../models/project.model";
+import type {
+  ProjectFormModel,
+  ProjectStatus,
+  Technology,
+} from "../models/project.model";
+import type { ProjectResponseDTO } from "../services/project.dto";
 import { projectService } from "../services/project.service";
 import { validateProjectForm } from "../utils/validation";
 
@@ -23,7 +28,55 @@ const initialForm: ProjectFormModel = {
   privacidad: "PUBLICO",
 };
 
-export function useProjects() {
+interface UseProjectsOptions {
+  projectToEdit?: ProjectResponseDTO | null;
+  onSaved?: () => void;
+}
+
+function mapProjectToForm(
+  project: ProjectResponseDTO,
+  technologies: Technology[]
+): ProjectFormModel {
+  return {
+    nombreProyecto: project.titulo || "",
+    rolProyecto: project.rolProyecto || "Full Stack Developer",
+    descripcionProyecto: project.descripcion || "",
+
+    tecnologiasIds: project.tecnologiaIds || [],
+    tecnologiasHerramientas:
+      project.nombresTecnologias ||
+      project.tecnologiaIds?.map((id) => {
+        return (
+          technologies.find((technology) => technology.id === id)?.nombre ||
+          `Tecnología ${id}`
+        );
+      }) ||
+      [],
+
+    urlRepositorio: project.enlaceGithub || "",
+    urlDemo: project.enlaceDemo || "",
+    urlsAdicionales:
+      project.urlsAdicionales && project.urlsAdicionales.length > 0
+        ? project.urlsAdicionales
+        : [""],
+
+    imagenes:
+      project.urlsImagenes?.map((url) => ({
+        url,
+        descripcion: "Imagen del proyecto",
+      })) || [],
+
+    fechaInicio: project.fechaInicio || "",
+    fechaFinalizacion: project.fechaFinalizacion || "",
+    estadoProyecto: (project.estadoProyecto as ProjectStatus) || "FINALIZADO",
+    privacidad: project.esPublico ? "PUBLICO" : "PRIVADO",
+  };
+}
+
+export function useProjects(options?: UseProjectsOptions) {
+  const projectToEdit = options?.projectToEdit || null;
+  const isEditMode = Boolean(projectToEdit);
+
   const [form, setForm] = useState<ProjectFormModel>(initialForm);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [loadingTechnologies, setLoadingTechnologies] = useState(false);
@@ -50,6 +103,14 @@ export function useProjects() {
   useEffect(() => {
     void loadTechnologies();
   }, []);
+
+  useEffect(() => {
+    if (projectToEdit) {
+      setForm(mapProjectToForm(projectToEdit, technologies));
+    } else {
+      setForm(initialForm);
+    }
+  }, [projectToEdit, technologies]);
 
   function updateField<K extends keyof ProjectFormModel>(
     field: K,
@@ -80,6 +141,7 @@ export function useProjects() {
 
     setForm((prev) => {
       if (prev.tecnologiasIds.includes(technologyId)) {
+        setMessage("Esta tecnología ya fue agregada.");
         return prev;
       }
 
@@ -132,7 +194,10 @@ export function useProjects() {
   function removeAdditionalUrl(index: number) {
     setForm((prev) => ({
       ...prev,
-      urlsAdicionales: prev.urlsAdicionales.filter((_, i) => i !== index),
+      urlsAdicionales:
+        prev.urlsAdicionales.length === 1
+          ? [""]
+          : prev.urlsAdicionales.filter((_, i) => i !== index),
     }));
   }
 
@@ -154,7 +219,7 @@ export function useProjects() {
 
     setForm((prev) => ({
       ...prev,
-      imagenes: [newImage],
+      imagenes: [...prev.imagenes, newImage],
     }));
   }
 
@@ -175,7 +240,7 @@ export function useProjects() {
 
     try {
       setLoading(true);
-      setMessage("Subiendo imagen a Cloudinary...");
+      setMessage("Subiendo imágenes a Cloudinary...");
 
       const urlsImagenes = await Promise.all(
         form.imagenes.map(async (imagen) => {
@@ -187,9 +252,7 @@ export function useProjects() {
         })
       );
 
-      setMessage("Guardando proyecto...");
-
-      await projectService.createProject({
+      const payload = {
         titulo: form.nombreProyecto,
         descripcion: form.descripcionProyecto,
         tecnologiaIds: form.tecnologiasIds,
@@ -206,17 +269,28 @@ export function useProjects() {
             ? form.fechaFinalizacion || undefined
             : undefined,
         estadoProyecto: form.estadoProyecto,
-      });
+      };
 
-      setMessage("Proyecto registrado correctamente.");
-      setForm(initialForm);
+      setMessage(isEditMode ? "Actualizando proyecto..." : "Guardando proyecto...");
+
+      if (isEditMode && projectToEdit) {
+        await projectService.updateProject(projectToEdit.idProyecto, payload);
+        setMessage("Proyecto actualizado correctamente.");
+      } else {
+        await projectService.createProject(payload);
+        setMessage("Proyecto registrado correctamente.");
+        setForm(initialForm);
+      }
+
+      options?.onSaved?.();
     } catch (error) {
-      const message =
+      setMessage(
         error instanceof Error
           ? error.message
-          : "No se pudo registrar el proyecto.";
-
-      setMessage(message);
+          : isEditMode
+            ? "No se pudo actualizar el proyecto."
+            : "No se pudo registrar el proyecto."
+      );
     } finally {
       setLoading(false);
     }
@@ -228,6 +302,7 @@ export function useProjects() {
     loadingTechnologies,
     loading,
     message,
+    isEditMode,
     updateField,
     addTechnology,
     removeTechnology,
