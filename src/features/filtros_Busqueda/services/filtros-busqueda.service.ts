@@ -13,7 +13,7 @@ import type { BuscarPortafoliosResponseDTO } from "./filtros-busqueda.dto";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8081";
 
-const USAR_MOCK = true;
+const USAR_MOCK = false;
 
 
 const MOCK_PORTAFOLIOS: PortafolioResultado[] = [
