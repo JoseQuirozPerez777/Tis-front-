@@ -1,6 +1,6 @@
 import {
   opcionesDisponibilidad,
-  opcionesIdiomas,
+  
 } from "../models/filtros-busqueda.model";
 
 import type { FiltrosBusqueda } from "../models/filtros-busqueda.model";
@@ -151,10 +151,7 @@ export const FiltrosBusquedaPanel = ({
 
         
 
-       
-
-      
-      
+ {/*     
 <div className="lg:col-span-3">
   <label className="mb-2 block text-sm font-medium text-text-primary">
     Idioma(s)
@@ -202,13 +199,13 @@ export const FiltrosBusquedaPanel = ({
             className="font-bold"
           >
             ×
-          </button>
+   /*       </button>
         </span>
       ))}
     </div>
   )}
 </div>
-
+*/}
 
       </div>
 
