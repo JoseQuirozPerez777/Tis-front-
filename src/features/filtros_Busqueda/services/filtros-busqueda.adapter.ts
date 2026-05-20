@@ -25,16 +25,8 @@ export const filtrosBusquedaToRequestDTO = (
     tecnologia: limpiarTexto(filtros.tecnologia),
     formacionAcademica: limpiarTexto(filtros.formacionAcademica),
     disponibilidad: filtros.disponibilidad || null,
-    modalidadTrabajo:
-  filtros.modalidadTrabajo === "Remoto"
-    ? "REMOTO"
-    : filtros.modalidadTrabajo === "Presencial"
-      ? "PRESENCIAL"
-      : filtros.modalidadTrabajo === "Híbrida"
-        ? "HIBRIDO"
-        : null,
-    experienciaMinima:
-      filtros.experienciaMinima === "" ? null : filtros.experienciaMinima,
+    modalidadTrabajo: null,
+    experienciaMinima: null,
     idiomas: filtros.idiomas.length > 0 ? filtros.idiomas : null,
     ubicacion: limpiarTexto(filtros.ubicacion),
     ordenarPor: filtros.ordenarPor,

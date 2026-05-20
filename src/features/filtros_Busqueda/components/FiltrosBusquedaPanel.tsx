@@ -1,7 +1,6 @@
 import {
   opcionesDisponibilidad,
   opcionesIdiomas,
-  opcionesModalidadTrabajo,
 } from "../models/filtros-busqueda.model";
 
 import type { FiltrosBusqueda } from "../models/filtros-busqueda.model";
@@ -35,7 +34,7 @@ export const FiltrosBusquedaPanel = ({
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <label className="mb-1 block text-sm font-medium text-text-primary">
             Profesión
@@ -95,20 +94,20 @@ export const FiltrosBusquedaPanel = ({
 
         <div>
           <label className="mb-1 block text-sm font-medium text-text-primary">
-            Formación académica
+            Institución académica
           </label>
           <input
             type="text"
             value={filtros.formacionAcademica}
             maxLength={80}
-            placeholder="Ej: Ingeniería de Sistemas"
+            placeholder="Ej: Universidad Mayor de San Simón"
             onChange={(event) =>
               onActualizarFiltro("formacionAcademica", event.target.value)
             }
             className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition placeholder:text-text-secondary focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
           />
           <p className="mt-1 text-xs text-gray-400">
-            Solo letras y espacios.
+            Busca por universidad, instituto o centro de estudios.
           </p>
         </div>
 
@@ -150,48 +149,13 @@ export const FiltrosBusquedaPanel = ({
           </select>
         </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-text-primary">
-            Modalidad de trabajo
-          </label>
-          <select
-            value={filtros.modalidadTrabajo}
-            onChange={(event) =>
-              onActualizarFiltro("modalidadTrabajo", event.target.value)
-            }
-            className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition placeholder:text-text-secondary focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
-          >
-            {opcionesModalidadTrabajo.map((opcion) => (
-              <option key={opcion || "todas"} value={opcion}>
-                {opcion || "Todas"}
-              </option>
-            ))}
-          </select>
-        </div>
+        
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-text-primary">
-            Experiencia mínima
-          </label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={filtros.experienciaMinima}
-            maxLength={2}
-            placeholder="Ej: 5"
-            onChange={(event) =>
-              onActualizarFiltro("experienciaMinima", event.target.value)
-            }
-            className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition placeholder:text-text-secondary focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
-          />
-          <p className="mt-1 text-xs text-gray-400">
-            Solo números entre 0 y 50.
-          </p>
-        </div>
+       
 
       
       
-<div className="lg:col-span-4">
+<div className="lg:col-span-3">
   <label className="mb-2 block text-sm font-medium text-text-primary">
     Idioma(s)
   </label>

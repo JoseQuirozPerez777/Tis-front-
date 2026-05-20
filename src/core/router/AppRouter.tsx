@@ -16,7 +16,8 @@ import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
 
 import { HabilidadesTecnicasPage } from '@features/habilidades-tecnicas/pages/HabilidadesTecnicasPage';
-
+import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
+import { HabilidadesBlandasPage } from '@features/habilidades-blandas/pages/HabilidadesBlandasPage';
 export const AppRouter = () => {
   return (
     <Routes>
@@ -35,9 +36,12 @@ export const AppRouter = () => {
           <Route path="/DashMyPerfil" element={<DashMyPerfilPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/experience" element={<ExperiencePage />} />
+          <Route path="/buscar-portafolios" element={<FiltrosBusquedaPage />} />
 
           <Route path="/skills" element={<HabilidadesTecnicasPage />} />
           <Route path="/habilidades-tecnicas" element={<HabilidadesTecnicasPage />} />
+          <Route path="/softskills" element={<HabilidadesBlandasPage />} />
+<Route path="/habilidades-blandas" element={<HabilidadesBlandasPage />} />
 
           <Route path="/academic-training" element={<AcademicTrainingPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />
