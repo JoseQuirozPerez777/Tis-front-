@@ -15,6 +15,12 @@ export interface ProjectImage {
   file?: File;
 }
 
+export interface ProjectPdf {
+  url: string;
+  nombre: string;
+  file?: File;
+}
+
 export interface ProjectFormModel {
   nombreProyecto: string;
   rolProyecto: string;
@@ -22,12 +28,14 @@ export interface ProjectFormModel {
 
   tecnologiasIds: number[];
   tecnologiasHerramientas: string[];
+  nuevasTecnologias: string[];
 
   urlRepositorio: string;
   urlDemo: string;
   urlsAdicionales: string[];
 
   imagenes: ProjectImage[];
+  pdfs: ProjectPdf[];
 
   fechaInicio: string;
   fechaFinalizacion: string;

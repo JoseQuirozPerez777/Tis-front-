@@ -30,6 +30,39 @@ function getAuthHeaders() {
   };
 }
 
+const CLOUD_NAME = 'dvhan21ur';
+    const UPLOAD_PRESET = 'portafolio'; 
+
+async function uploadToCloudinary(
+  file: File,
+  resourceType: "image" | "raw" ,
+  folder: string
+): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+  formData.append("folder", folder);
+
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || !data.secure_url) {
+    throw new Error(
+      data?.error?.message ||
+        `Error al subir el archivo a Cloudinary (${resourceType})`
+    );
+  }
+
+  return data.secure_url as string;
+}
+
 export const projectService = {
   getTechnologies: async (): Promise<Technology[]> => {
     const response = await fetch(`${API_URL}/api/tecnologias`, {
@@ -56,32 +89,12 @@ export const projectService = {
     }));
   },
 
-  uploadToCloudinary: async (file: File): Promise<string> => {
-    const CLOUD_NAME = "ddzmot3te";
-    const UPLOAD_PRESET = "profile_photos_unsigned";
+  uploadImageToCloudinary: async (file: File): Promise<string> => {
+    return uploadToCloudinary(file, "image", "project_images");
+  },
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-    formData.append("folder", "project_images");
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || !data.secure_url) {
-      throw new Error(
-        data?.error?.message || "Error al subir la imagen a Cloudinary"
-      );
-    }
-
-    return data.secure_url as string;
+  uploadPdfToCloudinary: async (file: File): Promise<string> => {
+    return uploadToCloudinary(file, "raw", "project_pdfs");
   },
 
   createProject: async (data: CreateProjectDTO) => {
@@ -131,13 +144,13 @@ export const projectService = {
     return result;
   },
 
-  toggleFeaturedProject: async (idProyecto: number, destacado: boolean) => {
+  toggleFeaturedProject: async (idProyecto: number, destacar: boolean) => {
     const response = await fetch(
-      `${API_URL}/api/proyectos/${idProyecto}/destacado`,
+      `${API_URL}/api/proyectos/${idProyecto}/destacar`,
       {
         method: "PATCH",
         headers: getAuthHeaders(),
-        body: JSON.stringify({ destacado }),
+        body: JSON.stringify({destacar}),
       }
     );
 
@@ -145,7 +158,7 @@ export const projectService = {
 
     if (!response.ok) {
       throw new Error(
-        result?.message || "No se pudo actualizar el estado destacado."
+        result?.message || "No se pudo actualizar el estado destacar."
       );
     }
 
@@ -174,4 +187,5 @@ export const deleteProject = projectService.deleteProject;
 export const toggleFeaturedProject = projectService.toggleFeaturedProject;
 export const getProjects = projectService.getProjects;
 export const getTechnologies = projectService.getTechnologies;
-export const uploadProjectImage = projectService.uploadToCloudinary;
+export const uploadProjectImage = projectService.uploadImageToCloudinary;
+export const uploadProjectPdf = projectService.uploadPdfToCloudinary;

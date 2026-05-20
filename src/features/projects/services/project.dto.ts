@@ -13,14 +13,16 @@ export interface CreateProjectDTO {
   titulo: string;
   descripcion: string;
   tecnologiaIds: number[];
+  nuevasTecnologias: string[];
 
   enlaceGithub?: string;
   enlaceDemo?: string;
 
   urlsImagenes: string[];
+  urlPdf: string;
 
   esPublico: boolean;
-  destacado?: boolean;
+  destacar?: boolean;
 
   rolProyecto?: string;
   urlsAdicionales?: string[];
@@ -38,13 +40,15 @@ export interface ProjectResponseDTO {
 
   tecnologiaIds: number[];
   nombresTecnologias?: string[];
+  nuevasTecnologias?: string[];
 
   enlaceGithub?: string;
   enlaceDemo?: string;
   urlsImagenes?: string[];
+  urlPdf?: string;
 
   esPublico: boolean;
-  destacado?: boolean;
+  destacar?: boolean;
   idUsuario?: number;
 
   rolProyecto?: string;
