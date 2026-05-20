@@ -27,9 +27,7 @@ export const profileSchema = z.object({
     .string()
     .min(3, 'La dirección debe tener al menos 3 caracteres')
     .max(120, 'La dirección es demasiado larga'),
-    disponibilidad: z
-  .enum(['Disponible', 'No disponible'])
-  .default('Disponible'),
+    disponibilidad: z.enum(['Disponible', 'No disponible']),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;

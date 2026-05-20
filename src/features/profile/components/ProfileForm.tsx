@@ -5,6 +5,12 @@ import { Input } from '@shared/components/ui/Input';
 import { profileService } from '../services/profile.service';
 import type { PerfilBackendResponse, Profesion } from '../models/profile.model';
 
+const normalizarDisponibilidad = (
+  value?: string | null,
+): 'Disponible' | 'No disponible' => {
+  return value === 'No disponible' ? 'No disponible' : 'Disponible';
+};
+
 interface ProfileFormProps {
   onProfileUpdated?: () => void;
 }
@@ -69,7 +75,7 @@ export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
       bio: perfilData.biografia ?? '',
       telefono: perfilData.telefono ?? '',
       direccion: perfilData.direccion ?? '',
-      disponibilidad: perfilData.disponibilidad ?? 'Disponible',
+      disponibilidad: normalizarDisponibilidad(perfilData.disponibilidad),
     });
   }, [perfilData, profesiones, reset]);
 

@@ -68,10 +68,7 @@ export const adaptExperienceToCreateDto = (
   formData: ExperienceFormData,
 ): CreateExperienceDto => {
   return {
-cargo: formData.cargo,
-empresa: formData.empresa,
-descripcion: formData.descripcion,
-esTrabajoActual: Boolean(formData.esTrabajoActual),
+
 
     nombreEmpresa: formData.empresa,
     cargoPuesto: formData.cargo,
