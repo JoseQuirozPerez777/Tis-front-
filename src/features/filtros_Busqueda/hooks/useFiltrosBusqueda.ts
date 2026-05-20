@@ -141,13 +141,18 @@ export const useFiltrosBusqueda = () => {
   };
 
   const limpiarFiltros = () => {
-    setFiltros(filtrosBusquedaIniciales);
-    buscarPortafolios(filtrosBusquedaIniciales);
-  };
+  setFiltros(filtrosBusquedaIniciales);
+  setResultados([]);
+  setTotal(0);
+  setTotalPaginas(1);
+  setError(null);
+};
 
   useEffect(() => {
-    buscarPortafolios(filtrosBusquedaIniciales);
-  }, []);
+  setResultados([]);
+  setTotal(0);
+  setTotalPaginas(1);
+}, []);
 
   return {
     filtros,
