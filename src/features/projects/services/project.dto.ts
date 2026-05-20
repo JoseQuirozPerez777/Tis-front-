@@ -19,7 +19,7 @@ export interface CreateProjectDTO {
   enlaceDemo?: string;
 
   urlsImagenes: string[];
-  urlPdf: string;
+  urlPdf?: string;
 
   esPublico: boolean;
   destacar?: boolean;
