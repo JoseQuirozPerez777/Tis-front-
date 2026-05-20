@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ShieldCheck,
   Link,
@@ -8,6 +9,7 @@ import {
   Plus,
   Trash2,
   X,
+  FileText,
 } from "lucide-react";
 import { useProjects } from "../hooks/useProjects";
 import type { ProjectResponseDTO } from "../services/project.dto";
@@ -24,6 +26,8 @@ export function ProjectForm({
   onCancel,
   onSaved,
 }: Props) {
+  const [newTechnologyInput, setNewTechnologyInput] = useState("");
+
   const {
     form,
     technologies,
@@ -34,11 +38,15 @@ export function ProjectForm({
     updateField,
     addTechnology,
     removeTechnology,
+    addNewTechnology,
+    removeNewTechnology,
     addAdditionalUrl,
     updateAdditionalUrl,
     removeAdditionalUrl,
     addImages,
     removeImage,
+    addPdfs,
+    removePdf,
     saveProject,
   } = useProjects({
     projectToEdit,
@@ -52,6 +60,11 @@ export function ProjectForm({
 
   function handleCancel() {
     onCancel?.();
+  }
+
+  function handleAddNewTechnology() {
+    addNewTechnology(newTechnologyInput);
+    setNewTechnologyInput("");
   }
 
   return (
@@ -159,6 +172,50 @@ export function ProjectForm({
             ))}
           </div>
         </div>
+
+        <div className="project-field">
+          <label>Nuevas tecnologías</label>
+
+          <div className="project-url-row">
+            <input
+              value={newTechnologyInput}
+              onChange={(e) => setNewTechnologyInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddNewTechnology();
+                }
+              }}
+              placeholder="Ej. NestJS, Docker, Prisma"
+              disabled={loading}
+            />
+
+            <button
+              type="button"
+              onClick={handleAddNewTechnology}
+              disabled={loading}
+              title="Agregar nueva tecnología"
+            >
+              <Plus size={17} />
+            </button>
+          </div>
+
+          <div className="project-chips" style={{ marginTop: "12px" }}>
+            {form.nuevasTecnologias.map((tech, index) => (
+              <span className="project-chip" key={`${tech}-${index}`}>
+                {tech}
+
+                <button
+                  type="button"
+                  onClick={() => removeNewTechnology(index)}
+                  disabled={loading}
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="project-card">
@@ -230,7 +287,7 @@ export function ProjectForm({
         </h2>
 
         <div className="project-field">
-          <label>Imagen del proyecto</label>
+          <label>Imágenes del proyecto</label>
 
           <div className="project-image-grid">
             <label className="project-upload-box">
@@ -242,6 +299,7 @@ export function ProjectForm({
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/jpg,image/webp"
+                multiple
                 onChange={(e) => {
                   addImages(e.target.files);
                   e.target.value = "";
@@ -260,6 +318,48 @@ export function ProjectForm({
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
+                  disabled={loading}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="project-field">
+          <label>Archivos PDF del proyecto</label>
+
+          <div className="project-image-grid">
+            <label className="project-upload-box">
+              <FileText size={32} />
+              <strong>Subir PDF</strong>
+              <span>Archivo PDF</span>
+              <small>Se subirá a Cloudinary al guardar</small>
+
+              <input
+                type="file"
+                accept="application/pdf"
+                multiple
+                onChange={(e) => {
+                  addPdfs(e.target.files);
+                  e.target.value = "";
+                }}
+                disabled={loading}
+              />
+            </label>
+
+            {form.pdfs.map((pdf, index) => (
+              <div className="project-pdf-preview" key={`${pdf.url}-${index}`}>
+                <FileText size={34} />
+                <strong>{pdf.nombre}</strong>
+                <a href={pdf.url} target="_blank" rel="noreferrer">
+                  Ver PDF
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => removePdf(index)}
                   disabled={loading}
                 >
                   <X size={16} />

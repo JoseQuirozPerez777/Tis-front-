@@ -47,8 +47,8 @@ const [projectPendingDelete, setProjectPendingDelete] =
 
   const sortedProjects = useMemo(() => {
     return [...proyectos].sort((a, b) => {
-      if (a.destacado === b.destacado) return 0;
-      return a.destacado ? -1 : 1;
+      if (a.destacar === b.destacar) return 0;
+      return a.destacar ? -1 : 1;
     });
   }, [proyectos]);
 
@@ -123,28 +123,28 @@ const handleConfirmDeleteProject = async () => {
       setFeaturedMessage("");
       setDeleteMessage("");
 
-      const nextValue = !proyecto.destacado;
+      const nextValue = !proyecto.destacar;
 
       await toggleFeaturedProject(proyecto.idProyecto, nextValue);
 
       setProyectos((prev) =>
         prev.map((item) =>
           item.idProyecto === proyecto.idProyecto
-            ? { ...item, destacado: nextValue }
+            ? { ...item, destacar: nextValue }
             : item
         )
       );
 
       setFeaturedMessage(
         nextValue
-          ? "Proyecto marcado como destacado."
-          : "Proyecto quitado de destacados."
+          ? "Proyecto marcado como destacar."
+          : "Proyecto quitado de destacar."
       );
     } catch (error) {
       setFeaturedMessage(
         error instanceof Error
           ? error.message
-          : "No se pudo actualizar el destacado."
+          : "No se pudo actualizar el destacar."
       );
     } finally {
       setUpdatingFeaturedId(null);
@@ -246,7 +246,7 @@ const handleConfirmDeleteProject = async () => {
               <article
                 key={proyecto.idProyecto}
                 className={`bg-card-bg/50 backdrop-blur-sm border rounded-2xl p-5 transition-colors ${
-                  proyecto.destacado
+                  proyecto.destacar
                     ? "border-yellow-400 shadow-[0_0_0_1px_rgba(250,204,21,0.35),0_12px_32px_rgba(250,204,21,0.12)]"
                     : "border-card-border hover:border-[#10B981]/50"
                 }`}
@@ -258,9 +258,9 @@ const handleConfirmDeleteProject = async () => {
                         {proyecto.titulo}
                       </h3>
 
-                      {proyecto.destacado && (
+                      {proyecto.destacar && (
                         <span className="inline-flex w-fit mt-2 bg-yellow-400/10 border border-yellow-400 text-yellow-200 px-3 py-1 rounded-full text-xs font-extrabold">
-                          ★ Destacado
+                          ★ destacar
                         </span>
                       )}
 
@@ -378,6 +378,32 @@ const handleConfirmDeleteProject = async () => {
                       </div>
                     </div>
                   )}
+
+
+{proyecto.urlPdf && (
+  <div className="mt-6">
+    <p className="text-text-secondary text-sm font-semibold mb-3">
+      PDF del proyecto
+    </p>
+
+    <div className="w-full h-72 rounded-2xl overflow-hidden bg-[#0F223D] border border-card-border">
+<iframe
+  src={`${proyecto.urlPdf}#toolbar=0`}
+  title={`${proyecto.titulo} PDF`}
+  className="w-full h-full bg-white"
+/>
+    </div>
+
+<a
+  href={proyecto.urlPdf}
+  target="_blank"
+  rel="noreferrer"
+>
+  Ver PDF completo
+</a>
+  </div>
+)}
+                  
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-card-border">
@@ -389,8 +415,8 @@ const handleConfirmDeleteProject = async () => {
                   >
                     {updatingFeaturedId === proyecto.idProyecto
                       ? "Actualizando..."
-                      : proyecto.destacado
-                        ? "Quitar destacado"
+                      : proyecto.destacar
+                        ? "Quitar destacar"
                         : "Destacar"}
                   </button>
 

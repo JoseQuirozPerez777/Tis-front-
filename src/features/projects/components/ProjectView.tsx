@@ -5,6 +5,11 @@ interface Props {
 }
 
 export function ProjectView({ project }: Props) {
+  const allTechnologies = [
+    ...project.tecnologiasHerramientas,
+    ...project.nuevasTecnologias,
+  ];
+
   return (
     <article className="project-preview-box">
       <div className="project-preview-header">
@@ -44,11 +49,9 @@ export function ProjectView({ project }: Props) {
       </div>
 
       <div className="project-preview-techs">
-        {project.tecnologiasHerramientas.length > 0 ? (
-          project.tecnologiasHerramientas.map((tech, index) => (
-            <span key={`${tech}-${project.tecnologiasIds[index] || index}`}>
-              {tech}
-            </span>
+        {allTechnologies.length > 0 ? (
+          allTechnologies.map((tech, index) => (
+            <span key={`${tech}-${index}`}>{tech}</span>
           ))
         ) : (
           <span>Sin tecnologías</span>
@@ -63,6 +66,16 @@ export function ProjectView({ project }: Props) {
               src={image.url}
               alt={image.descripcion || "Imagen del proyecto"}
             />
+          ))}
+        </div>
+      )}
+
+      {project.pdfs.length > 0 && (
+        <div className="project-preview-links">
+          {project.pdfs.map((pdf, index) => (
+            <a key={`${pdf.url}-${index}`} href={pdf.url} target="_blank" rel="noreferrer">
+              Ver PDF {index + 1}
+            </a>
           ))}
         </div>
       )}

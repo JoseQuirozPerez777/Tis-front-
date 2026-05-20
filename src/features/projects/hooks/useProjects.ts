@@ -15,12 +15,14 @@ const initialForm: ProjectFormModel = {
 
   tecnologiasIds: [],
   tecnologiasHerramientas: [],
+  nuevasTecnologias: [],
 
   urlRepositorio: "",
   urlDemo: "",
   urlsAdicionales: [""],
 
   imagenes: [],
+  pdfs: [],
 
   fechaInicio: "",
   fechaFinalizacion: "",
@@ -52,6 +54,7 @@ function mapProjectToForm(
         );
       }) ||
       [],
+    nuevasTecnologias: project.nuevasTecnologias || [],
 
     urlRepositorio: project.enlaceGithub || "",
     urlDemo: project.enlaceDemo || "",
@@ -65,6 +68,15 @@ function mapProjectToForm(
         url,
         descripcion: "Imagen del proyecto",
       })) || [],
+
+pdfs: project.urlPdf
+  ? [
+      {
+        url: project.urlPdf,
+        nombre: "PDF del proyecto",
+      },
+    ]
+  : [],
 
     fechaInicio: project.fechaInicio || "",
     fechaFinalizacion: project.fechaFinalizacion || "",
@@ -172,6 +184,35 @@ export function useProjects(options?: UseProjectsOptions) {
     });
   }
 
+  function addNewTechnology(value: string) {
+    const technologyName = value.trim();
+
+    if (!technologyName) return;
+
+    setForm((prev) => {
+      const exists = prev.nuevasTecnologias.some(
+        (tech) => tech.toLowerCase() === technologyName.toLowerCase()
+      );
+
+      if (exists) {
+        setMessage("Esta nueva tecnología ya fue agregada.");
+        return prev;
+      }
+
+      return {
+        ...prev,
+        nuevasTecnologias: [...prev.nuevasTecnologias, technologyName],
+      };
+    });
+  }
+
+  function removeNewTechnology(index: number) {
+    setForm((prev) => ({
+      ...prev,
+      nuevasTecnologias: prev.nuevasTecnologias.filter((_, i) => i !== index),
+    }));
+  }
+
   function addAdditionalUrl() {
     setForm((prev) => ({
       ...prev,
@@ -204,22 +245,29 @@ export function useProjects(options?: UseProjectsOptions) {
   function addImages(files: FileList | null) {
     if (!files || files.length === 0) return;
 
-    const file = files[0];
+    const validFiles = Array.from(files);
 
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage("La imagen no debe superar los 5MB.");
-      return;
+    for (const file of validFiles) {
+      if (!file.type.startsWith("image/")) {
+        setMessage("Solo se permiten imágenes.");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Cada imagen no debe superar los 5MB.");
+        return;
+      }
     }
 
-    const newImage = {
+    const newImages = validFiles.map((file) => ({
       url: URL.createObjectURL(file),
       descripcion: file.name,
       file,
-    };
+    }));
 
     setForm((prev) => ({
       ...prev,
-      imagenes: [...prev.imagenes, newImage],
+      imagenes: [...prev.imagenes, ...newImages],
     }));
   }
 
@@ -227,6 +275,42 @@ export function useProjects(options?: UseProjectsOptions) {
     setForm((prev) => ({
       ...prev,
       imagenes: prev.imagenes.filter((_, i) => i !== index),
+    }));
+  }
+
+  function addPdfs(files: FileList | null) {
+    if (!files || files.length === 0) return;
+
+    const validFiles = Array.from(files);
+
+    for (const file of validFiles) {
+      if (file.type !== "application/pdf") {
+        setMessage("Solo se permiten archivos PDF.");
+        return;
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        setMessage("Cada PDF no debe superar los 10MB.");
+        return;
+      }
+    }
+
+    const newPdfs = validFiles.map((file) => ({
+      url: URL.createObjectURL(file),
+      nombre: file.name,
+      file,
+    }));
+
+    setForm((prev) => ({
+      ...prev,
+      pdfs: [...prev.pdfs, ...newPdfs],
+    }));
+  }
+
+  function removePdf(index: number) {
+    setForm((prev) => ({
+      ...prev,
+      pdfs: prev.pdfs.filter((_, i) => i !== index),
     }));
   }
 
@@ -240,25 +324,34 @@ export function useProjects(options?: UseProjectsOptions) {
 
     try {
       setLoading(true);
-      setMessage("Subiendo imágenes a Cloudinary...");
+      setMessage("Subiendo archivos a Cloudinary...");
 
       const urlsImagenes = await Promise.all(
         form.imagenes.map(async (imagen) => {
           if (imagen.file) {
-            return projectService.uploadToCloudinary(imagen.file);
+            return projectService.uploadImageToCloudinary(imagen.file);
           }
 
           return imagen.url;
         })
       );
 
+const urlPdf =
+  form.pdfs.length > 0
+    ? form.pdfs[0].file
+      ? await projectService.uploadPdfToCloudinary(form.pdfs[0].file)
+      : form.pdfs[0].url
+    : undefined;
+
       const payload = {
         titulo: form.nombreProyecto,
         descripcion: form.descripcionProyecto,
         tecnologiaIds: form.tecnologiasIds,
+        nuevasTecnologias: form.nuevasTecnologias,
         enlaceGithub: form.urlRepositorio || undefined,
         enlaceDemo: form.urlDemo || undefined,
         urlsImagenes,
+        urlPdf,
         esPublico: form.privacidad === "PUBLICO",
 
         rolProyecto: form.rolProyecto || undefined,
@@ -306,11 +399,15 @@ export function useProjects(options?: UseProjectsOptions) {
     updateField,
     addTechnology,
     removeTechnology,
+    addNewTechnology,
+    removeNewTechnology,
     addAdditionalUrl,
     updateAdditionalUrl,
     removeAdditionalUrl,
     addImages,
     removeImage,
+    addPdfs,
+    removePdf,
     saveProject,
   };
 }
