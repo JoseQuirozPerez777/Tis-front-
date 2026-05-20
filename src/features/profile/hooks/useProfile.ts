@@ -22,6 +22,7 @@ export const useProfile = (onProfileUpdated?: () => void) => {
       bio: storedProfile?.bio || '',
       telefono: storedProfile?.telefono || '',
       direccion: storedProfile?.direccion || '',
+      disponibilidad: storedProfile?.disponibilidad || 'Disponible',
     },
     mode: 'onTouched',
   });
@@ -65,6 +66,7 @@ export const useProfile = (onProfileUpdated?: () => void) => {
       bio: storedProfile?.bio || '',
       telefono: storedProfile?.telefono || '',
       direccion: storedProfile?.direccion || '',
+       disponibilidad: storedProfile?.disponibilidad || 'Disponible',
     });
 
     setServerError(null);

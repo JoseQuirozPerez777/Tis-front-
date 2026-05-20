@@ -4,6 +4,7 @@ export interface ProfileRequestDto {
   bio: string;
   telefono: string;
   direccion: string;
+  disponibilidad: string;
 }
 
 export interface ProfilePhotoRequestDto {

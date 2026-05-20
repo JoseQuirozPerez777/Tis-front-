@@ -69,6 +69,7 @@ export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
       bio: perfilData.biografia ?? '',
       telefono: perfilData.telefono ?? '',
       direccion: perfilData.direccion ?? '',
+      disponibilidad: perfilData.disponibilidad ?? 'Disponible',
     });
   }, [perfilData, profesiones, reset]);
 
@@ -176,6 +177,24 @@ export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
               autoComplete="street-address"
               className="bg-[#0F223D] border-white/10 focus:border-[#3B82F6] text-[#E5E7EB]"
             />
+            <div className="md:col-span-2">
+  <label className="block text-sm text-[#9CA3AF] mb-2">
+    Disponibilidad laboral
+  </label>
+
+  <select
+    {...register('disponibilidad')}
+    className="w-full bg-[#0F223D] border border-white/10 rounded px-4 py-2 focus:border-[#3B82F6] outline-none text-[#E5E7EB]"
+  >
+    <option value="Disponible">Disponible</option>
+    <option value="No disponible">No disponible</option>
+  </select>
+
+  <p className="mt-2 text-xs text-[#9CA3AF]">
+    Indica si estás disponible para recibir propuestas laborales.
+  </p>
+</div>
+
 
             <div className="md:col-span-2">
               <label className="block text-sm text-[#9CA3AF] mb-2">
