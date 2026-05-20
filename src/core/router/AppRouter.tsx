@@ -14,6 +14,7 @@ import { PhotoPage } from '@features/photo/pages/PhotoPage';
 import { ProfessionalLinksPage } from '@features/profesional-links';
 import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
+import { ProjectsPage } from '@features/projects/pages/ProjectsPage';
 
 import { HabilidadesTecnicasPage } from '@features/habilidades-tecnicas/pages/HabilidadesTecnicasPage';
 import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
@@ -27,16 +28,19 @@ export const AppRouter = () => {
         <Route path="register" element={<RegisterPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<CambiarPasswordPage />} />
-        <Route path="Photo" element={<PhotoPage />} />
+        
       </Route>
 
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
+          <Route path="Photo" element={<PhotoPage />} />
+          <Route path="/photo" element={<PhotoPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/DashMyPerfil" element={<DashMyPerfilPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/buscar-portafolios" element={<FiltrosBusquedaPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
 
           <Route path="/skills" element={<HabilidadesTecnicasPage />} />
           <Route path="/habilidades-tecnicas" element={<HabilidadesTecnicasPage />} />
