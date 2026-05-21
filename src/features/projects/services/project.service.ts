@@ -30,12 +30,12 @@ function getAuthHeaders() {
   };
 }
 
-const CLOUD_NAME = 'dvhan21ur';
-    const UPLOAD_PRESET = 'portafolio'; 
+const CLOUD_NAME = "dvhan21ur";
+const UPLOAD_PRESET = "portafolio";
 
 async function uploadToCloudinary(
   file: File,
-  resourceType: "image" | "raw" ,
+  resourceType: "image" | "raw",
   folder: string
 ): Promise<string> {
   const formData = new FormData();
@@ -61,6 +61,33 @@ async function uploadToCloudinary(
   }
 
   return data.secure_url as string;
+}
+
+function mapProjectToUpdateDTO(
+  project: ProjectResponseDTO,
+  destacar: boolean
+): UpdateProjectDTO {
+  return {
+    titulo: project.titulo,
+    descripcion: project.descripcion,
+    tecnologiaIds: project.tecnologiaIds ?? [],
+    nuevasTecnologias: [],
+
+    enlaceGithub: project.enlaceGithub || undefined,
+    enlaceDemo: project.enlaceDemo || undefined,
+
+    urlsImagenes: project.urlsImagenes ?? [],
+    urlPdfs: project.urlPdfs ?? [],
+
+    esPublico: project.esPublico,
+    destacar,
+
+    rolProyecto: project.rolProyecto || undefined,
+    urlsAdicionales: project.urlsAdicionales ?? [],
+    fechaInicio: project.fechaInicio || undefined,
+    fechaFinalizacion: project.fechaFinalizacion || undefined,
+    estadoProyecto: project.estadoProyecto || "FINALIZADO",
+  };
 }
 
 export const projectService = {
@@ -144,25 +171,13 @@ export const projectService = {
     return result;
   },
 
-  toggleFeaturedProject: async (idProyecto: number, destacar: boolean) => {
-    const response = await fetch(
-      `${API_URL}/api/proyectos/${idProyecto}/destacar`,
-      {
-        method: "PATCH",
-        headers: getAuthHeaders(),
-        body: JSON.stringify({destacar}),
-      }
-    );
+  toggleFeaturedProject: async (
+    project: ProjectResponseDTO,
+    destacar: boolean
+  ) => {
+    const payload = mapProjectToUpdateDTO(project, destacar);
 
-    const result = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(
-        result?.message || "No se pudo actualizar el estado destacar."
-      );
-    }
-
-    return result;
+    return projectService.updateProject(project.idProyecto, payload);
   },
 
   getProjects: async (): Promise<ProjectResponseDTO[]> => {

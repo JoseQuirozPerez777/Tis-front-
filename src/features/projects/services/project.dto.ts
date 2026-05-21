@@ -19,10 +19,10 @@ export interface CreateProjectDTO {
   enlaceDemo?: string;
 
   urlsImagenes: string[];
-  urlPdf?: string;
+  urlPdfs: string[];
 
   esPublico: boolean;
-  destacar?: boolean;
+  destacar: boolean;
 
   rolProyecto?: string;
   urlsAdicionales?: string[];
@@ -45,10 +45,10 @@ export interface ProjectResponseDTO {
   enlaceGithub?: string;
   enlaceDemo?: string;
   urlsImagenes?: string[];
-  urlPdf?: string;
+  urlPdfs?: string[];
 
   esPublico: boolean;
-  destacar?: boolean;
+  destacar: boolean;
   idUsuario?: number;
 
   rolProyecto?: string;
