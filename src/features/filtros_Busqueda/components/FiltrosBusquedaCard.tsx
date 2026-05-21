@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { PortafolioResultado } from "../models/filtros-busqueda.model";
 
 interface FiltrosBusquedaCardProps {
@@ -7,6 +8,14 @@ interface FiltrosBusquedaCardProps {
 export const FiltrosBusquedaCard = ({
   portafolio,
 }: FiltrosBusquedaCardProps) => {
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    const fullUrl = `${window.location.origin}${portafolio.urlPublica}`;
+    navigator.clipboard.writeText(fullUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
   const iniciales = portafolio.nombreCompleto
     .split(" ")
     .slice(0, 2)
@@ -102,10 +111,34 @@ export const FiltrosBusquedaCard = ({
             </div>
           </div>
 
-          <div className="mt-5 flex justify-end">
+          <div className="mt-5 flex justify-end gap-3 items-center">
+            <button
+              onClick={copyToClipboard}
+              className={`flex items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold transition cursor-pointer select-none ${
+                copied
+                  ? 'bg-[#0f342b] border-[#25c48c]/30 text-[#34d399] shadow-[0_0_8px_rgba(52,211,153,0.15)]'
+                  : 'bg-brand-azul-medio/30 border-card-border text-text-secondary hover:border-brand-azul-brillante/50 hover:text-white hover:bg-brand-azul-medio/50'
+              }`}
+            >
+              {copied ? (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>¡Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 00-2 2h2a2 2 0 002-2M8 5a2 2 0 00-2 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span>Compartir</span>
+                </>
+              )}
+            </button>
             <a
               href={portafolio.urlPublica}
-              className="rounded-xl bg-brand-azul-brillante px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-azul-neon shadow-sm"
+              className="rounded-xl bg-brand-azul-brillante px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-azul-neon shadow-sm hover:shadow-[0_0_12px_rgba(47,128,237,0.3)]"
             >
               Ver perfil
             </a>
