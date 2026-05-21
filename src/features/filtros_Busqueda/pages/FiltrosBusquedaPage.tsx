@@ -1,13 +1,13 @@
 import { FiltrosBusquedaBar } from "../components/FiltrosBusquedaBar";
-import { FiltrosBusquedaPagination } from "../components/FiltrosBusquedaPagination";
+
 import { useFiltrosBusqueda } from "../hooks/useFiltrosBusqueda";
 
 export const FiltrosBusquedaPage = () => {
   const {
     filtros,
-    totalPaginas,
+
     cargando,
-    cambiarPagina,
+
     aplicarFiltros,
     actualizarFiltro,
   } = useFiltrosBusqueda();
@@ -34,18 +34,7 @@ export const FiltrosBusquedaPage = () => {
           />
         </div>
 
-        <div className="space-y-5">
 
-          <section className="space-y-4">
-
-            <FiltrosBusquedaPagination
-              paginaActual={filtros.pagina}
-              totalPaginas={totalPaginas}
-              cargando={cargando}
-              onCambiarPagina={cambiarPagina}
-            />
-          </section>
-        </div>
       </section>
     </main>
   );
