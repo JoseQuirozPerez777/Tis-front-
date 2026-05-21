@@ -5,5 +5,5 @@ export { UploadCVSection } from './components/UploadCVSection';
 export { ViewCVSection } from './components/ViewCVSection';
 export { ManageCVsSection } from './components/ManageCVsSection';
 export { useCVManagement } from './hooks/useCVManagement';
-export type { CVModel, CVTemplateModel, GenerateCVResponse, UploadCVResponse } from './models/cv.model';
+export type { CVModel, CVTemplateModel} from './models/cv.model';
 export { CVType, CVTemplate, CVLoadingState } from './models/cv.model';

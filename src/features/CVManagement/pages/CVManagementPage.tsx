@@ -11,7 +11,7 @@ interface CVManagementPageProps {
   onBack?: () => void;
 }
 
-export const CVManagementPage = ({ onBack }: CVManagementPageProps) => {
+export const CVManagementPage = ({}: CVManagementPageProps) => {
   const [currentView, setCurrentView] = useState<CVManagementView>('menu');
 
   const handleSelectOption = (option: string) => {
