@@ -36,8 +36,8 @@ export function validateProjectForm(form: ProjectFormModel): string | null {
     return "La descripción debe tener al menos 20 caracteres.";
   }
 
-  if (form.tecnologiasIds.length === 0) {
-    return "Debe agregar al menos una tecnología.";
+  if (form.tecnologiasIds.length === 0 && form.nuevasTecnologias.length === 0) {
+    return "Debe agregar al menos una tecnología existente o una nueva tecnología.";
   }
 
   if (!isValidUrl(form.urlRepositorio)) {

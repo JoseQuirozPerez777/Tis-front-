@@ -6,6 +6,7 @@ export interface ProfileUser {
   direccion: string;
   fotoPerfil?: string;
   correo?: string;
+   disponibilidad: string;
 }
 
 export interface PerfilBackendResponse {
@@ -16,6 +17,7 @@ export interface PerfilBackendResponse {
   telefono: string | null;
   direccion: string | null;
   correo: string;
+  disponibilidad: string | null;
 }
 
 export interface ProfileResponse {
@@ -27,6 +29,7 @@ export interface ProfileResponse {
     bio: string;
     telefono: string;
     direccion: string;
+    disponibilidad: string;
   };
 }
 

@@ -7,6 +7,12 @@ import { profileService } from '../services/profile.service';
 import { profileAdapter } from '../services/profile.adapter';
 import { useToast } from '@shared/hooks/useToast';
 
+const normalizarDisponibilidad = (
+  value?: string,
+): 'Disponible' | 'No disponible' => {
+  return value === 'No disponible' ? 'No disponible' : 'Disponible';
+};
+
 const storedProfile = profileService.getProfileLocal();
 
 export const useProfile = (onProfileUpdated?: () => void) => {
@@ -22,6 +28,7 @@ export const useProfile = (onProfileUpdated?: () => void) => {
       bio: storedProfile?.bio || '',
       telefono: storedProfile?.telefono || '',
       direccion: storedProfile?.direccion || '',
+      disponibilidad: normalizarDisponibilidad(storedProfile?.disponibilidad),
     },
     mode: 'onTouched',
   });
@@ -65,6 +72,7 @@ export const useProfile = (onProfileUpdated?: () => void) => {
       bio: storedProfile?.bio || '',
       telefono: storedProfile?.telefono || '',
       direccion: storedProfile?.direccion || '',
+      disponibilidad: normalizarDisponibilidad(storedProfile?.disponibilidad),
     });
 
     setServerError(null);

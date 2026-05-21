@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ShieldCheck,
   Link,
@@ -8,13 +9,24 @@ import {
   Plus,
   Trash2,
   X,
+  FileText,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useProjects } from "../hooks/useProjects";
+import type { ProjectResponseDTO } from "../services/project.dto";
 import "../styles/projects.css";
 
-export function ProjectForm() {
-  const navigate = useNavigate();
+interface Props {
+  projectToEdit?: ProjectResponseDTO | null;
+  onCancel?: () => void;
+  onSaved?: () => void;
+}
+
+export function ProjectForm({
+  projectToEdit = null,
+  onCancel,
+  onSaved,
+}: Props) {
+  const [newTechnologyInput, setNewTechnologyInput] = useState("");
 
   const {
     form,
@@ -22,16 +34,24 @@ export function ProjectForm() {
     loadingTechnologies,
     loading,
     message,
+    isEditMode,
     updateField,
     addTechnology,
     removeTechnology,
+    addNewTechnology,
+    removeNewTechnology,
     addAdditionalUrl,
     updateAdditionalUrl,
     removeAdditionalUrl,
     addImages,
     removeImage,
+    addPdfs,
+    removePdf,
     saveProject,
-  } = useProjects();
+  } = useProjects({
+    projectToEdit,
+    onSaved,
+  });
 
   const minDate = "1970-01-01";
   const today = new Date().toISOString().split("T")[0];
@@ -39,7 +59,12 @@ export function ProjectForm() {
   const isFinalizado = form.estadoProyecto === "FINALIZADO";
 
   function handleCancel() {
-    navigate(-1);
+    onCancel?.();
+  }
+
+  function handleAddNewTechnology() {
+    addNewTechnology(newTechnologyInput);
+    setNewTechnologyInput("");
   }
 
   return (
@@ -47,7 +72,7 @@ export function ProjectForm() {
       <section className="project-card">
         <h2>
           <ShieldCheck size={20} />
-          Información principal
+          {isEditMode ? "Editar proyecto" : "Información principal"}
         </h2>
 
         <div className="project-grid-2">
@@ -147,6 +172,50 @@ export function ProjectForm() {
             ))}
           </div>
         </div>
+
+        <div className="project-field">
+          <label>Nuevas tecnologías</label>
+
+          <div className="project-url-row">
+            <input
+              value={newTechnologyInput}
+              onChange={(e) => setNewTechnologyInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddNewTechnology();
+                }
+              }}
+              placeholder="Ej. NestJS, Docker, Prisma"
+              disabled={loading}
+            />
+
+            <button
+              type="button"
+              onClick={handleAddNewTechnology}
+              disabled={loading}
+              title="Agregar nueva tecnología"
+            >
+              <Plus size={17} />
+            </button>
+          </div>
+
+          <div className="project-chips" style={{ marginTop: "12px" }}>
+            {form.nuevasTecnologias.map((tech, index) => (
+              <span className="project-chip" key={`${tech}-${index}`}>
+                {tech}
+
+                <button
+                  type="button"
+                  onClick={() => removeNewTechnology(index)}
+                  disabled={loading}
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="project-card">
@@ -218,7 +287,7 @@ export function ProjectForm() {
         </h2>
 
         <div className="project-field">
-          <label>Imagen del proyecto</label>
+          <label>Imágenes del proyecto</label>
 
           <div className="project-image-grid">
             <label className="project-upload-box">
@@ -230,6 +299,7 @@ export function ProjectForm() {
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/jpg,image/webp"
+                multiple
                 onChange={(e) => {
                   addImages(e.target.files);
                   e.target.value = "";
@@ -256,6 +326,48 @@ export function ProjectForm() {
             ))}
           </div>
         </div>
+
+        <div className="project-field">
+          <label>Archivos PDF del proyecto</label>
+
+          <div className="project-image-grid">
+            <label className="project-upload-box">
+              <FileText size={32} />
+              <strong>Subir PDF</strong>
+              <span>Archivo PDF</span>
+              <small>Se subirá a Cloudinary al guardar</small>
+
+              <input
+                type="file"
+                accept="application/pdf"
+                multiple
+                onChange={(e) => {
+                  addPdfs(e.target.files);
+                  e.target.value = "";
+                }}
+                disabled={loading}
+              />
+            </label>
+
+            {form.pdfs.map((pdf, index) => (
+              <div className="project-pdf-preview" key={`${pdf.url}-${index}`}>
+                <FileText size={34} />
+                <strong>{pdf.nombre}</strong>
+                <a href={pdf.url} target="_blank" rel="noreferrer">
+                  Ver PDF
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => removePdf(index)}
+                  disabled={loading}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="project-card">
@@ -264,23 +376,23 @@ export function ProjectForm() {
           Información adicional
         </h2>
 
-          <div className="project-field">
-            <label>Estado del proyecto</label>
-            <select
-              value={form.estadoProyecto}
-              onChange={(e) =>
-                updateField(
-                  "estadoProyecto",
-                  e.target.value as typeof form.estadoProyecto
-                )
-              }
-              disabled={loading}
-            >
-              <option value="FINALIZADO">Finalizado</option>
-              <option value="EN_DESARROLLO">En desarrollo</option>
-              <option value="PAUSADO">Pausado</option>
-            </select>
-          </div>
+        <div className="project-field">
+          <label>Estado del proyecto</label>
+          <select
+            value={form.estadoProyecto}
+            onChange={(e) =>
+              updateField(
+                "estadoProyecto",
+                e.target.value as typeof form.estadoProyecto
+              )
+            }
+            disabled={loading}
+          >
+            <option value="FINALIZADO">Finalizado</option>
+            <option value="EN_DESARROLLO">En desarrollo</option>
+            <option value="PAUSADO">Pausado</option>
+          </select>
+        </div>
 
         <div className="project-grid-4">
           <div className="project-field">
@@ -311,7 +423,6 @@ export function ProjectForm() {
               </small>
             )}
           </div>
-
 
           <div className="project-field">
             <label>Privacidad</label>
@@ -348,7 +459,11 @@ export function ProjectForm() {
           disabled={loading}
         >
           <Save size={18} />
-          {loading ? message || "Guardando..." : "Guardar proyecto"}
+          {loading
+            ? message || "Guardando..."
+            : isEditMode
+              ? "Guardar cambios"
+              : "Guardar proyecto"}
         </button>
       </div>
     </div>

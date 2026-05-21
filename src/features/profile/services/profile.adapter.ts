@@ -8,5 +8,6 @@ export const profileAdapter = (user: ProfileUser): ProfileRequestDto => {
     bio: user.bio.trim(),
     telefono: user.telefono.trim(),
     direccion: user.direccion.trim(),
+    disponibilidad: user.disponibilidad,
   };
 };

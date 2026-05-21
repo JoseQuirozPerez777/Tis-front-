@@ -11,7 +11,7 @@ export interface BuscarPortafoliosRequestDTO {
   tecnologia?: string | null;
   formacionAcademica?: string | null;
   disponibilidad?: Disponibilidad | null;
-  modalidadTrabajo?: ModalidadTrabajo | null;
+  modalidadTrabajo?: "REMOTO" | "PRESENCIAL" | "HIBRIDO" | null;
   experienciaMinima?: number | null;
   idiomas?: string[] | null;
   ubicacion?: string | null;

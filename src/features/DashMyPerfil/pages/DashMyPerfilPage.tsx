@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/core/context/AuthContext';
+import { CVManagementPage } from '@/features/CVManagement';
 
 export const DashMyPerfilPage = () => {
     const { user } = useAuth();
@@ -50,6 +51,9 @@ export const DashMyPerfilPage = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    if (showCVManagement) {
+        return <CVManagementPage onBack={() => setShowCVManagement(false)} />;
+    }
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -179,7 +183,22 @@ export const DashMyPerfilPage = () => {
                         Gestionar habilidades →
                     </Link>
                 </div>
+
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/50 transition-colors group">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Gestión de CV</h3>
+                    <p className="text-text-secondary text-sm mb-4">
+                        Genera, sube y administra tu CV oficial desde aquí.
+                    </p>
+                    <button
+                    type="button"
+                    onClick={() => setShowCVManagement(true)}
+                    className="text-brand-azul-brillante font-medium text-sm hover:underline"
+                    >
+                    Ir a Gestión de CV →
+                    </button>
+                </div>
             </div>
         </div>
+                
     );
 };

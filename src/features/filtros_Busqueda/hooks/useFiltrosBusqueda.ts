@@ -105,12 +105,15 @@ export const useFiltrosBusqueda = () => {
   };
 
   const cambiarOrden = (ordenarPor: OrdenarPor) => {
-    setFiltros((prev) => ({
-      ...prev,
-      ordenarPor,
-      pagina: 1,
-    }));
+  const nuevosFiltros = {
+    ...filtros,
+    ordenarPor,
+    pagina: 1,
   };
+
+  setFiltros(nuevosFiltros);
+  buscarPortafolios(nuevosFiltros);
+};
 
   const cambiarPagina = (pagina: number) => {
     const nuevaPagina = Math.max(1, Math.min(pagina, totalPaginas));
@@ -149,13 +152,18 @@ export const useFiltrosBusqueda = () => {
   };
 
   const limpiarFiltros = () => {
-    setFiltros(filtrosBusquedaIniciales);
-    buscarPortafolios(filtrosBusquedaIniciales);
-  };
+  setFiltros(filtrosBusquedaIniciales);
+  setResultados([]);
+  setTotal(0);
+  setTotalPaginas(1);
+  setError(null);
+};
 
   useEffect(() => {
-    buscarPortafolios(filtrosBusquedaIniciales);
-  }, []);
+  setResultados([]);
+  setTotal(0);
+  setTotalPaginas(1);
+}, []);
 
   return {
     filtros,

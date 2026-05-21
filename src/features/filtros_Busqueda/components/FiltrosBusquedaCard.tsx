@@ -38,7 +38,7 @@ export const FiltrosBusquedaCard = ({
         </div>
 
         <div className="flex-1">
-          <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
               <h3 className="text-lg font-bold text-[#E2F0FF]">
                 {portafolio.nombreCompleto}
@@ -72,7 +72,7 @@ export const FiltrosBusquedaCard = ({
             </p>
           )}
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {portafolio.tecnologias.length > 0 ? (
               portafolio.tecnologias.slice(0, 5).map((tecnologia) => (
                 <span
