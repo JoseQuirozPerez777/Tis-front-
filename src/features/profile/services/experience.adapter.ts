@@ -68,8 +68,6 @@ export const adaptExperienceToCreateDto = (
   formData: ExperienceFormData,
 ): CreateExperienceDto => {
   return {
-
-
     nombreEmpresa: formData.empresa,
     cargoPuesto: formData.cargo,
 

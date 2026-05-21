@@ -16,8 +16,10 @@ import type {
 } from "../models/filtros-busqueda.model";
 
 import { buscarPortafoliosService } from "../services/filtros-busqueda.service";
+import { useAuth } from "@/core/context/AuthContext";
 
 export const useFiltrosBusqueda = () => {
+  const { user: currentUser } = useAuth();
   const [filtros, setFiltros] = useState<FiltrosBusqueda>(
     filtrosBusquedaIniciales,
   );
@@ -35,8 +37,17 @@ export const useFiltrosBusqueda = () => {
 
       const response = await buscarPortafoliosService(filtrosActuales);
 
-      setResultados(response.data);
-      setTotal(response.total);
+      // Exclude current logged in user from search results
+      const filteredData = response.data.filter(
+        (item) => String(item.id) !== String(currentUser?.id)
+      );
+
+      setResultados(filteredData);
+      
+      const containsCurrentUser = response.data.some(
+        (item) => String(item.id) === String(currentUser?.id)
+      );
+      setTotal(containsCurrentUser ? Math.max(0, response.total - 1) : response.total);
       setTotalPaginas(response.totalPaginas || 1);
     } catch (err) {
       setError(

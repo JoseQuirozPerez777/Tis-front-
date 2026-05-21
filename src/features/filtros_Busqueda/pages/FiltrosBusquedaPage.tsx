@@ -43,35 +43,35 @@ export const FiltrosBusquedaPage = () => {
         </div>
 
         <div className="space-y-5">
-  <FiltrosBusquedaPanel
-    filtros={filtros}
-    cargando={cargando}
-    onActualizarFiltro={actualizarFiltro}
-    onAplicarFiltros={aplicarFiltros}
-    onLimpiarFiltros={limpiarFiltros}
-  />
+          <FiltrosBusquedaPanel
+            filtros={filtros}
+            cargando={cargando}
+            onActualizarFiltro={actualizarFiltro}
+            onAplicarFiltros={aplicarFiltros}
+            onLimpiarFiltros={limpiarFiltros}
+          />
 
-  <section className="space-y-4">
-    <FiltrosBusquedaSort
-      valor={filtros.ordenarPor}
-      total={total}
-      onCambiarOrden={cambiarOrden}
-    />
+          <section className="space-y-4">
+            <FiltrosBusquedaSort
+              valor={filtros.ordenarPor}
+              total={total}
+              onCambiarOrden={cambiarOrden}
+            />
 
-    <FiltrosBusquedaList
-      resultados={resultados}
-      cargando={cargando}
-      error={error}
-    />
+            <FiltrosBusquedaList
+              resultados={resultados}
+              cargando={cargando}
+              error={error}
+            />
 
-    <FiltrosBusquedaPagination
-      paginaActual={filtros.pagina}
-      totalPaginas={totalPaginas}
-      cargando={cargando}
-      onCambiarPagina={cambiarPagina}
-    />
-  </section>
-</div>
+            <FiltrosBusquedaPagination
+              paginaActual={filtros.pagina}
+              totalPaginas={totalPaginas}
+              cargando={cargando}
+              onCambiarPagina={cambiarPagina}
+            />
+          </section>
+        </div>
       </section>
     </main>
   );
