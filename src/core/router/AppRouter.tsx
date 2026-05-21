@@ -6,7 +6,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { LandingPage } from '@features/landing';
 import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
-import { ProfilePage } from '@features/profile';
+import { ProfilePage, PortafolioViewPage } from '@features/profile';
 import { DashboardPage } from '@features/dashboard';
 
 import { AcademicTrainingPage, AcademicTrainingFormPage } from '@features/AcademicTraining';
@@ -16,6 +16,7 @@ import { ExperiencePage } from '@features/profile/pages/ExperiencePage';
 import { DashMyPerfilPage } from '@features/DashMyPerfil';
 
 import { HabilidadesTecnicasPage } from '@features/habilidades-tecnicas/pages/HabilidadesTecnicasPage';
+import { FiltrosBusquedaPage } from '@features/filtros_Busqueda';
 
 export const AppRouter = () => {
   return (
@@ -38,6 +39,9 @@ export const AppRouter = () => {
 
           <Route path="/skills" element={<HabilidadesTecnicasPage />} />
           <Route path="/habilidades-tecnicas" element={<HabilidadesTecnicasPage />} />
+
+          <Route path="/buscar-portafolios" element={<FiltrosBusquedaPage />} />
+          <Route path="/portafolio/:id" element={<PortafolioViewPage />} />
 
           <Route path="/academic-training" element={<AcademicTrainingPage />} />
           <Route path="/professional-links" element={<ProfessionalLinksPage />} />

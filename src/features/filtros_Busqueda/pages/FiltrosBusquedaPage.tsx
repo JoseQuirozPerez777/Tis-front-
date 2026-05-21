@@ -1,23 +1,15 @@
 import { FiltrosBusquedaBar } from "../components/FiltrosBusquedaBar";
-import { FiltrosBusquedaList } from "../components/FiltrosBusquedaList";
 import { FiltrosBusquedaPagination } from "../components/FiltrosBusquedaPagination";
-import { FiltrosBusquedaPanel } from "../components/FiltrosBusquedaPanel";
-import { FiltrosBusquedaSort } from "../components/FiltrosBusquedaSort";
 import { useFiltrosBusqueda } from "../hooks/useFiltrosBusqueda";
 
 export const FiltrosBusquedaPage = () => {
   const {
     filtros,
-    resultados,
-    total,
     totalPaginas,
     cargando,
-    error,
-    actualizarFiltro,
-    cambiarOrden,
     cambiarPagina,
     aplicarFiltros,
-    limpiarFiltros,
+    actualizarFiltro,
   } = useFiltrosBusqueda();
 
   return (
@@ -43,35 +35,17 @@ export const FiltrosBusquedaPage = () => {
         </div>
 
         <div className="space-y-5">
-  <FiltrosBusquedaPanel
-    filtros={filtros}
-    cargando={cargando}
-    onActualizarFiltro={actualizarFiltro}
-    onAplicarFiltros={aplicarFiltros}
-    onLimpiarFiltros={limpiarFiltros}
-  />
 
-  <section className="space-y-4">
-    <FiltrosBusquedaSort
-      valor={filtros.ordenarPor}
-      total={total}
-      onCambiarOrden={cambiarOrden}
-    />
+          <section className="space-y-4">
 
-    <FiltrosBusquedaList
-      resultados={resultados}
-      cargando={cargando}
-      error={error}
-    />
-
-    <FiltrosBusquedaPagination
-      paginaActual={filtros.pagina}
-      totalPaginas={totalPaginas}
-      cargando={cargando}
-      onCambiarPagina={cambiarPagina}
-    />
-  </section>
-</div>
+            <FiltrosBusquedaPagination
+              paginaActual={filtros.pagina}
+              totalPaginas={totalPaginas}
+              cargando={cargando}
+              onCambiarPagina={cambiarPagina}
+            />
+          </section>
+        </div>
       </section>
     </main>
   );
