@@ -31,6 +31,7 @@ export const useAcademicTraining = () => {
   const [status, setStatus] = useState(editingTraining?.status || '');
   const [description, setDescription] = useState(editingTraining?.description || '');
   const [certificateTest, setCertificateTest] = useState<File | null>(null);
+  const [certificateUrl, setCertificateUrl] = useState(editingTraining?.certificateUrl || '');
 
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
@@ -57,7 +58,19 @@ export const useAcademicTraining = () => {
       return;
     }
 
+    if (endDate && startDate > endDate) {
+      showToast('La fecha de inicio no puede ser mayor que la fecha de finalización.', 'error');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      let uploadedUrl = certificateUrl;
+      if (certificateTest) {
+        uploadedUrl = await academicTrainingService.uploadToCloudinary(certificateTest);
+        setCertificateUrl(uploadedUrl); // Update state with new URL
+      }
+
       const trainingData = {
         institution,
         degree,
@@ -68,6 +81,7 @@ export const useAcademicTraining = () => {
         status,
         description,
         certificateTest,
+        certificateUrl: uploadedUrl,
       };
 
       if (id) {
@@ -96,6 +110,7 @@ export const useAcademicTraining = () => {
     setStatus('');
     setDescription('');
     setCertificateTest(null);
+    setCertificateUrl('');
     navigate(-1);
   };
 
@@ -109,6 +124,7 @@ export const useAcademicTraining = () => {
     status, setStatus,
     description, setDescription,
     certificateTest, setCertificateTest,
+    certificateUrl, setCertificateUrl,
     isLoading,
     isEditing: !!id,
     handleAddTraining,

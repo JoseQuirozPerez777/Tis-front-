@@ -9,4 +9,5 @@ export interface AcademicTraining {
   status: string;
   description: string;
   certificateTest: File | null;
+  certificateUrl?: string;
 }

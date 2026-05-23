@@ -69,14 +69,11 @@ function mapProjectToForm(
         descripcion: "Imagen del proyecto",
       })) || [],
 
-pdfs: project.urlPdf
-  ? [
-      {
-        url: project.urlPdf,
-        nombre: "PDF del proyecto",
-      },
-    ]
-  : [],
+    pdfs:
+      project.urlPdfs?.map((url, index) => ({
+        url,
+        nombre: `PDF del proyecto ${index + 1}`,
+      })) || [],
 
     fechaInicio: project.fechaInicio || "",
     fechaFinalizacion: project.fechaFinalizacion || "",
@@ -336,26 +333,35 @@ export function useProjects(options?: UseProjectsOptions) {
         })
       );
 
-const urlPdf =
-  form.pdfs.length > 0
-    ? form.pdfs[0].file
-      ? await projectService.uploadPdfToCloudinary(form.pdfs[0].file)
-      : form.pdfs[0].url
-    : undefined;
+      const urlPdfs = await Promise.all(
+        form.pdfs.map(async (pdf) => {
+          if (pdf.file) {
+            return projectService.uploadPdfToCloudinary(pdf.file);
+          }
+
+          return pdf.url;
+        })
+      );
 
       const payload = {
         titulo: form.nombreProyecto,
         descripcion: form.descripcionProyecto,
         tecnologiaIds: form.tecnologiasIds,
         nuevasTecnologias: form.nuevasTecnologias,
+
         enlaceGithub: form.urlRepositorio || undefined,
         enlaceDemo: form.urlDemo || undefined,
+
         urlsImagenes,
-        urlPdf,
+        urlPdfs,
+
         esPublico: form.privacidad === "PUBLICO",
+        destacar: projectToEdit?.destacar ?? false,
 
         rolProyecto: form.rolProyecto || undefined,
-        urlsAdicionales: form.urlsAdicionales.filter((url) => url.trim() !== ""),
+        urlsAdicionales: form.urlsAdicionales.filter(
+          (url) => url.trim() !== ""
+        ),
         fechaInicio: form.fechaInicio || undefined,
         fechaFinalizacion:
           form.estadoProyecto === "FINALIZADO"
@@ -364,7 +370,9 @@ const urlPdf =
         estadoProyecto: form.estadoProyecto,
       };
 
-      setMessage(isEditMode ? "Actualizando proyecto..." : "Guardando proyecto...");
+      setMessage(
+        isEditMode ? "Actualizando proyecto..." : "Guardando proyecto..."
+      );
 
       if (isEditMode && projectToEdit) {
         await projectService.updateProject(projectToEdit.idProyecto, payload);

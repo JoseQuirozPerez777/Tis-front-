@@ -45,11 +45,10 @@ export const FiltrosBusquedaCard = ({ portafolio }: FiltrosBusquedaCardProps) =>
             </div>
 
             <span
-              className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
-                portafolio.disponibilidad === "Disponible"
-                  ? "bg-emerald-500/15 text-emerald-300"
-                  : "bg-yellow-500/15 text-yellow-300"
-              }`}
+              className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${portafolio.disponibilidad === "Disponible"
+                ? "bg-emerald-500/15 text-emerald-300"
+                : "bg-yellow-500/15 text-yellow-300"
+                }`}
             >
               {portafolio.disponibilidad || "Sin estado"}
             </span>
@@ -79,21 +78,21 @@ export const FiltrosBusquedaCard = ({ portafolio }: FiltrosBusquedaCardProps) =>
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-  <span className="text-xs font-semibold text-text-secondary">Idiomas:</span>
+            <span className="text-xs font-semibold text-text-secondary">Idiomas:</span>
 
-  {portafolio.idiomas.length > 0 ? (
-    portafolio.idiomas.map((idioma) => (
-      <span
-        key={idioma}
-        className="rounded-full border border-card-border bg-[#061327] px-3 py-1 text-xs font-medium text-[#E2F0FF]"
-      >
-        {idioma}
-      </span>
-    ))
-  ) : (
-    <span className="text-xs text-text-secondary">No registrados</span>
-  )}
-</div>
+            {portafolio.idiomas.length > 0 ? (
+              portafolio.idiomas.map((idioma) => (
+                <span
+                  key={idioma}
+                  className="rounded-full border border-card-border bg-[#061327] px-3 py-1 text-xs font-medium text-[#E2F0FF]"
+                >
+                  {idioma}
+                </span>
+              ))
+            ) : (
+              <span className="text-xs text-text-secondary">No registrados</span>
+            )}
+          </div>
 
           <div className="mt-5 grid gap-3 text-sm text-text-primary md:grid-cols-4">
             <div className="rounded-xl border border-card-border bg-[#061327] p-3">

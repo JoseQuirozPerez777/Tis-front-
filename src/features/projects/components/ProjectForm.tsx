@@ -368,6 +368,7 @@ export function ProjectForm({
             ))}
           </div>
         </div>
+        
       </section>
 
       <section className="project-card">
