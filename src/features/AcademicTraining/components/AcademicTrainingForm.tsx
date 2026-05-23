@@ -114,7 +114,7 @@ export const AcademicTrainingForm = () => {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               required
-              max={today}
+              max={endDate || today}
               className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
             />
 
@@ -123,6 +123,7 @@ export const AcademicTrainingForm = () => {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
+              min={startDate}
               max={today}
               className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
             />

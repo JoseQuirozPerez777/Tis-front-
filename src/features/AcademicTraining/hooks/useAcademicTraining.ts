@@ -58,6 +58,12 @@ export const useAcademicTraining = () => {
       return;
     }
 
+    if (endDate && startDate > endDate) {
+      showToast('La fecha de inicio no puede ser mayor que la fecha de finalización.', 'error');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       let uploadedUrl = certificateUrl;
       if (certificateTest) {
