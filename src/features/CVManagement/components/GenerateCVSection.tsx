@@ -128,6 +128,25 @@ const generateCVHTML = (data: any, templateId: string): string => {
       <title>CV - ${data.nombre || 'Usuario'}</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+      body,
+      .container,
+      .content,
+      .section,
+      .section p,
+      .section div,
+      .education-item,
+      .education-item div,
+      .job-item,
+      .job-item div {
+      color: #1f2937 !important;
+      }
+      
+      .header,
+      .header *,
+      .contact-info,
+      .contact-info * {
+      color: inherit;
+      }
         ${styleTheme}
         .job-item, .education-item { margin-bottom: 20px; }
         .job-title { font-weight: bold; font-size: 1.1em; }
