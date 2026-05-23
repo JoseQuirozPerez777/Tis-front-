@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useAcademicTraining } from '../hooks/useAcademicTraining';
@@ -18,6 +19,33 @@ export const AcademicTrainingForm = () => {
     handleAddTraining,
     handleCancel,
   } = useAcademicTraining();
+
+  const getTodayString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const today = getTodayString();
+  const showStatusField = endDate && endDate < today;
+
+  useEffect(() => {
+    const todayStr = getTodayString();
+    if (!endDate) {
+      if (status !== 'EN_CURSO') setStatus('EN_CURSO');
+    } else if (endDate === todayStr) {
+      if (status !== 'FINALIZADO') setStatus('FINALIZADO');
+    } else if (endDate > todayStr) {
+      if (status !== 'EN_CURSO') setStatus('EN_CURSO');
+    } else {
+      // endDate < todayStr
+      if (status !== 'FINALIZADO' && status !== 'INCOMPLETO') {
+        setStatus('');
+      }
+    }
+  }, [endDate, status, setStatus]);
 
   return (
     <div className="w-full max-w-lg mx-auto p-8 md:p-10 bg-brand-azul-profundo/40 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] animate-in fade-in slide-in-from-bottom-8 duration-1000">
@@ -86,6 +114,7 @@ export const AcademicTrainingForm = () => {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               required
+              max={today}
               className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
             />
 
@@ -94,50 +123,42 @@ export const AcademicTrainingForm = () => {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
+              max={today}
               className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
             />
           </div>
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium text-text-secondary ml-1">
-              Estado
-            </label>
-            <div className="flex flex-col gap-3 pl-1">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="status"
-                  value="EN_CURSO"
-                  checked={status === 'EN_CURSO'}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-4 h-4 accent-brand-accent-neon"
-                />
-                <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">En curso</span>
+          {showStatusField && (
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-sm font-medium text-text-secondary ml-1">
+                Estado
               </label>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="status"
-                  value="FINALIZADO"
-                  checked={status === 'FINALIZADO'}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-4 h-4 accent-brand-accent-neon"
-                />
-                <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">Finalizado</span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="status"
-                  value="INCOMPLETO"
-                  checked={status === 'INCOMPLETO'}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-4 h-4 accent-brand-accent-neon"
-                />
-                <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">Incompleto</span>
-              </label>
+              <div className="flex flex-col gap-3 pl-1">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="FINALIZADO"
+                    checked={status === 'FINALIZADO'}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-4 h-4 accent-brand-accent-neon"
+                  />
+                  <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">Finalizado</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="INCOMPLETO"
+                    checked={status === 'INCOMPLETO'}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-4 h-4 accent-brand-accent-neon"
+                  />
+                  <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">Incompleto</span>
+                </label>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium text-text-secondary ml-1">
