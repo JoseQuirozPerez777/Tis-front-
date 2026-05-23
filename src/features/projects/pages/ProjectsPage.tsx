@@ -35,8 +35,8 @@ export function ProjectsPage() {
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-const [projectPendingDelete, setProjectPendingDelete] =
-  useState<ProjectResponseDTO | null>(null);
+  const [projectPendingDelete, setProjectPendingDelete] =
+    useState<ProjectResponseDTO | null>(null);
 
   const technologyNameById = useMemo(() => {
     return technologies.reduce<Record<number, string>>((acc, technology) => {
@@ -73,49 +73,59 @@ const [projectPendingDelete, setProjectPendingDelete] =
   useEffect(() => {
     void cargarProyectos();
   }, []);
-useEffect(() => {
-  if (!deleteMessage) return;
 
-  const timer = setTimeout(() => {
-    setDeleteMessage("");
-  }, 3000);
+  useEffect(() => {
+    if (!deleteMessage) return;
 
-  return () => clearTimeout(timer);
-}, [deleteMessage]);
+    const timer = setTimeout(() => {
+      setDeleteMessage("");
+    }, 3000);
 
-const handleOpenDeleteModal = (proyecto: ProjectResponseDTO) => {
-  setProjectPendingDelete(proyecto);
-};
+    return () => clearTimeout(timer);
+  }, [deleteMessage]);
 
-const handleConfirmDeleteProject = async () => {
-  if (!projectPendingDelete) return;
+  useEffect(() => {
+    if (!featuredMessage) return;
 
-  try {
-    setDeletingProjectId(projectPendingDelete.idProyecto);
-    setDeleteMessage("");
-    setFeaturedMessage("");
+    const timer = setTimeout(() => {
+      setFeaturedMessage("");
+    }, 3000);
 
-    await deleteProject(projectPendingDelete.idProyecto);
+    return () => clearTimeout(timer);
+  }, [featuredMessage]);
 
-    setProyectos((prev) =>
-      prev.filter(
-        (item) => item.idProyecto !== projectPendingDelete.idProyecto
-      )
-    );
+  const handleOpenDeleteModal = (proyecto: ProjectResponseDTO) => {
+    setProjectPendingDelete(proyecto);
+  };
 
-    setDeleteMessage("Proyecto eliminado.");
-    setProjectPendingDelete(null);
-  } catch (error) {
-    setDeleteMessage(
-      error instanceof Error
-        ? error.message
-        : "No se pudo eliminar el proyecto."
-    );
-  } finally {
-    setDeletingProjectId(null);
-  }
-};
+  const handleConfirmDeleteProject = async () => {
+    if (!projectPendingDelete) return;
 
+    try {
+      setDeletingProjectId(projectPendingDelete.idProyecto);
+      setDeleteMessage("");
+      setFeaturedMessage("");
+
+      await deleteProject(projectPendingDelete.idProyecto);
+
+      setProyectos((prev) =>
+        prev.filter(
+          (item) => item.idProyecto !== projectPendingDelete.idProyecto
+        )
+      );
+
+      setDeleteMessage("Proyecto eliminado.");
+      setProjectPendingDelete(null);
+    } catch (error) {
+      setDeleteMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudo eliminar el proyecto."
+      );
+    } finally {
+      setDeletingProjectId(null);
+    }
+  };
 
   const handleToggleFeatured = async (proyecto: ProjectResponseDTO) => {
     try {
@@ -125,7 +135,7 @@ const handleConfirmDeleteProject = async () => {
 
       const nextValue = !proyecto.destacar;
 
-      await toggleFeaturedProject(proyecto.idProyecto, nextValue);
+      await toggleFeaturedProject(proyecto, nextValue);
 
       setProyectos((prev) =>
         prev.map((item) =>
@@ -137,14 +147,14 @@ const handleConfirmDeleteProject = async () => {
 
       setFeaturedMessage(
         nextValue
-          ? "Proyecto marcado como destacar."
-          : "Proyecto quitado de destacar."
+          ? "Proyecto marcado como destacado."
+          : "Proyecto quitado de destacados."
       );
     } catch (error) {
       setFeaturedMessage(
         error instanceof Error
           ? error.message
-          : "No se pudo actualizar el destacar."
+          : "No se pudo actualizar el destacado."
       );
     } finally {
       setUpdatingFeaturedId(null);
@@ -247,7 +257,7 @@ const handleConfirmDeleteProject = async () => {
                 key={proyecto.idProyecto}
                 className={`bg-card-bg/50 backdrop-blur-sm border rounded-2xl p-5 transition-colors ${
                   proyecto.destacar
-                    ? "border-yellow-400 shadow-[0_0_0_1px_rgba(250,204,21,0.35),0_12px_32px_rgba(250,204,21,0.12)]"
+                    ? " "
                     : "border-card-border hover:border-[#10B981]/50"
                 }`}
               >
@@ -260,7 +270,7 @@ const handleConfirmDeleteProject = async () => {
 
                       {proyecto.destacar && (
                         <span className="inline-flex w-fit mt-2 bg-yellow-400/10 border border-yellow-400 text-yellow-200 px-3 py-1 rounded-full text-xs font-extrabold">
-                          ★ destacar
+                          ★ Destacado
                         </span>
                       )}
 
@@ -277,7 +287,7 @@ const handleConfirmDeleteProject = async () => {
                       </span>
                     </div>
                   </div>
-
+</div>
                   <p className="text-text-secondary text-sm mt-3">
                     {proyecto.descripcion}
                   </p>
@@ -379,32 +389,40 @@ const handleConfirmDeleteProject = async () => {
                     </div>
                   )}
 
-
-{proyecto.urlPdf && (
+{proyecto.urlPdfs && proyecto.urlPdfs.length > 0 && (
   <div className="mt-6">
     <p className="text-text-secondary text-sm font-semibold mb-3">
-      PDF del proyecto
+      PDFs del proyecto
     </p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {proyecto.urlPdfs.map((pdfUrl, index) => {
+        const pdfName = `PDF ${index + 1}`;
+        return (
+          <div
+            key={`${pdfUrl}-${index}`}
+            className="bg-[#0F223D] border border-card-border rounded-2xl p-5 flex flex-col items-center text-center"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-400/30 flex items-center justify-center mb-3">
+              <span className="text-4xl">📄</span>
+            </div>
 
-    <div className="w-full h-72 rounded-2xl overflow-hidden bg-[#0F223D] border border-card-border">
-<iframe
-  src={`${proyecto.urlPdf}#toolbar=0`}
-  title={`${proyecto.titulo} PDF`}
-  className="w-full h-full bg-white"
-/>
+            <p className="text-text-primary font-semibold text-sm  w-full">
+              {pdfName}
+            </p>
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block mt-3 text-brand-azul-brillante hover:underline font-semibold text-sm"
+            >
+              Ver PDF completo
+            </a>
+          </div>
+        );
+      })}
     </div>
-
-<a
-  href={proyecto.urlPdf}
-  target="_blank"
-  rel="noreferrer"
->
-  Ver PDF completo
-</a>
   </div>
 )}
-                  
-                </div>
 
                 <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-card-border">
                   <button
@@ -416,7 +434,7 @@ const handleConfirmDeleteProject = async () => {
                     {updatingFeaturedId === proyecto.idProyecto
                       ? "Actualizando..."
                       : proyecto.destacar
-                        ? "Quitar destacar"
+                        ? "Quitar destacado"
                         : "Destacar"}
                   </button>
 
@@ -433,7 +451,8 @@ const handleConfirmDeleteProject = async () => {
 
                   <button
                     type="button"
-onClick={() => handleOpenDeleteModal(proyecto)}                    disabled={deletingProjectId === proyecto.idProyecto}
+                    onClick={() => handleOpenDeleteModal(proyecto)}
+                    disabled={deletingProjectId === proyecto.idProyecto}
                     className="border border-red-500 bg-red-500/10 text-red-300 px-5 py-2.5 rounded-xl font-bold hover:bg-red-500/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {deletingProjectId === proyecto.idProyecto
@@ -473,50 +492,49 @@ onClick={() => handleOpenDeleteModal(proyecto)}                    disabled={del
         </div>
       )}
 
-{projectPendingDelete && (
-  <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-    <div className="w-full max-w-md bg-[#102B4C] border border-red-500/40 rounded-2xl shadow-2xl p-6">
-      <h3 className="text-xl font-bold text-white">
-        Eliminar proyecto
-      </h3>
+      {projectPendingDelete && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#102B4C] border border-red-500/40 rounded-2xl shadow-2xl p-6">
+            <h3 className="text-xl font-bold text-white">
+              Eliminar proyecto
+            </h3>
 
-      <p className="text-slate-300 text-sm mt-3 leading-relaxed">
-        ¿Estás seguro de eliminar definitivamente el proyecto{" "}
-        <span className="font-bold text-white">
-          "{projectPendingDelete.titulo}"
-        </span>
-        ?
-      </p>
+            <p className="text-slate-300 text-sm mt-3 leading-relaxed">
+              ¿Estás seguro de eliminar definitivamente el proyecto{" "}
+              <span className="font-bold text-white">
+                "{projectPendingDelete.titulo}"
+              </span>
+              ?
+            </p>
 
-      <p className="text-red-300 text-sm mt-3">
-        Esta acción no se puede deshacer.
-      </p>
+            <p className="text-red-300 text-sm mt-3">
+              Esta acción no se puede deshacer.
+            </p>
 
-      <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-        <button
-          type="button"
-          onClick={() => setProjectPendingDelete(null)}
-          disabled={deletingProjectId === projectPendingDelete.idProyecto}
-          className="px-5 py-2.5 rounded-xl font-bold border border-slate-500 text-slate-200 hover:bg-white/10 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          Cancelar
-        </button>
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+              <button
+                type="button"
+                onClick={() => setProjectPendingDelete(null)}
+                disabled={deletingProjectId === projectPendingDelete.idProyecto}
+                className="px-5 py-2.5 rounded-xl font-bold border border-slate-500 text-slate-200 hover:bg-white/10 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                Cancelar
+              </button>
 
-        <button
-          type="button"
-          onClick={handleConfirmDeleteProject}
-          disabled={deletingProjectId === projectPendingDelete.idProyecto}
-          className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {deletingProjectId === projectPendingDelete.idProyecto
-            ? "Eliminando..."
-            : "Sí, eliminar"}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+              <button
+                type="button"
+                onClick={handleConfirmDeleteProject}
+                disabled={deletingProjectId === projectPendingDelete.idProyecto}
+                className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {deletingProjectId === projectPendingDelete.idProyecto
+                  ? "Eliminando..."
+                  : "Sí, eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
