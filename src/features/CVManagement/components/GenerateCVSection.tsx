@@ -220,10 +220,16 @@ const generateCVHTML = (data: any, templateId: string): string => {
               <h2 class="section-title">🚀 Proyectos</h2>
               ${data.proyectos.map((proj: any) => `
                 <div class="job-item">
-                  <div class="job-title">${proj.titulo || 'Proyecto sin título'}</div>
+                  <div class="job-title">${proj.titulo || 'Proyecto sin título'}
+                  ${proj.destacar ? `<span class="skill-tag">Destacado</span>` : ''}
+                  </div>
                   <div>${proj.descripcion || ''}</div>
-                  <div>Tecnologías: ${proj.tecnologias?.join(', ') || ''}</div>
+                  <div>Tecnologías: ${proj.tecnologias?.join(', ') || 'No especificadas'}</div>
                   ${proj.enlaceGithub ? `<div>🔗 <a href="${proj.enlaceGithub}">GitHub</a></div>` : ''}
+                  ${proj.enlaceDemo ? `
+                    <div>🌐 <a href="${proj.enlaceDemo}">Demo</a></div> ` : ''}
+                  ${proj.urlPdf ? `
+                    div>📄 <a href="${proj.urlPdf}">Ver PDF del proyecto</a></div> ` : ''}
                 </div>
               `).join('')}
             </div>
