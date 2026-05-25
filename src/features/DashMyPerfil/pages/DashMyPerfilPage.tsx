@@ -138,7 +138,7 @@ export const DashMyPerfilPage = () => {
                 </div>
 
                 <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-morado/50 transition-colors group">
-                    <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades</h3>
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Habilidades tecnicas</h3>
                     <p className="text-text-secondary text-sm mb-4">
                         Añade y organiza tus habilidades técnicas .
                     </p>

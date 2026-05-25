@@ -1,5 +1,7 @@
+import { uploadToCloudinary } from "@/core/api/cloudinary-upload";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
+
 import type {
   HabilidadBlanda,
   HabilidadBlandaPayload,
@@ -43,8 +45,12 @@ const emptyForm: FormState = {
 export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [archivo, setArchivo] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    setArchivo(null);
+
     if (selected) {
       setForm({
         id: selected.id,
@@ -85,30 +91,48 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
       return;
     }
 
-    const data: HabilidadBlandaPayload = {
-      nombre: form.nombre.trim(),
-      idCategoria: Number(form.idCategoria),
-      descripcion: form.descripcion.trim(),
-      evidenciaUrl: form.evidenciaUrl.trim(),
-    };
-
-    if (form.id) {
-      data.id = form.id;
-    }
-
     try {
       setSaving(true);
+
+      let evidenciaUrl = form.evidenciaUrl;
+
+      if (archivo) {
+        setUploading(true);
+        evidenciaUrl = await uploadToCloudinary(archivo);
+      }
+
+      const data: HabilidadBlandaPayload = {
+        nombre: form.nombre.trim(),
+        idCategoria: Number(form.idCategoria),
+        descripcion: form.descripcion.trim(),
+        evidenciaUrl: evidenciaUrl.trim(),
+      };
+
+      if (form.id) {
+        data.id = form.id;
+      }
 
       console.log("DATA HABILIDAD BLANDA ENVIADA:", data);
 
       await onSave(data);
+
+      setArchivo(null);
       setForm(emptyForm);
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error al guardar la habilidad blanda"
+      );
     } finally {
       setSaving(false);
+      setUploading(false);
     }
   };
 
   const handleCancel = () => {
+    setArchivo(null);
     setForm(emptyForm);
     onCancel();
   };
@@ -141,11 +165,13 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
       >
         <option value="">Seleccione una categoría</option>
 
-        {categorias.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.tipo} - {cat.nombre}
-          </option>
-        ))}
+        {categorias
+          .filter((cat) => cat.tipo === "BLANDA")
+          .map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.tipo} - {cat.nombre}
+            </option>
+          ))}
       </select>
 
       <label className="block text-sm mb-1 text-gray-300">
@@ -160,22 +186,58 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
       />
 
       <label className="block text-sm mb-1 text-gray-300">
-        URL de evidencia
+        Subir archivos
       </label>
-      <input
-        name="evidenciaUrl"
-        value={form.evidenciaUrl}
-        onChange={handleChange}
-        placeholder="https://..."
-        className="w-full p-2 mb-4 bg-slate-800 rounded text-white outline-none border border-slate-700"
-      />
+
+      <div className="mb-3">
+        <input
+          id="archivo-habilidad-blanda"
+          type="file"
+          onChange={(e) => setArchivo(e.target.files?.[0] || null)}
+          className="hidden"
+        />
+
+        <label
+          htmlFor="archivo-habilidad-blanda"
+          className="inline-flex items-center justify-center px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded cursor-pointer text-white font-medium"
+        >
+          Seleccionar archivo
+        </label>
+
+        {archivo && (
+          <div className="mt-2 flex items-center justify-between bg-slate-800 border border-slate-700 rounded p-2">
+            <p className="text-sm text-gray-300 truncate">{archivo.name}</p>
+
+            <button
+              type="button"
+              onClick={() => setArchivo(null)}
+              className="ml-3 text-sm text-red-400 hover:text-red-300"
+            >
+              Quitar
+            </button>
+          </div>
+        )}
+      </div>
+
+      {form.evidenciaUrl && !archivo && (
+        <a
+          href={form.evidenciaUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-blue-400 underline mb-3 inline-block"
+        >
+          Ver archivo actual
+        </a>
+      )}
 
       <button
         onClick={handleSubmit}
-        disabled={saving}
+        disabled={saving || uploading}
         className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900 p-2 rounded font-semibold"
       >
-        {saving
+        {uploading
+          ? "Subiendo archivo..."
+          : saving
           ? "Guardando..."
           : form.id
           ? "Actualizar habilidad"

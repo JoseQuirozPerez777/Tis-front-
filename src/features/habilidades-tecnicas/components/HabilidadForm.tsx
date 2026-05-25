@@ -1,5 +1,7 @@
+import { uploadToCloudinary } from "@/core/api/cloudinary-upload";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
+
 import type {
   HabilidadTecnica,
   HabilidadTecnicaPayload,
@@ -48,8 +50,12 @@ const emptyForm: FormState = {
 export const HabilidadForm = ({ selected, onSave, onCancel }: Props) => {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [archivo, setArchivo] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    setArchivo(null);
+
     if (selected) {
       setForm({
         id: selected.id,
@@ -92,32 +98,50 @@ export const HabilidadForm = ({ selected, onSave, onCancel }: Props) => {
       return;
     }
 
-    const data: HabilidadTecnicaPayload = {
-      nombre: form.nombre.trim(),
-      idCategoria: Number(form.idCategoria),
-      nivelDominio: form.nivelDominio,
-      anosExperiencia: Number(form.anosExperiencia || 0),
-      descripcion: form.descripcion.trim(),
-      certificadoUrl: form.certificadoUrl.trim(),
-    };
-
-    if (form.id) {
-      data.id = form.id;
-    }
-
     try {
       setSaving(true);
+
+      let certificadoUrl = form.certificadoUrl;
+
+      if (archivo) {
+        setUploading(true);
+        certificadoUrl = await uploadToCloudinary(archivo);
+      }
+
+      const data: HabilidadTecnicaPayload = {
+        nombre: form.nombre.trim(),
+        idCategoria: Number(form.idCategoria),
+        nivelDominio: form.nivelDominio,
+        anosExperiencia: Number(form.anosExperiencia || 0),
+        descripcion: form.descripcion.trim(),
+        certificadoUrl: certificadoUrl.trim(),
+      };
+
+      if (form.id) {
+        data.id = form.id;
+      }
 
       console.log("DATA HABILIDAD TECNICA ENVIADA:", data);
 
       await onSave(data);
+
+      setArchivo(null);
       setForm(emptyForm);
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Error al guardar la habilidad técnica"
+      );
     } finally {
       setSaving(false);
+      setUploading(false);
     }
   };
 
   const handleCancel = () => {
+    setArchivo(null);
     setForm(emptyForm);
     onCancel();
   };
@@ -139,9 +163,7 @@ export const HabilidadForm = ({ selected, onSave, onCancel }: Props) => {
         className="w-full p-2 mb-3 bg-slate-800 rounded text-white outline-none border border-slate-700"
       />
 
-      <label className="block text-sm mb-1 text-gray-300">
-        Categoría
-      </label>
+      <label className="block text-sm mb-1 text-gray-300">Categoría</label>
       <select
         name="idCategoria"
         value={form.idCategoria}
@@ -150,11 +172,13 @@ export const HabilidadForm = ({ selected, onSave, onCancel }: Props) => {
       >
         <option value="">Seleccione una categoría</option>
 
-        {categorias.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.tipo} - {cat.nombre}
-          </option>
-        ))}
+        {categorias
+          .filter((cat) => cat.tipo === "TECNICA")
+          .map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.tipo} - {cat.nombre}
+            </option>
+          ))}
       </select>
 
       <label className="block text-sm mb-1 text-gray-300">
@@ -184,9 +208,7 @@ export const HabilidadForm = ({ selected, onSave, onCancel }: Props) => {
         className="w-full p-2 mb-3 bg-slate-800 rounded text-white outline-none border border-slate-700"
       />
 
-      <label className="block text-sm mb-1 text-gray-300">
-        Descripción
-      </label>
+      <label className="block text-sm mb-1 text-gray-300">Descripción</label>
       <textarea
         name="descripcion"
         value={form.descripcion}
@@ -196,22 +218,60 @@ export const HabilidadForm = ({ selected, onSave, onCancel }: Props) => {
       />
 
       <label className="block text-sm mb-1 text-gray-300">
-        URL del certificado
-      </label>
-      <input
-        name="certificadoUrl"
-        value={form.certificadoUrl}
-        onChange={handleChange}
-        placeholder="https://..."
-        className="w-full p-2 mb-4 bg-slate-800 rounded text-white outline-none border border-slate-700"
-      />
+  Subir archivos
+</label>
+
+<div className="mb-3">
+  <input
+    id="archivo-habilidad-tecnica"
+    type="file"
+    onChange={(e) => setArchivo(e.target.files?.[0] || null)}
+    className="hidden"
+  />
+
+  <label
+    htmlFor="archivo-habilidad-tecnica"
+    className="inline-flex items-center justify-center px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded cursor-pointer text-white font-medium"
+  >
+    Seleccionar archivo
+  </label>
+
+  {archivo && (
+    <div className="mt-2 flex items-center justify-between bg-slate-800 border border-slate-700 rounded p-2">
+      <p className="text-sm text-gray-300 truncate">
+        {archivo.name}
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setArchivo(null)}
+        className="ml-3 text-sm text-red-400 hover:text-red-300"
+      >
+        Quitar
+      </button>
+    </div>
+  )}
+</div>
+
+      {form.certificadoUrl && !archivo && (
+        <a
+          href={form.certificadoUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-blue-400 underline mb-3 inline-block"
+        >
+          Ver archivo actual
+        </a>
+      )}
 
       <button
         onClick={handleSubmit}
-        disabled={saving}
+        disabled={saving || uploading}
         className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900 p-2 rounded font-semibold"
       >
-        {saving
+        {uploading
+          ? "Subiendo archivo..."
+          : saving
           ? "Guardando..."
           : form.id
           ? "Actualizar habilidad"
