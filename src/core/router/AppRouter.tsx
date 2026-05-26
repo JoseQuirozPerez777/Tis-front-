@@ -4,7 +4,7 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 
 import { LandingPage } from '@features/landing';
-import { LoginPage, ForgotPasswordPage, CambiarPasswordPage } from '@features/login';
+import { LoginPage, ForgotPasswordPage, CambiarPasswordPage,ChangePasswordPage } from '@features/login';
 import { RegisterPage } from '@features/register';
 import { ProfilePage, PortafolioViewPage, PublicPortafolioPage } from '@features/profile';
 import { DashboardPage } from '@features/dashboard';
@@ -56,6 +56,7 @@ export const AppRouter = () => {
           <Route path="/AcademicTraining" element={<AcademicTrainingPage />} />
           <Route path="/AcademicTraining/new" element={<AcademicTrainingFormPage />} />
           <Route path="/AcademicTraining/edit/:id" element={<AcademicTrainingFormPage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
         </Route>
       </Route>
     </Routes>
