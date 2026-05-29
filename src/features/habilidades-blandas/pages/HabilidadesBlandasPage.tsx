@@ -15,10 +15,31 @@ import type {
 import { HabilidadBlandaList } from "../components/HabilidadBlandaList";
 import { HabilidadBlandaForm } from "../components/HabilidadBlandaForm";
 
+import { ToastMessage } from "@/shared/components/ui/ToastMessage";
+import { ConfirmModal } from "@/shared/components/ui/ConfirmModal";
+
 export const HabilidadesBlandasPage = () => {
   const [skills, setSkills] = useState<HabilidadBlanda[]>([]);
   const [selected, setSelected] = useState<HabilidadBlanda | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
+
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "info" = "info"
+  ) => {
+    setToast({ message, type });
+
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
 
   const load = async () => {
     try {
@@ -27,7 +48,7 @@ export const HabilidadesBlandasPage = () => {
       setSkills(data);
     } catch (error) {
       console.error(error);
-      alert("Error al cargar las habilidades blandas");
+      showToast("Error al cargar las habilidades blandas", "error");
     } finally {
       setLoading(false);
     }
@@ -41,34 +62,36 @@ export const HabilidadesBlandasPage = () => {
     try {
       if (data.id) {
         await actualizarHabilidadBlanda(data);
-        alert("Habilidad blanda actualizada correctamente");
+        showToast("Habilidad blanda actualizada correctamente", "success");
       } else {
         await crearHabilidadBlanda(data);
-        alert("Habilidad blanda registrada correctamente");
+        showToast("Habilidad blanda registrada correctamente", "success");
       }
 
       setSelected(null);
       await load();
     } catch (error) {
       console.error(error);
-      alert("Error al guardar la habilidad blanda");
+      showToast("Error al guardar la habilidad blanda", "error");
     }
   };
 
   const onDelete = async (id: number) => {
-    const confirmar = window.confirm(
-      "¿Seguro que deseas eliminar esta habilidad blanda?"
-    );
+    setDeleteId(id);
+  };
 
-    if (!confirmar) return;
+  const confirmDelete = async () => {
+    if (!deleteId) return;
 
     try {
-      await eliminarHabilidadBlanda(id);
-      alert("Habilidad blanda eliminada correctamente");
+      await eliminarHabilidadBlanda(deleteId);
+      showToast("Habilidad blanda eliminada correctamente", "success");
       await load();
     } catch (error) {
       console.error(error);
-      alert("Error al eliminar la habilidad blanda");
+      showToast("Error al eliminar la habilidad blanda", "error");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -104,6 +127,22 @@ export const HabilidadesBlandasPage = () => {
           />
         </div>
       </div>
+
+      {toast && (
+        <ToastMessage
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <ConfirmModal
+        open={deleteId !== null}
+        title="Eliminar habilidad"
+        message="¿Seguro que deseas eliminar esta habilidad blanda?"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </section>
   );
 };

@@ -1,7 +1,8 @@
 import { uploadToCloudinary } from "@/core/api/cloudinary-upload";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-
+import { RichTextEditor } from "@/shared/components/ui/RichTextEditor";
+import { ToastMessage } from "@/shared/components/ui/ToastMessage";
 import type {
   HabilidadBlanda,
   HabilidadBlandaPayload,
@@ -47,6 +48,21 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
   const [saving, setSaving] = useState(false);
   const [archivo, setArchivo] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+const [formToast, setFormToast] = useState<{
+  message: string;
+  type: "success" | "error" | "info";
+} | null>(null);
+
+const showFormToast = (
+  message: string,
+  type: "success" | "error" | "info" = "info"
+) => {
+  setFormToast({ message, type });
+
+  setTimeout(() => {
+    setFormToast(null);
+  }, 3000);
+};
 
   useEffect(() => {
     setArchivo(null);
@@ -82,12 +98,12 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
 
   const handleSubmit = async () => {
     if (!form.nombre.trim()) {
-      alert("El nombre de la habilidad blanda es obligatorio");
+      showFormToast("El nombre de la habilidad blanda es obligatorio", "error");
       return;
     }
 
     if (!form.idCategoria) {
-      alert("Debe seleccionar una categoría");
+      showFormToast("Debe seleccionar una categoría", "error");
       return;
     }
 
@@ -120,11 +136,12 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
       setForm(emptyForm);
     } catch (error) {
       console.error(error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Error al guardar la habilidad blanda"
-      );
+      showFormToast(
+  error instanceof Error
+    ? error.message
+    : "Error al guardar la habilidad blanda",
+  "error"
+);
     } finally {
       setSaving(false);
       setUploading(false);
@@ -174,17 +191,20 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
           ))}
       </select>
 
-      <label className="block text-sm mb-1 text-gray-300">
-        Descripción
-      </label>
-      <textarea
-        name="descripcion"
-        value={form.descripcion}
-        onChange={handleChange}
-        placeholder="Describe cómo demuestras esta habilidad"
-        className="w-full p-2 mb-3 bg-slate-800 rounded text-white outline-none border border-slate-700 min-h-[90px]"
-      />
+     <label className="block text-sm mb-1 text-gray-300">
+  Descripción
+</label>
 
+<RichTextEditor
+  value={form.descripcion}
+  onChange={(value) =>
+    setForm((prev) => ({
+      ...prev,
+      descripcion: value,
+    }))
+  }
+  placeholder="Describe cómo demuestras esta habilidad"
+/>
       <label className="block text-sm mb-1 text-gray-300">
         Subir archivos
       </label>
@@ -252,6 +272,14 @@ export const HabilidadBlandaForm = ({ selected, onSave, onCancel }: Props) => {
           Cancelar edición
         </button>
       )}
+{formToast && (
+  <ToastMessage
+    message={formToast.message}
+    type={formToast.type}
+    onClose={() => setFormToast(null)}
+  />
+)}
+
     </div>
   );
 };

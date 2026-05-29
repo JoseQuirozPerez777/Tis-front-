@@ -41,10 +41,11 @@ export const HabilidadList = ({ skills, onEdit, onDelete }: Props) => {
               </p>
 
               {s.descripcion && (
-                <p className="text-sm text-gray-300 mt-2">
-                  {s.descripcion}
-                </p>
-              )}
+  <div
+    className="text-sm text-gray-300 mt-2"
+    dangerouslySetInnerHTML={{ __html: s.descripcion }}
+  />
+)}
 
               {s.certificadoUrl && (
                 <a

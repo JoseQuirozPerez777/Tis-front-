@@ -15,10 +15,31 @@ import type {
 import { HabilidadList } from "../components/HabilidadList";
 import { HabilidadForm } from "../components/HabilidadForm";
 
+import { ToastMessage } from "@/shared/components/ui/ToastMessage";
+import { ConfirmModal } from "@/shared/components/ui/ConfirmModal";
+
 export const HabilidadesTecnicasPage = () => {
   const [skills, setSkills] = useState<HabilidadTecnica[]>([]);
   const [selected, setSelected] = useState<HabilidadTecnica | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
+
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "info" = "info"
+  ) => {
+    setToast({ message, type });
+
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
 
   const load = async () => {
     try {
@@ -27,7 +48,7 @@ export const HabilidadesTecnicasPage = () => {
       setSkills(data);
     } catch (error) {
       console.error(error);
-      alert("Error al cargar las habilidades técnicas");
+      showToast("Error al cargar las habilidades técnicas", "error");
     } finally {
       setLoading(false);
     }
@@ -41,34 +62,36 @@ export const HabilidadesTecnicasPage = () => {
     try {
       if (data.id) {
         await actualizarHabilidad(data);
-        alert("Habilidad actualizada correctamente");
+        showToast("Habilidad actualizada correctamente", "success");
       } else {
         await crearHabilidad(data);
-        alert("Habilidad registrada correctamente");
+        showToast("Habilidad registrada correctamente", "success");
       }
 
       setSelected(null);
       await load();
     } catch (error) {
       console.error(error);
-      alert("Error al guardar la habilidad técnica");
+      showToast("Error al guardar la habilidad técnica", "error");
     }
   };
 
   const onDelete = async (id: number) => {
-    const confirmar = window.confirm(
-      "¿Seguro que deseas eliminar esta habilidad técnica?"
-    );
+    setDeleteId(id);
+  };
 
-    if (!confirmar) return;
+  const confirmDelete = async () => {
+    if (!deleteId) return;
 
     try {
-      await eliminarHabilidad(id);
-      alert("Habilidad eliminada correctamente");
+      await eliminarHabilidad(deleteId);
+      showToast("Habilidad eliminada correctamente", "success");
       await load();
     } catch (error) {
       console.error(error);
-      alert("Error al eliminar la habilidad técnica");
+      showToast("Error al eliminar la habilidad técnica", "error");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -104,6 +127,22 @@ export const HabilidadesTecnicasPage = () => {
           />
         </div>
       </div>
+
+      {toast && (
+        <ToastMessage
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <ConfirmModal
+        open={deleteId !== null}
+        title="Eliminar habilidad"
+        message="¿Seguro que deseas eliminar esta habilidad técnica?"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </section>
   );
 };
