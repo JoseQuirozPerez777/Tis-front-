@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Logo } from '@shared/components/ui/Logo';
+import { ShareModal } from '@shared/components/ui/ShareModal';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();
@@ -9,6 +10,8 @@ export const DashboardLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -44,14 +47,42 @@ export const DashboardLayout = () => {
 
     loadProfilePhoto();
   }, [location.pathname]);
-  const navLinks = [
+
+  useEffect(() => {
+    const fetchShareUrl = async () => {
+      try {
+        const token =
+          sessionStorage.getItem('jwt') ||
+          sessionStorage.getItem('token') ||
+          localStorage.getItem('jwt') ||
+          localStorage.getItem('token');
+        const response = await fetch('http://localhost:8081/api/enlace/mi-enlace-publico', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setShareUrl(data.urlCompleta || '');
+        } else {
+          setShareUrl(`${window.location.origin}/portafolio/${user?.id}`);
+        }
+      } catch {
+        setShareUrl(`${window.location.origin}/portafolio/${user?.id}`);
+      }
+    };
+    fetchShareUrl();
+  }, [user?.id]);
+  const navLinks: { name: string; path: string | null; icon: string }[] = [
     { name: 'Mi Perfil', path: '/profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
     { name: 'Habilidades', path: '/hardskills', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
     { name: 'Proyectos', path: '/projects', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
     { name: 'Cambiar Contraseña', path: '/change-password', icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 1114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z' },
     { name: 'Experiencia', path: '/experience', icon: 'M12 14l9-5-9-5-9 5 9 5z' },
-    {name: 'Buscar Portafolios',path: '/buscar-portafolios', icon: 'M21 21l-4.35-4.35m1.35-5.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z',
-},
+    { name: 'Buscar Portafolios', path: '/buscar-portafolios', icon: 'M21 21l-4.35-4.35m1.35-5.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z' },
+    { name: 'Comparte Portafolio', path: null, icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' },
   ];
 
   return (
@@ -113,11 +144,29 @@ export const DashboardLayout = () => {
                 </div>
                 <nav className="p-2 space-y-1">
                   {navLinks.map((link) => {
-                    const isActive = location.pathname === link.path;
+                    const isActive = link.path ? location.pathname === link.path : false;
+                    const isShare = link.name === 'Comparte Portafolio';
+                    const iconEl = (
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={link.icon} />
+                      </svg>
+                    );
+                    if (isShare) {
+                      return (
+                        <button
+                          key="share"
+                          onClick={() => { setIsMenuOpen(false); setShareModalOpen(true); }}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium w-full text-left text-text-secondary hover:text-brand-azul-brillante hover:bg-brand-azul-brillante/10"
+                        >
+                          {iconEl}
+                          {link.name}
+                        </button>
+                      );
+                    }
                     return (
                       <Link
                         key={link.path}
-                        to={link.path}
+                        to={link.path!}
                         onClick={() => setIsMenuOpen(false)}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium
                         ${isActive
@@ -125,9 +174,7 @@ export const DashboardLayout = () => {
                             : 'text-text-secondary hover:text-text-primary hover:bg-card-border/30'
                           }`}
                       >
-                        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={link.icon} />
-                        </svg>
+                        {iconEl}
                         {link.name}
                       </Link>
                     );
@@ -156,6 +203,13 @@ export const DashboardLayout = () => {
           <Outlet />
         </div>
       </main>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        shareUrl={shareUrl}
+      />
     </div>
   );
 };
