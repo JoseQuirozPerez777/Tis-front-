@@ -99,11 +99,14 @@ export const AcademicTrainingForm = () => {
               className="flex h-11 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200"
             >
               <option value="" className="bg-brand-azul-profundo text-white">Seleccionar</option>
+              <option value="PRIMARIA" className="bg-brand-azul-profundo text-white">Primaria</option>
+              <option value="SECUNDARIA" className="bg-brand-azul-profundo text-white">Secundaria</option>
               <option value="TECNICO" className="bg-brand-azul-profundo text-white">Técnico</option>
               <option value="LICENCIATURA" className="bg-brand-azul-profundo text-white">Licenciatura</option>
-              <option value="DIPLOMADO" className="bg-brand-azul-profundo text-white">Diplomado</option>
               <option value="MAESTRIA" className="bg-brand-azul-profundo text-white">Maestría</option>
               <option value="DOCTORADO" className="bg-brand-azul-profundo text-white">Doctorado</option>
+              <option value="DIPLOMADO" className="bg-brand-azul-profundo text-white">Diplomado</option>
+              <option value="CURSOS" className="bg-brand-azul-profundo text-white">Cursos</option>
             </select>
           </div>
 

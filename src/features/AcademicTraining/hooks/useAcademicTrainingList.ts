@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { AcademicTraining } from '../models/academicTraining.model';
 import { academicTrainingService } from '../services/academicTraining.service';
 import { useToast } from '@shared/hooks/useToast';
+
+const LEVEL_ORDER = [
+  'PRIMARIA', 'SECUNDARIA', 'TECNICO', 'LICENCIATURA',
+  'MAESTRIA', 'DOCTORADO', 'DIPLOMADO', 'CURSOS',
+];
 
 export const useAcademicTrainingList = () => {
   const [trainings, setTrainings] = useState<AcademicTraining[]>([]);
@@ -9,45 +14,57 @@ export const useAcademicTrainingList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    const fetchTrainings = async () => {
-      try {
-        setIsLoading(true);
-        const data = await academicTrainingService.getAcademicTrainings();
-        setTrainings(data);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Error al cargar la formación académica';
-        showToast(message, 'error');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Use a ref so the effect doesn't re-run when showToast identity changes
+  const showToastRef = useRef(showToast);
+  showToastRef.current = showToast;
 
+  const fetchTrainings = async () => {
+    try {
+      setIsLoading(true);
+      const data = await academicTrainingService.getAcademicTrainings();
+      setTrainings(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error al cargar la formación académica';
+      showToastRef.current(message, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTrainings();
-  }, [showToast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDelete = async (id: string) => {
     try {
       await academicTrainingService.deleteAcademicTraining(id);
       setTrainings(prev => prev.filter(t => t.id !== id));
-      showToast('Formación eliminada con éxito', 'success');
+      showToastRef.current('Formación eliminada con éxito', 'success');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error al eliminar la formación';
-      showToast(message, 'error');
+      showToastRef.current(message, 'error');
     }
   };
 
-  const filteredTrainings = trainings.filter(training =>
-    training.institution.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    training.degree.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    training.fieldOfStudy.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredTrainings = [...trainings]
+    .filter(t =>
+      (t.institution ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (t.degree ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (t.fieldOfStudy ?? '').toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const ai = LEVEL_ORDER.indexOf((a.level ?? '').toUpperCase());
+      const bi = LEVEL_ORDER.indexOf((b.level ?? '').toUpperCase());
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
 
   return {
     trainings: filteredTrainings,
     searchTerm,
     setSearchTerm,
     isLoading,
-    handleDelete
+    handleDelete,
+    refetch: fetchTrainings,
   };
 };

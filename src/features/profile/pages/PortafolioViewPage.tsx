@@ -248,7 +248,7 @@ export const PortafolioViewPage = () => {
           onClick={() => setActiveTab("experience")}
           className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeTab === "experience" ? "bg-brand-azul-brillante text-white shadow-md" : "text-text-secondary hover:text-text-primary"}`}
         >
-          Experiencia y Skills
+          Experiencia y Habilidades
         </button>
         <button
           onClick={() => setActiveTab("projects")}
