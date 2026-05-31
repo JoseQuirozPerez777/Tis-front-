@@ -160,10 +160,9 @@ export const useFiltrosBusqueda = () => {
 };
 
   useEffect(() => {
-  setResultados([]);
-  setTotal(0);
-  setTotalPaginas(1);
-}, []);
+    buscarPortafolios(filtrosBusquedaIniciales);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
   return {
     filtros,
