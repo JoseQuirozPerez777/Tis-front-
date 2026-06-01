@@ -2,11 +2,16 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/core/context/AuthContext';
 import { CVManagementPage } from '@/features/CVManagement';
+import { PrivacyConfigurationSection } from '../components/PrivacyConfigurationSection';
 
 export const DashMyPerfilPage = () => {
     const { user } = useAuth();
     const [showCVManagement, setShowCVManagement] = useState(false);
+    const [showPrivacySettings, setShowPrivacySettings] = useState(false);
 
+    if (showPrivacySettings) {
+        return <PrivacyConfigurationSection onBack={() => setShowPrivacySettings(false)} />;
+    }
 
     if (showCVManagement) {
         return <CVManagementPage onBack={() => setShowCVManagement(false)} />;
@@ -97,6 +102,20 @@ export const DashMyPerfilPage = () => {
                         className="text-brand-azul-brillante font-medium text-sm hover:underline"
                     >
                         Ir a Gestión de CV →
+                    </button>
+                </div>
+
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#f59e0b]/50 transition-colors group">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Configuración de Privacidad</h3>
+                    <p className="text-text-secondary text-sm mb-4">
+                        Revisa los datos que envía el backend y controla su visibilidad en el perfil del sistema.
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => setShowPrivacySettings(true)}
+                        className="text-[#f59e0b] font-medium text-sm hover:underline"
+                    >
+                        Ir a Privacidad →
                     </button>
                 </div>
             </div>
