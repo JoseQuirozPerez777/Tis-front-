@@ -8,6 +8,7 @@ export const loginAdapter = {
       email: dto.email,
       fullName: `${dto.name}`,
       token: dto.access_token,
+      roles: dto.roles ?? [],
     };
   },
 };

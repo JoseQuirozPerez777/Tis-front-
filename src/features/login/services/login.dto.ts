@@ -3,6 +3,7 @@ export interface LoginResponseDTO {
   email: string;
   name: string;
   access_token: string;
+  roles?: string[];
 }
 
 export interface LoginRequestDTO {
