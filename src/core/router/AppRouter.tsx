@@ -2,6 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
+import { AdminRoute } from './AdminRoute';
+
+import { ReportesUsuariosPage } from '@features/reportes-usuarios';
 
 import { LandingPage } from '@features/landing';
 import { LoginPage, ForgotPasswordPage, CambiarPasswordPage,ChangePasswordPage } from '@features/login';
@@ -57,6 +60,10 @@ export const AppRouter = () => {
           <Route path="/AcademicTraining/new" element={<AcademicTrainingFormPage />} />
           <Route path="/AcademicTraining/edit/:id" element={<AcademicTrainingFormPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
+
+<Route element={<AdminRoute />}>
+  <Route path="/admin/reportes/usuarios" element={<ReportesUsuariosPage />} />
+</Route>
         </Route>
       </Route>
     </Routes>

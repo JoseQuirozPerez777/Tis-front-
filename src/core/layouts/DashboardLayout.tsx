@@ -7,11 +7,15 @@ import { ShareModal } from '@shared/components/ui/ShareModal';
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState('');
-  const menuRef = useRef<HTMLDivElement>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const esAdministrador = user?.roles?.includes('ROLE_ADMIN');
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -48,6 +52,7 @@ export const DashboardLayout = () => {
     loadProfilePhoto();
   }, [location.pathname]);
 
+
   useEffect(() => {
     const fetchShareUrl = async () => {
       try {
@@ -56,6 +61,7 @@ export const DashboardLayout = () => {
           sessionStorage.getItem('token') ||
           localStorage.getItem('jwt') ||
           localStorage.getItem('token');
+
         const response = await fetch('http://localhost:8081/api/enlace/mi-enlace-publico', {
           method: 'POST',
           headers: {
@@ -63,6 +69,7 @@ export const DashboardLayout = () => {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
+
         if (response.ok) {
           const data = await response.json();
           setShareUrl(data.urlCompleta || '');
@@ -73,17 +80,60 @@ export const DashboardLayout = () => {
         setShareUrl(`${window.location.origin}/portafolio/${user?.id}`);
       }
     };
+
     fetchShareUrl();
   }, [user?.id]);
+
   const navLinks: { name: string; path: string | null; icon: string }[] = [
-    { name: 'Mi Perfil', path: '/profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
-    { name: 'Habilidades', path: '/hardskills', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-    { name: 'Proyectos', path: '/projects', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-    { name: 'Cambiar Contraseña', path: '/change-password', icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 1114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z' },
-    { name: 'Experiencia', path: '/experience', icon: 'M12 14l9-5-9-5-9 5 9 5z' },
-    { name: 'Buscar Portafolios', path: '/buscar-portafolios', icon: 'M21 21l-4.35-4.35m1.35-5.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z' },
-    { name: 'Comparte Portafolio', path: null, icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' },
+    {
+      name: 'Mi Perfil',
+      path: '/profile',
+      icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
+    },
+    {
+      name: 'Habilidades',
+      path: '/hardskills',
+      icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+    },
+    {
+      name: 'Proyectos',
+      path: '/projects',
+      icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
+    },
+    {
+      name: 'Cambiar Contraseña',
+      path: '/change-password',
+      icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0zM4.501 20.118a7.5 7.5 0 1114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
+    },
+    {
+      name: 'Experiencia',
+      path: '/experience',
+      icon: 'M12 14l9-5-9-5-9 5 9 5z',
+    },
+    {
+      name: 'Buscar Portafolios',
+      path: '/buscar-portafolios',
+      icon: 'M21 21l-4.35-4.35m1.35-5.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z',
+    },
+    {
+      name: 'Comparte Portafolio',
+      path: null,
+      icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1',
+    },
+
+    ...(esAdministrador
+      ? [
+          {
+            name: 'Reportes de Usuarios',
+            path: '/admin/reportes/usuarios',
+            icon: 'M3 3v18h18M7 16V9m5 7V5m5 11v-6',
+          },
+        ]
+      : []),
   ];
+
+
+
 
   return (
     <div className="flex flex-col bg-bg-dark min-h-screen text-text-primary overflow-hidden">

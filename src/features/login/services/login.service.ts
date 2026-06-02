@@ -50,7 +50,8 @@ export const loginService = {
   email: data.usuario.correo,
   fullName: data.usuario.nombre,
   token: data.token,
-  foto: data.usuario.foto
+  foto: data.usuario.foto,
+  roles: data.usuario.roles ?? []
 };
   },
 
