@@ -1,6 +1,5 @@
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { Lock } from 'lucide-react';
+import { exportarReporteUsuariosPDF } from '../utils/exportarReporteUsuariosPDF';
 
 import { ReportesUsuariosFilters } from '../components/ReportesUsuariosFilters';
 import { ReportesUsuariosStats } from '../components/ReportesUsuariosStats';
@@ -9,50 +8,31 @@ import { useReportesUsuarios } from '../hooks/useReportesUsuarios';
 
 export const ReportesUsuariosPage = () => {
   const {
-  filtrosFormulario,
-  setFiltrosFormulario,
-  usuarios,
-  totalUsuarios,
-  usuariosActivos,
-  usuariosInactivos,
-  cargando,
-  error,
-  aplicarFiltros,
-  limpiarFiltros,
-} = useReportesUsuarios();
+    filtrosFormulario,
+    setFiltrosFormulario,
+    usuarios,
+    totalUsuarios,
+    usuariosActivos,
+    usuariosInactivos,
+    cargando,
+    error,
+    aplicarFiltros,
+    limpiarFiltros,
+  } = useReportesUsuarios();
 
-  const exportarPdf = async () => {
-    const elemento = document.getElementById('reporte-usuarios-pdf');
-
-    if (!elemento) {
-      alert('No se encontró el contenido para exportar.');
-      return;
-    }
-
-    try {
-      const canvas = await html2canvas(elemento, {
-        scale: 2,
-        backgroundColor: '#020817',
-      });
-
-      const imagen = canvas.toDataURL('image/png');
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const anchoPdf = pdf.internal.pageSize.getWidth();
-      const altoPdf = (canvas.height * anchoPdf) / canvas.width;
-
-      pdf.addImage(imagen, 'PNG', 0, 0, anchoPdf, altoPdf);
-      pdf.save('reporte-usuarios.pdf');
-    } catch (error) {
-      console.error(error);
-      alert('Ocurrió un error al exportar el reporte en PDF.');
-    }
+  const exportarPdf = () => {
+    exportarReporteUsuariosPDF({
+      usuarios,
+      filtros: filtrosFormulario,
+      totalUsuarios,
+      usuariosActivos,
+      usuariosInactivos,
+    });
   };
 
   return (
     <main className="min-h-screen bg-[#020817] px-6 py-8 text-white">
-      <section id="reporte-usuarios-pdf" className="space-y-6">
+      <section className="space-y-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-white">
@@ -86,10 +66,10 @@ export const ReportesUsuariosPage = () => {
         />
 
         <ReportesUsuariosTable
-  usuarios={usuarios}
-  cargando={cargando}
-  error={error}
-/>
+          usuarios={usuarios}
+          cargando={cargando}
+          error={error}
+        />
       </section>
     </main>
   );
