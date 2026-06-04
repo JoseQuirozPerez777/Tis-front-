@@ -22,6 +22,7 @@ import { ProjectsPage } from '@features/projects/pages/ProjectsPage';
 import { HabilidadesTecnicasPage } from '@features/habilidades-tecnicas/pages/HabilidadesTecnicasPage';
 import { FiltrosBusquedaPage } from '@features/filtros_Busqueda/pages/FiltrosBusquedaPage';
 import { HabilidadesBlandasPage } from '@features/habilidades-blandas/pages/HabilidadesBlandasPage';
+import {LikesPage} from '@features/likes/pages/Likespages';
 
 export const AppRouter = () => {
   return (
@@ -60,6 +61,8 @@ export const AppRouter = () => {
           <Route path="/AcademicTraining/new" element={<AcademicTrainingFormPage />} />
           <Route path="/AcademicTraining/edit/:id" element={<AcademicTrainingFormPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/my-profile/visits" element={<LikesPage/>} />
+
 
 <Route element={<AdminRoute />}>
   <Route path="/admin/reportes/usuarios" element={<ReportesUsuariosPage />} />
