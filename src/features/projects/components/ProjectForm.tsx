@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { RichTextEditor } from "@/shared/components/ui/RichTextEditor";
+
 import {
   ShieldCheck,
   Link,
@@ -26,6 +28,7 @@ export function ProjectForm({
   onCancel,
   onSaved,
 }: Props) {
+  
   const [newTechnologyInput, setNewTechnologyInput] = useState("");
 
   const {
@@ -111,13 +114,15 @@ export function ProjectForm({
           <label>
             Descripción del proyecto <span>*</span>
           </label>
-          <textarea
-            value={form.descripcionProyecto}
-            onChange={(e) => updateField("descripcionProyecto", e.target.value)}
-            placeholder="Aplicación web para la gestión de inventario de productos, control de stock, reportes y ventas."
-            maxLength={1000}
-            disabled={loading}
-          />
+
+<RichTextEditor
+  value={form.descripcionProyecto || ""}
+  onChange={(value) =>
+    updateField("descripcionProyecto", value)
+  }
+  placeholder="Describe tu proyecto..."
+/>
+
           <small>{form.descripcionProyecto.length}/1000</small>
         </div>
 
