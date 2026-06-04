@@ -1,5 +1,6 @@
 import { ProfileForm } from "../components/ProfileForm";
-import { Link } from "react-router-dom";
+import { Eye } from 'lucide-react';
+import { Link,useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ProfessionalLinksPage } from "../../profesional-links/pages/ProfessionalLinksPage";
 import { useProfilePhoto } from "../../photo/hooks/useProfilePhoto";
@@ -11,6 +12,7 @@ export const ProfilePage = () => {
   const [perfil, setPerfil] = useState<PerfilBackendResponse | null>(null);
   const [profesiones, setProfesiones] = useState<Profesion[]>([]);
   const [loadingPerfil, setLoadingPerfil] = useState(false);
+  const navigate = useNavigate();
 
   const { previewUrl, isLoadingPerfil } = useProfilePhoto();
 
@@ -112,11 +114,19 @@ export const ProfilePage = () => {
               </p>
             )}
 
-            {perfil?.biografia && (
-              <p className="text-sm sm:text-base text-text-secondary mt-3 max-w-xl mx-auto md:mx-0">
-                {perfil.biografia}
-              </p>
-            )}
+{perfil?.biografia && (
+  <div
+    className="
+      text-sm sm:text-base text-text-secondary mt-3 max-w-xl mx-auto md:mx-0
+      [&_ul]:list-disc [&_ul]:pl-6
+      [&_ol]:list-decimal [&_ol]:pl-6
+      [&_li]:mb-1
+    "
+    dangerouslySetInnerHTML={{
+      __html: perfil.biografia,
+    }}
+  />
+)}
 
             <div className="mt-3 text-sm text-text-secondary space-y-1">
               {perfil?.correo && (
@@ -149,13 +159,24 @@ export const ProfilePage = () => {
             </div>
           </div>
 
-          <div className="flex justify-center md:justify-end w-full md:w-auto">
-            <button
+          <div className="flex gap-3">
+              <button
               onClick={handleEditProfile}
               className="bg-brand-azul-brillante hover:opacity-90 text-white w-full md:w-auto px-5 sm:px-6 py-3 rounded-xl shadow-lg whitespace-nowrap"
             >
               Editar perfil
             </button>
+
+              <button
+                  onClick={() => navigate('/my-profile/visits')}
+                  className="flex items-center gap-2 bg-[#0F223D] border border-[#64ffda] text-[#64ffda] px-4 py-3 rounded-xl hover:bg-[#64ffda]/10 transition"
+                  title="Ver quién visitó mi perfil"
+                >
+                  <Eye size={20} />
+
+                  <span>Visitas</span>
+
+              </button>
           </div>
         </div>
       </section>
