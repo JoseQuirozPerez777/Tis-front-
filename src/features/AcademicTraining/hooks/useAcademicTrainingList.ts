@@ -47,6 +47,19 @@ export const useAcademicTrainingList = () => {
     }
   };
 
+  const handleTogglePrivacy = async (training: AcademicTraining) => {
+    if (!training.id) return;
+    try {
+      const updatedTraining = { ...training, isPublic: !training.isPublic };
+      await academicTrainingService.updateAcademicTraining(training.id, updatedTraining);
+      setTrainings(prev => prev.map(t => t.id === training.id ? { ...t, isPublic: !t.isPublic } : t));
+      showToastRef.current('Privacidad actualizada con éxito', 'success');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error al actualizar la privacidad';
+      showToastRef.current(message, 'error');
+    }
+  };
+
   const filteredTrainings = [...trainings]
     .filter(t =>
       (t.institution ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -65,6 +78,7 @@ export const useAcademicTrainingList = () => {
     setSearchTerm,
     isLoading,
     handleDelete,
+    handleTogglePrivacy,
     refetch: fetchTrainings,
   };
 };

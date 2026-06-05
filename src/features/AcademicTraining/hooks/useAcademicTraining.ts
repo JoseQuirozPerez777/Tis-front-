@@ -32,6 +32,7 @@ export const useAcademicTraining = () => {
   const [description, setDescription] = useState(editingTraining?.description || '');
   const [certificateTest, setCertificateTest] = useState<File | null>(null);
   const [certificateUrl, setCertificateUrl] = useState(editingTraining?.certificateUrl || '');
+  const [isPublic, setIsPublic] = useState<boolean>(editingTraining?.isPublic ?? true);
 
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
@@ -82,6 +83,7 @@ export const useAcademicTraining = () => {
         description,
         certificateTest,
         certificateUrl: uploadedUrl,
+        isPublic,
       };
 
       if (id) {
@@ -111,6 +113,7 @@ export const useAcademicTraining = () => {
     setDescription('');
     setCertificateTest(null);
     setCertificateUrl('');
+    setIsPublic(true);
     navigate(-1);
   };
 
@@ -125,6 +128,7 @@ export const useAcademicTraining = () => {
     description, setDescription,
     certificateTest, setCertificateTest,
     certificateUrl, setCertificateUrl,
+    isPublic, setIsPublic,
     isLoading,
     isEditing: !!id,
     handleAddTraining,

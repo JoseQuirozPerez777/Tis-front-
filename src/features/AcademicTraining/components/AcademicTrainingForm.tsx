@@ -14,6 +14,7 @@ export const AcademicTrainingForm = () => {
     status, setStatus,
     description, setDescription,
     setCertificateTest,
+    isPublic, setIsPublic,
     isLoading,
     isEditing,
     handleAddTraining,
@@ -185,6 +186,37 @@ export const AcademicTrainingForm = () => {
               onChange={(e) => setCertificateTest(e.target.files ? e.target.files[0] : null)}
               className="block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-accent-neon/10 file:text-brand-accent-neon hover:file:bg-brand-accent-neon/20 transition-all cursor-pointer"
             />
+          </div>
+
+          <div className="flex flex-col gap-1.5 w-full">
+            <label className="text-sm font-medium text-text-secondary ml-1">
+              Privacidad
+            </label>
+            <div className="flex gap-4 pl-1">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="isPublic"
+                  checked={isPublic === true}
+                  onChange={() => setIsPublic(true)}
+                  className="w-4 h-4 accent-brand-accent-neon"
+                />
+                <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">Público</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="isPublic"
+                  checked={isPublic === false}
+                  onChange={() => setIsPublic(false)}
+                  className="w-4 h-4 accent-brand-accent-neon"
+                />
+                <span className="text-sm text-text-primary group-hover:text-brand-accent-neon transition-colors">Privado</span>
+              </label>
+            </div>
+            <p className="text-xs text-text-muted ml-1 mt-1">
+              {isPublic ? 'Se mostrará en tu portafolio público.' : 'Solo será visible para ti.'}
+            </p>
           </div>
         </div>
 
