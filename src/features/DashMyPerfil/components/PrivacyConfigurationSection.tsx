@@ -6,6 +6,18 @@ interface PrivacyConfigurationSectionProps {
   onBack: () => void;
 }
 
+const SECTIONS: Record<string, string[]> = {
+  "Información Personal": ["nombre", "foto", "profesion", "biografia", "enlacePublico"],
+  "Información de Contacto": ["correo", "telefono", "direccion", "redesSociales"],
+  "Experiencia Laboral": ["experienciasLaborales"],
+  "Formación Académica": ["formacionesAcademica"],
+  "Habilidades Técnicas": ["habilidadesTecnicas"],
+  "Habilidades Blandas": ["habilidadesBlandas"],
+  "Proyectos": ["proyectos"],
+  "Evidencias y Certificaciones": ["evidencias"],
+};
+
+
 const getInitialVisibility = (value: unknown, prefix = ''): Record<string, boolean> => {
   const visibility: Record<string, boolean> = {};
 
@@ -173,10 +185,59 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
     return null;
   };
 
-  const renderedFields = useMemo(() => {
-    if (!portfolioData) return null;
-    return Object.entries(portfolioData).map(([key, value]) => renderData(value, key, key));
-  }, [portfolioData, visibility]);
+const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+const handleToggleSection = (section: string) => {
+  setOpenSections((prev) => ({
+    ...prev,
+    [section]: !prev[section],
+  }));
+};
+
+  
+const renderedSections = useMemo(() => {
+  if (!portfolioData) return null;
+
+  return Object.entries(SECTIONS).map(([sectionTitle, keys]) => {
+    let filteredKeys = keys;
+
+    // Excluir campos en Información Personal
+    if (sectionTitle === "Información Personal") {
+      filteredKeys = keys.filter(
+        (key) => key !== "foto" && key !== "enlacePublico"
+      );
+    }
+    const sectionFields = filteredKeys
+      .filter((key) => portfolioData[key] !== undefined)
+      .map((key) => renderData(portfolioData[key], key, key));
+
+    if (sectionFields.length === 0) return null;
+
+    const isOpen = openSections[sectionTitle] ?? false;
+    const alwaysOpen = sectionTitle === "Información Personal";
+
+    return (
+      <div key={sectionTitle} className="space-y-4 rounded-2xl border border-card-border bg-card-bg/40 p-4">
+        <button
+          type="button"
+          onClick={() => !alwaysOpen && handleToggleSection(sectionTitle)}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <h2 className="text-xl font-bold text-text-primary">{sectionTitle}</h2>
+          {!alwaysOpen && (
+            <span className="text-sm text-text-secondary">
+              {isOpen ? "Ocultar" : "Mostrar"}
+            </span>
+          )}
+        </button>
+        {(alwaysOpen || isOpen) && (
+          <ul className="space-y-4 pl-2">{sectionFields}</ul>
+        )}
+      </div>
+    );
+  });
+}, [portfolioData, visibility, openSections]);
+
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -184,7 +245,10 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
         <div>
           <h1 className="text-3xl font-bold text-text-primary">CONFIGURACIÓN DE PRIVACIDAD</h1>
           <p className="text-text-secondary mt-1">
-            Visualiza los datos que envía el backend y oculta cada dato con el icono de ojo.
+            Visualiza los datos y oculta el dato que no quieres que se vea en perfil publico.
+          </p>
+          <p className="text-text-secondary mt-1">
+            Con el icono de ojo puedes ocultar o mostrar. Recuerda aplicar los cambios para que se reflejen en tu perfil público.
           </p>
         </div>
         <button
@@ -217,7 +281,7 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
             <div className="rounded-[32px] border border-card-border bg-card-bg/50 p-4">
               <p className="text-sm text-text-secondary">Haz clic en el icono para ocultar o mostrar cada campo.</p>
             </div>
-            <ul className="space-y-4">{renderedFields}</ul>
+            <ul className="space-y-8">{renderedSections}</ul>
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
