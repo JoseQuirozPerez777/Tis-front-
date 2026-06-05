@@ -18,7 +18,7 @@ interface ProfileFormProps {
 
 export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
   
-  const { form, isLoading, serverError, onSubmit, onCancel } =
+  const { form, isLoading, serverError, onSubmit } =
     useProfile(onProfileUpdated);
 
 const {

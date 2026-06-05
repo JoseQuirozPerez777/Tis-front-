@@ -1,6 +1,26 @@
+// src/features/profile/pages/PortafolioPage.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import {
+  BriefcaseBusiness,
+  ExternalLink,
+  MapPin,
+  Mail,
+  Phone,
+  Heart,
+  ArrowLeft,
+  Github,
+  FileText,
+  Image as ImageIcon,
+  Calendar,
+  Code2,
+  Linkedin,
+  Twitter,
+  Globe,
+  Link as LinkIcon,
+} from "lucide-react";
 
+// ==================== INTERFACES (igual que antes) ====================
 interface ExperienciaLaboralResumenDTO {
   nombreEmpresa: string;
   cargoPuesto: string;
@@ -51,6 +71,7 @@ interface ProyectoResumenDTO {
   rolProyecto: string;
   descripcion: string;
   urlsImagenes: string[];
+  urlPdfs?: string[];
   urlsAdicionales: string[];
   tecnologias: string[];
   enlaceGithub: string | null;
@@ -82,58 +103,209 @@ interface PortafolioCompleto {
   redesSociales: RedSocialResumenDTO[];
 }
 
-export const PortafolioViewPage = () => {
-  const { id } = useParams<{ id: string }>();
+// ==================== UTILIDAD: extraer slug de enlacePublico ====================
+const extraerSlugDeEnlacePublico = (enlacePublico: string | null): string | null => {
+  if (!enlacePublico) return null;
+  // Suponiendo que el enlace es algo como "https://frontend.com/share/textoUrl"
+  // o "http://localhost:3000/portafolio/publico/textoUrl"
+  const partes = enlacePublico.split('/');
+  return partes[partes.length - 1];
+};
+
+// Fallback: convertir correo a slug URL‑safe (mismo algoritmo que el backend)
+const correoToSlug = (correo: string): string => {
+  return btoa(correo)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+};
+
+// ==================== COMPONENTE PRINCIPAL ====================
+export const PortafolioPage = () => {
+  const { id, textoUrl } = useParams<{ id?: string; textoUrl?: string }>();
   const navigate = useNavigate();
+
   const [portafolio, setPortafolio] = useState<PortafolioCompleto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"general" | "experience" | "projects" | "education">("general");
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [processingLike, setProcessingLike] = useState(false);
+  const [slugPrivado, setSlugPrivado] = useState<string | null>(null);
 
+  const isPublicMode = !!textoUrl;
+  const identifier = isPublicMode ? textoUrl! : id!;
+
+  // ==================== CARGA DE DATOS ====================
   useEffect(() => {
-    const fetchPortafolio = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const token =
-          sessionStorage.getItem("jwt") ||
-          sessionStorage.getItem("token") ||
-          localStorage.getItem("jwt") ||
-          localStorage.getItem("token");
 
-        const response = await fetch(`http://localhost:8081/api/portafolio/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
+        if (isPublicMode) {
+          // --- MODO PÚBLICO ---
+          const [
+            profileRes,
+            expRes,
+            projRes,
+            techRes,
+            softRes,
+            eduRes,
+            likesRes,
+          ] = await Promise.all([
+            fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}`),
+            fetch(`http://localhost:8081/api/enlace/experiencias/${textoUrl}`),
+            fetch(`http://localhost:8081/api/enlace/proyectos/${textoUrl}`),
+            fetch(`http://localhost:8081/api/enlace/habilidades-tecnicas/${textoUrl}`),
+            fetch(`http://localhost:8081/api/enlace/habilidades-blandas/${textoUrl}`),
+            fetch(`http://localhost:8081/api/enlace/formaciones/${textoUrl}`),
+            fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}/likes/total`),
+          ]);
 
-        if (!response.ok) {
-          throw new Error("No se pudo cargar el portafolio del usuario.");
+          if (!profileRes.ok) throw new Error("No se pudo cargar el perfil público.");
+          const profileData = await profileRes.json();
+          if (likesRes.ok) {
+            const likesData = await likesRes.json();
+            setTotalLikes(likesData.totalLikes);
+          }
+
+          const portafolioMapeado: PortafolioCompleto = {
+            nombre: profileData.nombre,
+            correo: profileData.correo,
+            foto: profileData.foto,
+            profesion: profileData.nombreProfesion || "Profesional",
+            biografia: profileData.biografia,
+            telefono: profileData.telefono,
+            direccion: profileData.direccion,
+            enlacePublico: null,
+            experienciasLaborales: expRes.ok ? await expRes.json() : [],
+            formacionesAcademica: eduRes.ok ? await eduRes.json() : [],
+            habilidadesTecnicas: techRes.ok ? await techRes.json() : [],
+            habilidadesBlandas: softRes.ok ? await softRes.json() : [],
+            proyectos: projRes.ok ? await projRes.json() : [],
+            redesSociales: (profileData.redes || []).map((r: any) => ({
+              nombreRed: r.nombreRed,
+              urlPerfil: r.urlPerfil,
+            })),
+          };
+          setPortafolio(portafolioMapeado);
+        } else {
+          // --- MODO PRIVADO ---
+          const token =
+            sessionStorage.getItem("jwt") ||
+            sessionStorage.getItem("token") ||
+            localStorage.getItem("jwt") ||
+            localStorage.getItem("token");
+
+          const response = await fetch(`http://localhost:8081/api/portafolio/${id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          });
+
+          if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
+          const data = await response.json();
+          setPortafolio(data);
+
+          // 🔥 CLAVE: extraer el slug real del enlace público (evita problemas de encoding)
+          let slug = null;
+          if (data.enlacePublico) {
+            slug = extraerSlugDeEnlacePublico(data.enlacePublico);
+          }
+          if (!slug && data.correo) {
+            slug = correoToSlug(data.correo);
+          }
+          setSlugPrivado(slug);
+
+          // Cargar total de likes usando el slug
+          if (slug) {
+            try {
+              const likesTotalRes = await fetch(`http://localhost:8081/api/enlace/profile/${slug}/likes/total`);
+              if (likesTotalRes.ok) {
+                const { totalLikes } = await likesTotalRes.json();
+                setTotalLikes(totalLikes);
+              }
+            } catch (err) {
+              console.error("Error al cargar total de likes", err);
+            }
+          }
         }
-
-        const data = await response.json();
-        setPortafolio(data);
       } catch (err) {
-        console.error("Error al cargar portafolio:", err);
-        setError(err instanceof Error ? err.message : "Error al cargar portafolio.");
+        console.error(err);
+        setError(err instanceof Error ? err.message : "Error al cargar el portafolio.");
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchPortafolio();
-    }
-  }, [id]);
+    if (identifier) fetchData();
+  }, [identifier, isPublicMode]);
 
+  // ==================== MANEJO DE LIKES (usa el slug real) ====================
+  const handleLike = async () => {
+    let likeIdentifier: string | null = null;
+    if (isPublicMode) {
+      likeIdentifier = textoUrl!;
+    } else {
+      // Priorizar el slug extraído del enlace público (el que el backend espera)
+      if (slugPrivado) {
+        likeIdentifier = slugPrivado;
+      } else if (portafolio?.enlacePublico) {
+        likeIdentifier = extraerSlugDeEnlacePublico(portafolio.enlacePublico);
+      } else if (portafolio?.correo) {
+        likeIdentifier = correoToSlug(portafolio.correo);
+      }
+    }
+
+    if (!likeIdentifier) {
+      alert("No se puede dar like: falta el identificador del perfil.");
+      return;
+    }
+
+    try {
+      setProcessingLike(true);
+      const url = `http://localhost:8081/api/enlace/profile/${likeIdentifier}/like`;
+      const token = !isPublicMode
+        ? sessionStorage.getItem("jwt") ||
+          sessionStorage.getItem("token") ||
+          localStorage.getItem("jwt") ||
+          localStorage.getItem("token")
+        : undefined;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Error al dar like");
+      }
+
+      setTotalLikes((prev) => prev + 1);
+      if (!isPublicMode) alert("¡Like registrado!");
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Error al registrar like");
+    } finally {
+      setProcessingLike(false);
+    }
+  };
+
+  // ==================== RENDERIZADO DE ESTADOS ====================
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-brand-azul-brillante border-t-transparent"></div>
-          <p className="mt-4 text-text-secondary">Cargando portafolio profesional...</p>
+          <p className="mt-4 text-text-secondary">
+            {isPublicMode ? "Cargando portafolio público..." : "Cargando portafolio..."}
+          </p>
         </div>
       </div>
     );
@@ -143,16 +315,14 @@ export const PortafolioViewPage = () => {
     return (
       <div className="mx-auto max-w-xl text-center py-16 px-4">
         <div className="rounded-3xl border border-red-500/20 bg-red-950/20 p-8 backdrop-blur-md">
-          <svg className="mx-auto h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
+          <BriefcaseBusiness className="mx-auto h-16 w-16 text-red-500" />
           <h2 className="mt-4 text-2xl font-bold text-text-primary">Error al cargar portafolio</h2>
-          <p className="mt-2 text-text-secondary">{error || "Usuario no encontrado."}</p>
+          <p className="mt-2 text-text-secondary">{error || "No se encontró el portafolio solicitado."}</p>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate(isPublicMode ? "/" : "/dashboard")}
             className="mt-6 rounded-xl bg-brand-azul-brillante px-6 py-2.5 font-semibold text-white hover:opacity-90 transition"
           >
-            Volver
+            {isPublicMode ? "Ir al Inicio" : "Volver"}
           </button>
         </div>
       </div>
@@ -162,47 +332,65 @@ export const PortafolioViewPage = () => {
   const fotoPerfil = portafolio.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const telefonoWhatsapp = portafolio.telefono?.replace(/\D/g, "") || "";
 
+  // ==================== RENDER PRINCIPAL ====================
   return (
     <div className="relative min-h-[calc(100vh-100px)] py-8 px-4 max-w-6xl mx-auto flex flex-col gap-8 animate-in fade-in duration-500">
-      {/* Luces de fondo */}
+      {/* Luces decorativas */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-azul-brillante/5 rounded-full blur-[100px] pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-brand-morado/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-      {/* Botón de retroceso */}
-      <div>
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="flex items-center gap-2 text-text-secondary hover:text-brand-azul-brillante transition font-medium"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Volver
-        </button>
-      </div>
+      {/* Botón Volver solo en modo privado */}
+      {!isPublicMode && (
+        <div>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-2 text-text-secondary hover:text-brand-azul-brillante transition font-medium"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Volver
+          </button>
+        </div>
+      )}
 
       {/* Cabecera de Perfil */}
       <section className="bg-card-bg/60 backdrop-blur-md border border-card-border rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8">
           <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-            <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden border-4 border-brand-azul-brillante/30 shadow-lg bg-[#0F223D] shrink-0">
-              <img src={fotoPerfil} className="w-full h-full object-cover" alt={portafolio.nombre} />
+            <div className="flex flex-col items-center shrink-0">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden border-4 border-brand-azul-brillante/30 shadow-lg bg-[#0F223D]">
+                <img src={fotoPerfil} className="w-full h-full object-cover" alt={portafolio.nombre} />
+              </div>
+              <button
+                onClick={handleLike}
+                disabled={processingLike}
+                className="mt-3 flex items-center gap-2 rounded-xl bg-pink-600 px-4 py-2 text-white font-medium hover:bg-pink-700 transition disabled:opacity-50"
+              >
+                <Heart className="w-4 h-4 fill-white" />
+                {processingLike ? "Procesando..." : "Me gusta"}
+              </button>
+              <span className="mt-2 text-sm text-text-secondary">{totalLikes} likes</span>
             </div>
 
             <div className="flex-1">
+              {isPublicMode && (
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-accent-neon/10 border border-brand-accent-neon/20 px-3 py-0.5 text-xs font-semibold text-brand-accent-neon mb-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-neon animate-pulse" />
+                  Perfil Público Compartido
+                </div>
+              )}
               <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">{portafolio.nombre}</h1>
               <p className="text-base sm:text-lg text-brand-azul-brillante font-semibold mt-1">{portafolio.profesion}</p>
               {portafolio.direccion && (
                 <p className="text-sm text-text-secondary mt-1 flex items-center justify-center md:justify-start gap-1">
-                  <svg className="w-4 h-4 text-brand-morado" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <MapPin className="w-4 h-4 text-brand-morado" />
                   {portafolio.direccion}
                 </p>
               )}
               {portafolio.biografia && (
-                <p className="text-sm sm:text-base text-text-secondary mt-3 max-w-2xl leading-relaxed">{portafolio.biografia}</p>
+                <div
+                  className="text-sm sm:text-base text-text-secondary mt-3 max-w-2xl leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
+                  dangerouslySetInnerHTML={{ __html: portafolio.biografia }}
+                />
               )}
             </div>
           </div>
@@ -213,9 +401,7 @@ export const PortafolioViewPage = () => {
                 href={`mailto:${portafolio.correo}`}
                 className="flex items-center justify-center gap-2 bg-[#0B1F3A] hover:bg-[#112F58] text-[#E2F0FF] border border-brand-azul-brillante/30 py-2.5 px-5 rounded-xl transition text-sm font-semibold shadow-md"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+                <Mail className="w-4 h-4" />
                 Contactar por Correo
               </a>
             )}
@@ -226,9 +412,7 @@ export const PortafolioViewPage = () => {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 py-2.5 px-5 rounded-xl transition text-sm font-semibold shadow-md"
               >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.747 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.118-2.905-6.993C16.48 1.873 14.004.84 11.37.84c-5.446 0-9.873 4.42-9.877 9.866-.001 1.702.461 3.351 1.34 4.8l-.995 3.636 3.719-.948zm12.39-7.39c-.27-.136-1.602-.79-1.85-.882-.25-.091-.43-.136-.61.136-.18.27-.7.882-.856 1.063-.156.183-.312.204-.582.068-.27-.136-1.143-.42-2.178-1.342-.805-.718-1.348-1.605-1.506-1.877-.158-.272-.017-.42.119-.556.122-.122.27-.317.405-.476.136-.16.18-.272.27-.454.09-.18.045-.34-.022-.476-.068-.136-.61-1.474-.836-2.019-.22-.53-.442-.458-.61-.466-.156-.008-.337-.01-.518-.01-.18 0-.473.068-.72.34-.248.272-.946.924-.946 2.253 0 1.33.968 2.613 1.103 2.795.136.182 1.905 2.91 4.617 4.08.645.278 1.148.445 1.54.57.65.206 1.24.177 1.707.107.52-.078 1.602-.655 1.828-1.287.226-.632.226-1.177.158-1.287-.068-.11-.25-.195-.52-.332z" />
-                </svg>
+                <Phone className="w-4 h-4" />
                 Escribir por WhatsApp
               </a>
             )}
@@ -237,28 +421,44 @@ export const PortafolioViewPage = () => {
       </section>
 
       {/* Pestañas de Navegación */}
-      <div className="flex border-b border-card-border/80 p-1 bg-card-bg/20 rounded-xl max-w-fit gap-2">
+      <div className="flex border-b border-card-border/80 p-1 bg-card-bg/20 rounded-xl max-w-fit gap-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab("general")}
-          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeTab === "general" ? "bg-brand-azul-brillante text-white shadow-md" : "text-text-secondary hover:text-text-primary"}`}
+          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            activeTab === "general"
+              ? "bg-brand-azul-brillante text-white shadow-md"
+              : "text-text-secondary hover:text-text-primary"
+          }`}
         >
           Resumen General
         </button>
         <button
           onClick={() => setActiveTab("experience")}
-          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeTab === "experience" ? "bg-brand-azul-brillante text-white shadow-md" : "text-text-secondary hover:text-text-primary"}`}
+          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            activeTab === "experience"
+              ? "bg-brand-azul-brillante text-white shadow-md"
+              : "text-text-secondary hover:text-text-primary"
+          }`}
         >
-          Experiencia y Habilidades
+          Experiencia y Skills
         </button>
         <button
           onClick={() => setActiveTab("projects")}
-          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeTab === "projects" ? "bg-brand-azul-brillante text-white shadow-md" : "text-text-secondary hover:text-text-primary"}`}
+          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            activeTab === "projects"
+              ? "bg-brand-azul-brillante text-white shadow-md"
+              : "text-text-secondary hover:text-text-primary"
+          }`}
         >
           Proyectos ({portafolio.proyectos.length})
         </button>
         <button
           onClick={() => setActiveTab("education")}
-          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeTab === "education" ? "bg-brand-azul-brillante text-white shadow-md" : "text-text-secondary hover:text-text-primary"}`}
+          className={`px-4 sm:px-6 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            activeTab === "education"
+              ? "bg-brand-azul-brillante text-white shadow-md"
+              : "text-text-secondary hover:text-text-primary"
+          }`}
         >
           Educación y Enlaces
         </button>
@@ -266,19 +466,21 @@ export const PortafolioViewPage = () => {
 
       {/* Contenido de Pestañas */}
       <div className="flex-1 space-y-6">
-        {/* PESTAÑA: RESUMEN GENERAL */}
+        {/* ========== PESTAÑA GENERAL ========== */}
         {activeTab === "general" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Tarjeta de Biografía / Presentación */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Sobre Mí</h3>
-                <p className="text-text-secondary leading-relaxed text-sm sm:text-base whitespace-pre-line">
-                  {portafolio.biografia || "El profesional no ha ingresado una descripción biográfica por el momento."}
-                </p>
+                {portafolio.biografia ? (
+                  <div
+                    className="text-sm sm:text-base text-text-secondary leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
+                    dangerouslySetInnerHTML={{ __html: portafolio.biografia }}
+                  />
+                ) : (
+                  <p className="text-sm text-text-secondary">El profesional no ha ingresado una descripción biográfica por el momento.</p>
+                )}
               </div>
-
-              {/* Redes Sociales Aplanadas */}
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Enlaces Profesionales</h3>
                 {portafolio.redesSociales.length > 0 ? (
@@ -291,10 +493,14 @@ export const PortafolioViewPage = () => {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 bg-[#0B1F3A]/60 border border-card-border/80 px-4 py-2.5 rounded-xl hover:border-brand-azul-brillante/50 hover:bg-brand-azul-brillante/5 transition text-sm font-medium"
                       >
+                        {red.nombreRed === "LinkedIn" && <Linkedin className="w-4 h-4 text-brand-azul-brillante" />}
+                        {red.nombreRed === "Twitter" && <Twitter className="w-4 h-4 text-brand-azul-brillante" />}
+                        {red.nombreRed === "GitHub" && <Github className="w-4 h-4 text-brand-azul-brillante" />}
+                        {!["LinkedIn", "Twitter", "GitHub"].includes(red.nombreRed) && (
+                          <Globe className="w-4 h-4 text-brand-azul-brillante" />
+                        )}
                         <span className="text-brand-azul-brillante font-semibold">{red.nombreRed}</span>
-                        <svg className="w-3.5 h-3.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
+                        <ExternalLink className="w-3.5 h-3.5 text-text-secondary" />
                       </a>
                     ))}
                   </div>
@@ -304,7 +510,6 @@ export const PortafolioViewPage = () => {
               </div>
             </div>
 
-            {/* Columna derecha: Detalles rápidos */}
             <div className="space-y-6">
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Información Rápida</h3>
@@ -339,10 +544,9 @@ export const PortafolioViewPage = () => {
           </div>
         )}
 
-        {/* PESTAÑA: EXPERIENCIA Y SKILLS */}
+        {/* ========== PESTAÑA EXPERIENCIA Y SKILLS ========== */}
         {activeTab === "experience" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Experiencia Laboral (Columna Izquierda) */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-6">Trayectoria Profesional</h3>
@@ -350,11 +554,9 @@ export const PortafolioViewPage = () => {
                   <div className="relative border-l border-brand-azul-brillante/30 ml-4 space-y-8">
                     {portafolio.experienciasLaborales.map((exp, index) => (
                       <div key={index} className="relative pl-6">
-                        {/* Marcador de línea de tiempo */}
                         <div className="absolute -left-1.5 top-1.5 h-3.5 w-3.5 rounded-full border border-brand-azul-brillante bg-bg-dark flex items-center justify-center">
                           <div className="h-1.5 w-1.5 rounded-full bg-brand-azul-brillante"></div>
                         </div>
-
                         <div>
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <h4 className="text-base sm:text-lg font-bold text-text-primary">{exp.cargoPuesto}</h4>
@@ -362,21 +564,15 @@ export const PortafolioViewPage = () => {
                               {exp.fechaInicio} — {exp.actualmenteTrabajoAqui ? "Presente" : exp.fechaFin}
                             </span>
                           </div>
-
                           <p className="text-sm font-semibold text-brand-morado mt-0.5">
                             {exp.nombreEmpresa} <span className="text-text-secondary font-normal">({exp.ubicacion})</span>
                           </p>
-
                           {exp.modalidadTrabajo && (
                             <span className="mt-2 inline-block rounded-md bg-card-border/30 px-2 py-0.5 text-xs text-text-secondary font-medium">
                               {exp.modalidadTrabajo} · {exp.tipoContrato || "Contrato"}
                             </span>
                           )}
-
-                          <p className="mt-3 text-sm text-text-secondary leading-relaxed whitespace-pre-line">
-                            {exp.descripcionProyecto}
-                          </p>
-
+                          <p className="mt-3 text-sm text-text-secondary leading-relaxed whitespace-pre-line">{exp.descripcionProyecto}</p>
                           {exp.tecnologias && exp.tecnologias.length > 0 && (
                             <div className="mt-4 flex flex-wrap gap-1.5">
                               {exp.tecnologias.map((tech) => (
@@ -389,7 +585,6 @@ export const PortafolioViewPage = () => {
                               ))}
                             </div>
                           )}
-
                           {exp.evidenciaLaboralPdfUrl && (
                             <div className="mt-3">
                               <a
@@ -398,9 +593,7 @@ export const PortafolioViewPage = () => {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1.5 text-xs text-brand-azul-brillante hover:underline font-semibold"
                               >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
+                                <FileText className="w-4 h-4" />
                                 Ver Certificado / Evidencia PDF
                               </a>
                             </div>
@@ -415,9 +608,7 @@ export const PortafolioViewPage = () => {
               </div>
             </div>
 
-            {/* Habilidades Técnicas y Blandas (Columna Derecha) */}
             <div className="space-y-6">
-              {/* Hard Skills */}
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Habilidades Técnicas</h3>
                 {portafolio.habilidadesTecnicas.length > 0 ? (
@@ -431,12 +622,12 @@ export const PortafolioViewPage = () => {
                           </span>
                         </div>
                         {skill.categoria && (
-                          <span className="text-[10px] text-brand-morado font-medium uppercase tracking-wider block mb-1">
-                            {skill.categoria}
-                          </span>
+                          <span className="text-[10px] text-brand-morado font-medium uppercase tracking-wider block mb-1">{skill.categoria}</span>
                         )}
                         {skill.anosExperiencia !== undefined && skill.anosExperiencia > 0 && (
-                          <p className="text-xs text-text-secondary">{skill.anosExperiencia} {skill.anosExperiencia === 1 ? "año" : "años"} de experiencia</p>
+                          <p className="text-xs text-text-secondary">
+                            {skill.anosExperiencia} {skill.anosExperiencia === 1 ? "año" : "años"} de experiencia
+                          </p>
                         )}
                         {skill.certificadoUrl && (
                           <a
@@ -456,7 +647,6 @@ export const PortafolioViewPage = () => {
                 )}
               </div>
 
-              {/* Soft Skills */}
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Habilidades Blandas</h3>
                 {portafolio.habilidadesBlandas.length > 0 ? (
@@ -479,7 +669,7 @@ export const PortafolioViewPage = () => {
           </div>
         )}
 
-        {/* PESTAÑA: PROYECTOS */}
+        {/* ========== PESTAÑA PROYECTOS ========== */}
         {activeTab === "projects" && (
           <div>
             {portafolio.proyectos.length > 0 ? (
@@ -489,7 +679,6 @@ export const PortafolioViewPage = () => {
                     key={index}
                     className="bg-card-bg/50 backdrop-blur-sm border border-card-border rounded-2xl overflow-hidden hover:border-brand-azul-brillante/30 transition flex flex-col h-full shadow-lg"
                   >
-                    {/* Imagen de Portada del Proyecto */}
                     <div className="h-48 overflow-hidden bg-[#0A1A2F] relative border-b border-card-border">
                       {pro.urlsImagenes && pro.urlsImagenes.length > 0 ? (
                         <img
@@ -498,10 +687,9 @@ export const PortafolioViewPage = () => {
                           className="w-full h-full object-cover hover:scale-105 transition duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-text-secondary">
-                          <svg className="w-12 h-12 text-card-border" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
+                        <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                          <BriefcaseBusiness size={56} className="text-brand-azul-brillante mb-3" />
+                          <span className="text-white font-semibold text-center line-clamp-2">{pro.titulo}</span>
                         </div>
                       )}
                       <span className="absolute bottom-3 right-3 bg-brand-azul-brillante/95 text-white text-xs font-bold px-2.5 py-1 rounded-md">
@@ -514,48 +702,117 @@ export const PortafolioViewPage = () => {
                         <h4 className="text-lg font-bold text-text-primary tracking-tight">{pro.titulo}</h4>
                         <p className="text-xs text-brand-morado font-semibold uppercase tracking-wider mt-0.5">{pro.rolProyecto}</p>
                         {pro.fechaInicio && (
-                          <p className="text-[11px] text-text-secondary mt-0.5">
-                            Periodo: {pro.fechaInicio} — {pro.fechaFinalizacion || "Presente"}
+                          <p className="text-[11px] text-text-secondary mt-0.5 flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {pro.fechaInicio} — {pro.fechaFinalizacion || "Presente"}
                           </p>
                         )}
                       </div>
 
-                      <p className="text-sm text-text-secondary leading-relaxed line-clamp-3 flex-1">{pro.descripcion}</p>
+                      {pro.descripcion && (
+                        <div
+                          className="text-sm sm:text-base text-text-secondary [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
+                          dangerouslySetInnerHTML={{ __html: pro.descripcion }}
+                        />
+                      )}
 
                       {pro.tecnologias && pro.tecnologias.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {pro.tecnologias.map((tech) => (
-                            <span
-                              key={tech}
-                              className="rounded-full bg-[#0B1F3A] border border-brand-azul-brillante/15 px-2.5 py-0.5 text-xs text-[#E2F0FF] font-medium"
-                            >
-                              {tech}
-                            </span>
-                          ))}
+                        <div className="mt-4">
+                          <p className="text-text-secondary text-sm font-semibold mb-3 flex items-center gap-1">
+                            <Code2 className="w-4 h-4" /> Tecnologías usadas
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {pro.tecnologias.map((tech) => (
+                              <span
+                                key={tech}
+                                className="rounded-full bg-[#0B1F3A] border border-brand-azul-brillante/15 px-2.5 py-0.5 text-xs text-[#E2F0FF] font-medium"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
 
-                      <div className="flex items-center gap-3 pt-3 border-t border-card-border/40 justify-end mt-auto">
-                        {pro.enlaceGithub && (
-                          <a
-                            href={pro.enlaceGithub}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 text-xs text-text-primary hover:text-brand-azul-brillante font-semibold transition"
-                          >
-                            GitHub
-                          </a>
-                        )}
-                        {pro.enlaceDemo && (
-                          <a
-                            href={pro.enlaceDemo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-brand-azul-brillante hover:opacity-90 text-white text-xs font-semibold px-4.5 py-2 rounded-xl transition"
-                          >
-                            Demo En Vivo
-                          </a>
-                        )}
+                      {pro.urlsImagenes && pro.urlsImagenes.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-text-secondary text-sm font-semibold mb-3 flex items-center gap-1">
+                            <ImageIcon className="w-4 h-4" /> Imágenes del proyecto
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {pro.urlsImagenes.map((imagenUrl, idx) => (
+                              <button
+                                key={`${imagenUrl}-${idx}`}
+                                type="button"
+                                onClick={() => window.open(imagenUrl, "_blank")}
+                                className="w-full rounded-xl bg-[#2b7ae7] border border-card-border px-3 py-2 text-sm text-text-primary hover:border-brand-azul-brillante hover:bg-[#122947] transition"
+                              >
+                                Imagen {idx + 1}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {pro.urlPdfs && pro.urlPdfs.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-text-secondary text-sm font-semibold mb-3 flex items-center gap-1">
+                            <FileText className="w-4 h-4" /> PDFs del proyecto
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {pro.urlPdfs.map((pdfUrl, idx) => (
+                              <a
+                                key={`${pdfUrl}-${idx}`}
+                                href={pdfUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="w-full rounded-xl bg-[#2b7ae7] border border-card-border px-3 py-2 text-sm text-text-primary text-center hover:border-brand-azul-brillante hover:bg-[#122947] transition"
+                              >
+                                📄 PDF {idx + 1}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="pt-3 border-t border-card-border/40 mt-auto">
+                        <p className="text-text-secondary text-sm font-semibold mb-3">Enlaces del proyecto</p>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          {pro.enlaceGithub && (
+                            <a
+                              href={pro.enlaceGithub}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-xs text-text-primary hover:text-brand-azul-brillante font-semibold transition"
+                            >
+                              <Github size={16} />
+                              GitHub
+                            </a>
+                          )}
+                          {pro.enlaceDemo && (
+                            <a
+                              href={pro.enlaceDemo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-xs text-text-primary hover:text-brand-azul-brillante font-semibold transition"
+                            >
+                              <ExternalLink size={16} />
+                              Demo En Vivo
+                            </a>
+                          )}
+                          {pro.urlsAdicionales?.map((url, idx) => (
+                            <a
+                              key={`${url}-${idx}`}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 bg-[#0B1F3A] border border-brand-azul-brillante/15 hover:border-brand-azul-brillante text-white text-xs font-semibold px-4 py-2 rounded-xl transition"
+                            >
+                              <ExternalLink size={16} />
+                              Link {idx + 1}
+                            </a>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </article>
@@ -569,10 +826,9 @@ export const PortafolioViewPage = () => {
           </div>
         )}
 
-        {/* PESTAÑA: EDUCACIÓN */}
+        {/* ========== PESTAÑA EDUCACIÓN Y ENLACES ========== */}
         {activeTab === "education" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Formación Académica (Columna Izquierda) */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-6">Educación y Formación</h3>
@@ -580,11 +836,9 @@ export const PortafolioViewPage = () => {
                   <div className="relative border-l border-brand-morado/30 ml-4 space-y-8">
                     {portafolio.formacionesAcademica.map((form, index) => (
                       <div key={index} className="relative pl-6">
-                        {/* Marcador de línea de tiempo */}
                         <div className="absolute -left-1.5 top-1.5 h-3.5 w-3.5 rounded-full border border-brand-morado bg-bg-dark flex items-center justify-center">
                           <div className="h-1.5 w-1.5 rounded-full bg-brand-morado"></div>
                         </div>
-
                         <div>
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <h4 className="text-base sm:text-lg font-bold text-text-primary">{form.tituloObtenido}</h4>
@@ -592,23 +846,17 @@ export const PortafolioViewPage = () => {
                               {form.fechaInicio} — {form.fechaFin || "Presente"}
                             </span>
                           </div>
-
                           <p className="text-sm font-semibold text-brand-azul-brillante mt-0.5">
                             {form.institucion} <span className="text-text-secondary font-normal">({form.area})</span>
                           </p>
-
                           {form.nivel && (
                             <span className="mt-2 inline-block rounded-md bg-card-border/30 px-2 py-0.5 text-xs text-text-secondary font-medium">
                               Nivel: {form.nivel} · Estado: {form.estado || "Completado"}
                             </span>
                           )}
-
                           {form.descripcion && (
-                            <p className="mt-3 text-sm text-text-secondary leading-relaxed whitespace-pre-line">
-                              {form.descripcion}
-                            </p>
+                            <p className="mt-3 text-sm text-text-secondary leading-relaxed whitespace-pre-line">{form.descripcion}</p>
                           )}
-
                           {form.urlImagen && (
                             <div className="mt-4 max-w-sm rounded-xl overflow-hidden border border-card-border">
                               <img src={form.urlImagen} alt="Formación" className="w-full h-auto object-cover max-h-48" />
@@ -624,16 +872,13 @@ export const PortafolioViewPage = () => {
               </div>
             </div>
 
-            {/* Enlaces y Redes (Columna Derecha) */}
             <div className="space-y-6">
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Información de Contacto</h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-brand-azul-brillante/10 rounded-xl flex items-center justify-center text-brand-azul-brillante shrink-0">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
+                      <Mail className="w-5 h-5" />
                     </div>
                     <div>
                       <span className="block text-xs text-text-secondary font-semibold">Correo Electrónico</span>
@@ -642,13 +887,10 @@ export const PortafolioViewPage = () => {
                       </a>
                     </div>
                   </div>
-
                   {portafolio.telefono && (
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-[#25D366]/10 rounded-xl flex items-center justify-center text-[#25D366] shrink-0">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
+                        <Phone className="w-5 h-5" />
                       </div>
                       <div>
                         <span className="block text-xs text-text-secondary font-semibold">Teléfono / Celular</span>
@@ -656,13 +898,10 @@ export const PortafolioViewPage = () => {
                       </div>
                     </div>
                   )}
-
                   {portafolio.enlacePublico && (
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-brand-morado/10 rounded-xl flex items-center justify-center text-brand-morado shrink-0">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                        </svg>
+                        <LinkIcon className="w-5 h-5" />
                       </div>
                       <div>
                         <span className="block text-xs text-text-secondary font-semibold">Enlace Público Oficial</span>
