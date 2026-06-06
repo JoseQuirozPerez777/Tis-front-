@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { RichTextEditor } from "@/shared/components/ui/RichTextEditor";
 import { useProfile } from '../hooks/useProfile';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
@@ -16,14 +17,17 @@ interface ProfileFormProps {
 }
 
 export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
-  const { form, isLoading, serverError, onSubmit, onCancel } =
+  
+  const { form, isLoading, serverError, onSubmit } =
     useProfile(onProfileUpdated);
 
-  const {
-    register,
-    reset,
-    formState: { errors },
-  } = form;
+const {
+  register,
+  reset,
+  watch,
+  setValue,
+  formState: { errors },
+} = form;
 
   const [profesiones, setProfesiones] = useState<Profesion[]>([]);
   const [loadingProfesiones, setLoadingProfesiones] = useState(false);
@@ -206,13 +210,16 @@ export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
               <label className="block text-sm text-[#9CA3AF] mb-2">
                 Biografía Profesional
               </label>
-
-              <textarea
-                rows={4}
-                placeholder="Describe tu experiencia y metas..."
-                {...register('bio')}
-                className="w-full bg-[#0F223D] border border-white/10 rounded px-4 py-2 focus:border-[#3B82F6] outline-none text-[#E5E7EB] resize-none"
-              />
+<RichTextEditor
+  value={watch('bio') || ''}
+  onChange={(value) =>
+    setValue('bio', value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    })
+  }
+  placeholder="Describe tu experiencia y metas..."
+/>
 
               {errors.bio?.message && (
                 <p className="mt-2 text-sm text-red-400">
@@ -224,13 +231,6 @@ export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
         </section>
 
         <div className="flex flex-col md:flex-row md:justify-end space-y-3 md:space-y-0 md:space-x-4 pt-4 border-t border-white/10">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-2 border border-[#4ADE80] text-[#4ADE80] rounded hover:bg-[#4ADE80]/10 transition-colors"
-          >
-            Cancelar
-          </button>
 
           <Button
             type="submit"

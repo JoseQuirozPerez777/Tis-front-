@@ -12,119 +12,80 @@ export const FiltrosBusquedaCard = ({ portafolio }: FiltrosBusquedaCardProps) =>
     .join("");
 
   return (
-    <article className="rounded-2xl border border-card-border bg-[#0B1F3A]/80 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition hover:border-brand-azul-brillante/60">
-      <div className="flex flex-col gap-5 md:flex-row">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-brand-azul-brillante/20 text-xl font-bold text-brand-azul-brillante">
-          {portafolio.fotoPerfilUrl ? (
-            <img
-              src={portafolio.fotoPerfilUrl}
-              alt={portafolio.nombreCompleto}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            iniciales
-          )}
+    <article className="group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-all duration-300 hover:border-brand-azul-brillante/50">
+
+      {/* Top Section */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-start justify-between">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-azul-brillante/20 text-sm font-bold text-brand-azul-brillante">
+            {portafolio.fotoPerfilUrl ? (
+              <img
+                src={portafolio.fotoPerfilUrl}
+                alt={portafolio.nombreCompleto}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              iniciales
+            )}
+          </div>
+          <span
+            className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold ${portafolio.disponibilidad === "Disponible"
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              : "border-yellow-500/30 bg-yellow-500/10 text-yellow-400"
+              }`}
+          >
+            {portafolio.disponibilidad || "Sin estado"}
+          </span>
         </div>
 
-        <div className="flex-1">
-          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-            <div>
-              <h3 className="text-xl font-bold text-[#E2F0FF]">
-                {portafolio.nombreCompleto}
-              </h3>
+        <div>
+          <h3 className="line-clamp-1 text-base font-bold text-text-primary transition-colors group-hover:text-brand-accent-neon">
+            {portafolio.nombreCompleto}
+          </h3>
+          <p className="line-clamp-1 text-sm font-medium text-text-secondary">
+            {portafolio.profesion}
+          </p>
+        </div>
 
-              <p className="text-sm font-semibold text-brand-azul-brillante">
-                {portafolio.profesion}
-              </p>
-
-              {portafolio.especializacion && (
-                <p className="mt-1 text-sm text-text-secondary">
-                  {portafolio.especializacion}
-                </p>
-              )}
-            </div>
-
-            <span
-              className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${portafolio.disponibilidad === "Disponible"
-                ? "bg-emerald-500/15 text-emerald-300"
-                : "bg-yellow-500/15 text-yellow-300"
-                }`}
-            >
-              {portafolio.disponibilidad || "Sin estado"}
+        {/* Content */}
+        <div className="flex flex-col gap-2 text-xs text-text-muted">
+          {portafolio.especializacion && (
+            <span className="flex items-center gap-1.5">
+              <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span className="line-clamp-1">{portafolio.especializacion}</span>
             </span>
-          </div>
+          )}
 
           {portafolio.resumen && (
-            <p className="mt-4 line-clamp-2 text-sm leading-6 text-text-secondary">
-              {portafolio.resumen}
-            </p>
+            <p className="line-clamp-2 leading-relaxed">{portafolio.resumen}</p>
           )}
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {portafolio.tecnologias.length > 0 ? (
-              portafolio.tecnologias.slice(0, 5).map((tecnologia) => (
-                <span
-                  key={tecnologia}
-                  className="rounded-full bg-[#1E3A5F] px-3 py-1 text-xs font-medium text-[#E2F0FF]"
-                >
-                  {tecnologia}
-                </span>
-              ))
-            ) : (
-              <span className="text-xs text-text-secondary">
-                Sin tecnologías registradas
-              </span>
-            )}
-          </div>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-text-secondary">Idiomas:</span>
-
-            {portafolio.idiomas.length > 0 ? (
-              portafolio.idiomas.map((idioma) => (
-                <span
-                  key={idioma}
-                  className="rounded-full border border-card-border bg-[#061327] px-3 py-1 text-xs font-medium text-[#E2F0FF]"
-                >
-                  {idioma}
-                </span>
-              ))
-            ) : (
-              <span className="text-xs text-text-secondary">No registrados</span>
-            )}
-          </div>
-
-          <div className="mt-5 grid gap-3 text-sm text-text-primary md:grid-cols-4">
-            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
-              <span className="block text-xs text-text-secondary">Ubicación</span>
-              {portafolio.ubicacion}
-            </div>
-
-            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
-              <span className="block text-xs text-text-secondary">Modalidad</span>
-              {portafolio.modalidadTrabajo || "No definida"}
-            </div>
-
-            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
-              <span className="block text-xs text-text-secondary">Experiencia</span>
-              {portafolio.experienciaAnios} años
-            </div>
-
-            <div className="rounded-xl border border-card-border bg-[#061327] p-3">
-              <span className="block text-xs text-text-secondary">Proyectos</span>
-              {portafolio.cantidadProyectos}
-            </div>
-          </div>
-
-          <div className="mt-5 flex justify-end">
-            <a
-              href={portafolio.urlPublica}
-              className="rounded-xl bg-brand-azul-brillante px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-            >
-              Ver perfil
-            </a>
-          </div>
         </div>
+
+        {/* Tech & Lang */}
+        <div className="mt-1 flex flex-wrap gap-1.5">
+          {portafolio.tecnologias.slice(0, 3).map((tech) => (
+            <span key={tech} className="rounded-full border border-brand-azul-brillante/20 bg-brand-azul-brillante/10 px-2 py-0.5 text-[10px] font-medium text-brand-azul-brillante">
+              {tech}
+            </span>
+          ))}
+          {portafolio.tecnologias.length > 3 && (
+            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-text-muted">
+              +{portafolio.tecnologias.length - 3}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-5 flex border-t border-white/8 pt-4">
+        <a
+          href={portafolio.urlPublica}
+          className="rounded-xl bg-brand-azul-brillante px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+        >
+          Ver perfil
+        </a>
       </div>
     </article>
   );

@@ -10,4 +10,5 @@ export interface AcademicTraining {
   description: string;
   certificateTest: File | null;
   certificateUrl?: string;
+  isPublic?: boolean;
 }

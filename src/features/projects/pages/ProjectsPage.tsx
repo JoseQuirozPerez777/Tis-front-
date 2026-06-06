@@ -288,9 +288,20 @@ export function ProjectsPage() {
                     </div>
                   </div>
 </div>
-                  <p className="text-text-secondary text-sm mt-3">
-                    {proyecto.descripcion}
-                  </p>
+
+{proyecto.descripcion && (
+  <div
+    className="
+      text-sm sm:text-base text-text-secondary mt-3 max-w-xl mx-auto md:mx-0
+      [&_ul]:list-disc [&_ul]:pl-6
+      [&_ol]:list-decimal [&_ol]:pl-6
+      [&_li]:mb-1
+    "
+    dangerouslySetInnerHTML={{
+      __html: proyecto.descripcion,
+    }}
+  />
+)}
 
                   <div className="flex flex-wrap gap-2 mt-4">
                     {proyecto.tecnologiaIds?.map((id, index) => (
@@ -364,30 +375,26 @@ export function ProjectsPage() {
                     ))}
                   </div>
 
-                  {proyecto.urlsImagenes && proyecto.urlsImagenes.length > 0 && (
-                    <div className="mt-6">
-                      <p className="text-text-secondary text-sm font-semibold mb-3">
-                        Imágenes del proyecto
-                      </p>
+{proyecto.urlsImagenes && proyecto.urlsImagenes.length > 0 && (
+  <div className="mt-6">
+    <p className="text-text-secondary text-sm font-semibold mb-3">
+      Imágenes del proyecto
+    </p>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {proyecto.urlsImagenes.map((imagenUrl, index) => (
-                          <button
-                            key={`${imagenUrl}-${index}`}
-                            type="button"
-                            onClick={() => setSelectedImage(imagenUrl)}
-                            className="w-full h-56 sm:h-64 rounded-2xl overflow-hidden bg-[#0F223D] border border-card-border cursor-pointer"
-                          >
-                            <img
-                              src={imagenUrl}
-                              alt={`${proyecto.titulo} imagen ${index + 1}`}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {proyecto.urlsImagenes.map((imagenUrl, index) => (
+        <button
+          key={`${imagenUrl}-${index}`}
+          type="button"
+          onClick={() => setSelectedImage(imagenUrl)}
+          className="w-full h-20 rounded-2xl bg-[#0F223D] border border-card-border flex items-center justify-center cursor-pointer"
+        >
+          Imagen {index + 1}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
 
 {proyecto.urlPdfs && proyecto.urlPdfs.length > 0 && (
   <div className="mt-6">

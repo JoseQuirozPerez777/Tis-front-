@@ -43,7 +43,8 @@ export const academicTrainingService = {
       fechaFin: training.endDate ? training.endDate : null,
       estado: training.status,
       descripcion: training.description,
-      urlImagen: training.certificateUrl || ''
+      urlImagen: training.certificateUrl || '',
+      esPublico: training.isPublic !== undefined ? training.isPublic : true
     };
 
     const response = await fetch(`${API_URL}/formacion/registrar`, {
@@ -100,7 +101,8 @@ export const academicTrainingService = {
       endDate: item.fechaFin,
       status: item.estado,
       description: item.descripcion,
-      certificateUrl: item.urlImagen
+      certificateUrl: item.urlImagen,
+      isPublic: item.esPublico
     }));
   },
 
@@ -119,7 +121,8 @@ export const academicTrainingService = {
       fechaFin: training.endDate ? training.endDate : null,
       estado: training.status,
       descripcion: training.description,
-      urlImagen: training.certificateUrl || ''
+      urlImagen: training.certificateUrl || '',
+      esPublico: training.isPublic !== undefined ? training.isPublic : true
     };
 
     const response = await fetch(`${API_URL}/formacion/${id}`, {
