@@ -10,7 +10,9 @@ export const dashMyPerfilService = {
   },
 
   async getVisibilityElements() {
-    return await apiClient.get<Record<string, Array<{ id: number; nombre: string; esPublico: boolean }>>>('/visibilidad/mis-elementos');
+    const response = await apiClient.get<Record<string, Array<{ id: number; nombre: string; esPublico: boolean }>>>('/visibilidad/mis-elementos');
+    console.log('GET /visibilidad/mis-elementos response:', response);
+  return response;
   },
 
   async saveVisibilitySettings(settings: Record<string, boolean>) {
@@ -18,6 +20,6 @@ export const dashMyPerfilService = {
   },
 
   async saveVisibilityElements(payload: Partial<Record<string, Array<{ id: number; esPublico: boolean }>>>) {
-    return await apiClient.post('/visibilidad/guardar-elementos', payload);
+    return await apiClient.put('/visibilidad/guardar-elementos', payload);
   },
 };
