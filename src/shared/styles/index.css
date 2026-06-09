@@ -37,10 +37,22 @@
   ::-webkit-scrollbar {
     width: 6px;
   }
+
   ::-webkit-scrollbar-track {
     @apply bg-bg-dark;
   }
+
   ::-webkit-scrollbar-thumb {
     @apply bg-brand-azul-medio rounded-full hover:bg-brand-azul-brillante transition-colors;
+  }
+
+  input[type="date"] {
+    color-scheme: dark;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.8);
+    opacity: 1;
+    cursor: pointer;
   }
 }
