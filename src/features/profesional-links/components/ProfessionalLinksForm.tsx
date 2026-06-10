@@ -58,18 +58,22 @@ export const ProfessionalLinksForm = ({
 
   return (
     <div className="w-full text-white">
-      <div className="rounded-[28px] border border-[#163154] bg-[#061A31] shadow-lg">
-        <div className="border-b border-[#163154] px-8 py-6">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#23E7C8] text-[#23E7C8]">
+      <div className="w-full overflow-hidden rounded-[20px] md:rounded-[28px] border border-[#163154] bg-[#061A31] shadow-lg">
+        
+        {/* Header */}
+        <div className="border-b border-[#163154] px-4 py-5 sm:px-6 md:px-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+            
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border-2 border-[#23E7C8] text-[#23E7C8] flex-shrink-0">
               🔗
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-[#23E7C8] md:text-4xl">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#23E7C8]">
                 Redes profesionales
               </h1>
-              <p className="mt-1 text-sm text-[#C3CBD8] md:text-base">
+
+              <p className="mt-1 text-xs sm:text-sm md:text-base text-[#C3CBD8]">
                 Agrega tus perfiles profesionales para que otros puedan conocer
                 más sobre ti.
               </p>
@@ -77,7 +81,11 @@ export const ProfessionalLinksForm = ({
           </div>
         </div>
 
-        <form onSubmit={onSubmit} className="p-8">
+        {/* Formulario */}
+        <form
+          onSubmit={onSubmit}
+          className="p-4 sm:p-6 md:p-8"
+        >
           {serverError && (
             <div className="mb-6 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
               {serverError}
@@ -90,42 +98,53 @@ export const ProfessionalLinksForm = ({
             </div>
           )}
 
-          <section className="rounded-[22px] border border-[#163154] bg-[#0A2240] p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-[#F3F4F6]">
+          <section className="rounded-[18px] md:rounded-[22px] border border-[#163154] bg-[#0A2240] p-4 sm:p-6 md:p-8">
+            
+            <h2 className="text-xl sm:text-2xl font-bold text-[#F3F4F6]">
               {selectedLink ? 'Editar enlace' : 'Nuevo enlace'}
             </h2>
 
-            <p className="mt-2 text-sm text-[#9CA3AF] md:text-base">
+            <p className="mt-2 text-sm md:text-base text-[#9CA3AF]">
               {selectedLink
                 ? 'Solo puedes actualizar la URL del enlace seleccionado.'
                 : 'Agrega y gestiona los enlaces a tus redes profesionales.'}
             </p>
 
             <div className="mt-8">
-              <div className="mb-6 flex items-center gap-4">
+              
+              {/* Información de red */}
+              <div className="mb-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                
                 <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-xl text-white shadow-md ${
+                  className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl text-white shadow-md flex-shrink-0 ${
                     isLinkedIn ? 'bg-[#0A66C2]' : 'bg-[#111827]'
                   }`}
                 >
                   {isLinkedIn ? (
-                    <span className="text-2xl font-bold">in</span>
+                    <span className="text-xl sm:text-2xl font-bold">
+                      in
+                    </span>
                   ) : (
-                    <span className="text-2xl font-bold">GH</span>
+                    <span className="text-xl sm:text-2xl font-bold">
+                      GH
+                    </span>
                   )}
                 </div>
 
                 <div>
-                  <p className="text-2xl font-semibold text-white">
+                  <p className="text-xl sm:text-2xl font-semibold text-white break-words">
                     {selectedNetwork}
                   </p>
-                  <p className="text-base text-[#C3CBD8]">
+
+                  <p className="text-sm sm:text-base text-[#C3CBD8]">
                     Enlace a tu perfil profesional
                   </p>
                 </div>
               </div>
 
+              {/* Campos */}
               <div className="space-y-5">
+                
                 <div>
                   <label className="mb-2 block text-sm font-medium text-white">
                     Tipo de red <span className="text-red-400">*</span>
@@ -134,8 +153,10 @@ export const ProfessionalLinksForm = ({
                   <select
                     {...register('nombreRed')}
                     disabled={!!selectedLink}
-                    className={`w-full rounded-xl border border-[#2563EB] bg-[#071A30] px-4 py-4 text-white outline-none focus:border-[#3B82F6] ${
-                      selectedLink ? 'cursor-not-allowed opacity-70' : ''
+                    className={`w-full rounded-xl border border-[#2563EB] bg-[#071A30] px-4 py-3 sm:py-4 text-white outline-none focus:border-[#3B82F6] ${
+                      selectedLink
+                        ? 'cursor-not-allowed opacity-70'
+                        : ''
                     }`}
                   >
                     <option value="LinkedIn">LinkedIn</option>
@@ -144,8 +165,8 @@ export const ProfessionalLinksForm = ({
 
                   {selectedLink && (
                     <p className="mt-2 text-sm text-[#AEB7C6]">
-                      El tipo de red no se puede cambiar al editar. Solo puedes
-                      actualizar el enlace.
+                      El tipo de red no se puede cambiar al editar.
+                      Solo puedes actualizar el enlace.
                     </p>
                   )}
 
@@ -169,7 +190,7 @@ export const ProfessionalLinksForm = ({
                         : 'https://github.com/juanperez'
                     }
                     {...register('urlPerfil')}
-                    className="w-full rounded-xl border border-[#2563EB] bg-[#071A30] px-4 py-4 text-white outline-none placeholder:text-[#AEB7C6] focus:border-[#3B82F6]"
+                    className="w-full rounded-xl border border-[#2563EB] bg-[#071A30] px-4 py-3 sm:py-4 text-white outline-none placeholder:text-[#AEB7C6] focus:border-[#3B82F6]"
                   />
 
                   {errors.urlPerfil?.message ? (
@@ -185,17 +206,17 @@ export const ProfessionalLinksForm = ({
                   )}
                 </div>
 
-                <div className="flex items-center gap-3 rounded-xl border border-[#163154] bg-[#071A30] px-4 py-4">
+                <div className="flex items-start sm:items-center gap-3 rounded-xl border border-[#163154] bg-[#071A30] px-4 py-4">
                   <input
                     id="esPublico"
                     type="checkbox"
                     {...register('esPublico')}
-                    className="h-5 w-5 cursor-pointer"
+                    className="h-5 w-5 cursor-pointer flex-shrink-0"
                   />
 
                   <label
                     htmlFor="esPublico"
-                    className="cursor-pointer text-sm text-white"
+                    className="cursor-pointer text-sm text-white leading-relaxed"
                   >
                     Mostrar este enlace como público
                   </label>
@@ -203,12 +224,15 @@ export const ProfessionalLinksForm = ({
               </div>
             </div>
 
+            {/* Botones */}
             <div className="mt-8 border-t border-[#163154] pt-6">
-              <div className="flex flex-col gap-3 md:flex-row md:justify-end">
+              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="rounded-xl bg-[#173255] px-8 py-3"
+                  disabled={isLoading}
+                  className="w-full sm:w-auto rounded-xl border border-[#1E3A5F] bg-transparent px-5 py-3 font-medium text-[#E5E7EB] transition hover:bg-[#1E3A5F]/30 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   Cancelar
                 </button>
@@ -216,10 +240,10 @@ export const ProfessionalLinksForm = ({
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`rounded-xl px-8 py-3 font-semibold text-white transition ${
+                  className={`w-full sm:w-auto rounded-xl px-8 py-3 font-semibold text-white transition ${
                     isLoading
                       ? 'cursor-not-allowed bg-gray-500 opacity-70'
-                      : 'bg-[#43C77A] hover:bg-[#38b56b]'
+                      : 'bg-brand-azul-brillante hover:opacity-90 shadow-lg'
                   }`}
                 >
                   {isLoading
@@ -228,6 +252,7 @@ export const ProfessionalLinksForm = ({
                       ? 'Actualizar enlace'
                       : 'Guardar enlace'}
                 </button>
+
               </div>
             </div>
           </section>
