@@ -4,7 +4,6 @@ import { useAuth } from '@/core/context/AuthContext';
 import {
   FiltrosBusquedaBar,
   FiltrosBusquedaPanel,
-  FiltrosBusquedaSort,
   FiltrosBusquedaList,
   FiltrosBusquedaPagination,
   useFiltrosBusqueda,
@@ -21,12 +20,10 @@ export const DashboardPage = () => {
   const {
     filtros,
     resultados,
-    total,
     totalPaginas,
     cargando,
     error,
     actualizarFiltro,
-    cambiarOrden,
     cambiarPagina,
     aplicarFiltros,
     limpiarFiltros,
@@ -54,41 +51,41 @@ export const DashboardPage = () => {
 
 
 
-     {esAdministrador && (
-  <div className="rounded-2xl border border-card-border bg-brand-azul-medio/40 p-6 shadow-lg">
-    <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-      <div className="flex items-start gap-4">
-        <div className="rounded-xl bg-brand-azul-brillante/20 p-4 text-brand-azul-neon">
-          <BarChart3 size={30} />
+      {esAdministrador && (
+        <div className="rounded-2xl border border-card-border bg-brand-azul-medio/40 p-6 shadow-lg">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="rounded-xl bg-brand-azul-brillante/20 p-4 text-brand-azul-neon">
+                <BarChart3 size={30} />
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-[#E2F0FF]">
+                  Reportes de Usuarios
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-text-secondary">
+                  Consulta el reporte general de usuarios registrados, revisa
+                  usuarios activos e inactivos, aplica filtros y exporta la
+                  información en PDF.
+                </p>
+
+                <p className="mt-3 text-sm font-medium text-emerald-400">
+                  Acceso destinado al administrador del sistema.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={irAReportesUsuarios}
+              className="rounded-xl bg-brand-azul-brillante px-5 py-3 font-semibold text-white transition-all hover:bg-blue-500"
+            >
+              Ir a reportes
+            </button>
+          </div>
         </div>
-
-        <div>
-          <h2 className="text-xl font-bold text-[#E2F0FF]">
-            Reportes de Usuarios
-          </h2>
-
-          <p className="mt-2 max-w-2xl text-text-secondary">
-            Consulta el reporte general de usuarios registrados, revisa
-            usuarios activos e inactivos, aplica filtros y exporta la
-            información en PDF.
-          </p>
-
-          <p className="mt-3 text-sm font-medium text-emerald-400">
-            Acceso destinado al administrador del sistema.
-          </p>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={irAReportesUsuarios}
-        className="rounded-xl bg-brand-azul-brillante px-5 py-3 font-semibold text-white transition-all hover:bg-blue-500"
-      >
-        Ir a reportes
-      </button>
-    </div>
-  </div>
-)}
+      )}
 
 
 
@@ -104,11 +101,10 @@ export const DashboardPage = () => {
 
           <button
             onClick={() => setMostrarFiltros(!mostrarFiltros)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
-              mostrarFiltros
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all cursor-pointer ${mostrarFiltros
                 ? 'bg-brand-azul-brillante/20 border-brand-azul-brillante text-brand-azul-neon shadow-[0_0_12px_rgba(47,128,237,0.3)]'
                 : 'bg-brand-azul-medio/50 border-card-border text-text-secondary hover:border-brand-azul-brillante/50 hover:text-text-primary'
-            }`}
+              }`}
           >
             <SlidersHorizontal size={16} />
             <span>{mostrarFiltros ? 'Ocultar Filtros' : 'Filtros Avanzados'}</span>
@@ -136,11 +132,7 @@ export const DashboardPage = () => {
           )}
 
           <div className="space-y-4">
-            <FiltrosBusquedaSort
-              valor={filtros.ordenarPor}
-              total={total}
-              onCambiarOrden={cambiarOrden}
-            />
+
 
             <FiltrosBusquedaList
               resultados={resultados}
