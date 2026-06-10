@@ -129,8 +129,9 @@ export const PortafolioPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"general" | "experience" | "projects" | "education">("general");
-  const [totalLikes, setTotalLikes] = useState(0);
-  const [processingLike, setProcessingLike] = useState(false);
+const [totalLikes, setTotalLikes] = useState(0);
+const [liked, setLiked] = useState(false);
+const [processingLike, setProcessingLike] = useState(false);
   const [slugPrivado, setSlugPrivado] = useState<string | null>(null);
 
   const isPublicMode = !!textoUrl;
@@ -145,23 +146,35 @@ export const PortafolioPage = () => {
 
         if (isPublicMode) {
           // --- MODO PÚBLICO ---
-          const [
-            profileRes,
-            expRes,
-            projRes,
-            techRes,
-            softRes,
-            eduRes,
-            likesRes,
-          ] = await Promise.all([
-            fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}`),
-            fetch(`http://localhost:8081/api/enlace/experiencias/${textoUrl}`),
-            fetch(`http://localhost:8081/api/enlace/proyectos/${textoUrl}`),
-            fetch(`http://localhost:8081/api/enlace/habilidades-tecnicas/${textoUrl}`),
-            fetch(`http://localhost:8081/api/enlace/habilidades-blandas/${textoUrl}`),
-            fetch(`http://localhost:8081/api/enlace/formaciones/${textoUrl}`),
-            fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}/likes/total`),
-          ]);
+const token =
+  sessionStorage.getItem("jwt") ||
+  sessionStorage.getItem("token") ||
+  localStorage.getItem("jwt") ||
+  localStorage.getItem("token");
+
+const [
+  profileRes,
+  expRes,
+  projRes,
+  techRes,
+  softRes,
+  eduRes,
+  likesRes,
+  likedRes,
+] = await Promise.all([
+  fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}`),
+  fetch(`http://localhost:8081/api/enlace/experiencias/${textoUrl}`),
+  fetch(`http://localhost:8081/api/enlace/proyectos/${textoUrl}`),
+  fetch(`http://localhost:8081/api/enlace/habilidades-tecnicas/${textoUrl}`),
+  fetch(`http://localhost:8081/api/enlace/habilidades-blandas/${textoUrl}`),
+  fetch(`http://localhost:8081/api/enlace/formaciones/${textoUrl}`),
+  fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}/likes/total`),
+  fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}/liked`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  }),
+]);
 
           if (!profileRes.ok) throw new Error("No se pudo cargar el perfil público.");
           const profileData = await profileRes.json();
@@ -169,6 +182,11 @@ export const PortafolioPage = () => {
             const likesData = await likesRes.json();
             setTotalLikes(likesData.totalLikes);
           }
+          
+          if (likedRes.ok) {
+  const likedData = await likedRes.json();
+  setLiked(likedData.liked);
+}
 
           const portafolioMapeado: PortafolioCompleto = {
             nombre: profileData.nombre,
@@ -220,17 +238,36 @@ export const PortafolioPage = () => {
           setSlugPrivado(slug);
 
           // Cargar total de likes usando el slug
-          if (slug) {
-            try {
-              const likesTotalRes = await fetch(`http://localhost:8081/api/enlace/profile/${slug}/likes/total`);
-              if (likesTotalRes.ok) {
-                const { totalLikes } = await likesTotalRes.json();
-                setTotalLikes(totalLikes);
-              }
-            } catch (err) {
-              console.error("Error al cargar total de likes", err);
-            }
-          }
+if (slug) {
+  try {
+
+    const likesTotalRes = await fetch(
+      `http://localhost:8081/api/enlace/profile/${slug}/likes/total`
+    );
+
+    const likedRes = await fetch(
+      `http://localhost:8081/api/enlace/profile/${slug}/liked`,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
+
+    if (likesTotalRes.ok) {
+      const { totalLikes } = await likesTotalRes.json();
+      setTotalLikes(totalLikes);
+    }
+
+    if (likedRes.ok) {
+      const likedData = await likedRes.json();
+      setLiked(likedData.liked);
+    }
+
+  } catch (err) {
+    console.error("Error al cargar likes", err);
+  }
+}
         }
       } catch (err) {
         console.error(err);
@@ -282,13 +319,35 @@ export const PortafolioPage = () => {
         },
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Error al dar like");
-      }
+if (!response.ok) {
+  const errorText = await response.text();
+  throw new Error(errorText || "Error al procesar like");
+}
 
-      setTotalLikes((prev) => prev + 1);
-      if (!isPublicMode) alert("¡Like registrado!");
+const data = await response.json();
+
+if (data.message.includes("registrado")) {
+
+  setLiked(true);
+
+  setTotalLikes((prev) => prev + 1);
+
+  if (!isPublicMode) {
+    alert("¡Like registrado!");
+  }
+
+} else {
+
+  setLiked(false);
+
+  setTotalLikes((prev) => Math.max(0, prev - 1));
+
+  if (!isPublicMode) {
+    alert("Like eliminado");
+  }
+}
+
+
     } catch (error) {
       console.error(error);
       alert(error instanceof Error ? error.message : "Error al registrar like");
@@ -363,10 +422,14 @@ export const PortafolioPage = () => {
               <button
                 onClick={handleLike}
                 disabled={processingLike}
-                className="mt-3 flex items-center gap-2 rounded-xl bg-pink-600 px-4 py-2 text-white font-medium hover:bg-pink-700 transition disabled:opacity-50"
+                className="mt-3 flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-white font-medium hover:bg-red-400 transition disabled:opacity-50"
               >
                 <Heart className="w-4 h-4 fill-white" />
-                {processingLike ? "Procesando..." : "Me gusta"}
+                {processingLike
+  ? "Procesando..."
+  : liked
+    ? "Ya no me gusta"
+    : "Me gusta"}
               </button>
               <span className="mt-2 text-sm text-text-secondary">{totalLikes} likes</span>
             </div>
