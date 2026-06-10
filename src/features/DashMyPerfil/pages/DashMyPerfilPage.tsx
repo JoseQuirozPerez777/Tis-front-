@@ -24,7 +24,7 @@ export const DashMyPerfilPage = () => {
                         ¡Hola, {user?.fullName?.split(' ')[0] || 'Usuario'}! 👋
                     </h1>
                     <p className="text-text-secondary mt-1">
-                        Bienvenido a tu panel de control de Portafolios TIS.
+                        Bienvenido a tu panel de control de Portafolios.
                     </p>
                 </div>
             </div>
@@ -33,11 +33,11 @@ export const DashMyPerfilPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/50 transition-colors group">
-                    <h3 className="text-xl font-semibold text-text-primary mb-2">Tu Perfil</h3>
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Informacion Basica</h3>
                     <p className="text-text-secondary text-sm mb-4">
                         Mantén tu información personal y de contacto actualizada.
                     </p>
-                    <Link to="/profile" className="text-brand-azul-brillante font-medium text-sm hover:underline">
+                    <Link to="/profile" className="text-[#10B981] font-medium text-sm hover:underline">
                         Revisar perfil →
                     </Link>
                 </div>
@@ -47,37 +47,8 @@ export const DashMyPerfilPage = () => {
                     <p className="text-text-secondary text-sm mb-4">
                         Añade y organiza tus habilidades técnicas .
                     </p>
-                    <Link to="/habilidades-tecnicas" className="text-brand-morado font-medium text-sm hover:underline">
+                    <Link to="/habilidades-tecnicas" className="text-[#10B981] font-medium text-sm hover:underline">
                         Gestionar habilidades →
-                    </Link>
-                </div>
-
-                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-violet-500/50 transition-colors group">
-                    <h3 className="text-xl font-semibold text-text-primary mb-2">Experiencia</h3>
-                    <p className="text-text-secondary text-sm mb-4">
-                        Registra y organiza tu experiencia laboral.
-                    </p>
-                    <Link to="/experience" className="text-violet-400 font-medium text-sm hover:underline">
-                        Ir a experiencia →
-                    </Link>
-                </div>
-
-                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
-                    <h3 className="text-xl font-semibold text-text-primary mb-2">Proyectos</h3>
-                    <p className="text-text-secondary text-sm mb-4">
-                        Muestra tus mejores trabajos y casos de éxito.
-                    </p>
-                    <Link to="/projects" className="text-[#10B981] font-medium text-sm hover:underline">
-                        Ir a proyectos →
-                    </Link>
-                </div>
-                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
-                    <h3 className="text-xl font-semibold text-text-primary mb-2">Formacion Academica</h3>
-                    <p className="text-text-secondary text-sm mb-4">
-                        Muestra tu formacion academica.
-                    </p>
-                    <Link to="/academic-training" className="text-[#10B981] font-medium text-sm hover:underline">
-                        Ir a formacion academica →
                     </Link>
                 </div>
 
@@ -91,7 +62,37 @@ export const DashMyPerfilPage = () => {
                     </Link>
                 </div>
 
-                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-brand-azul-brillante/50 transition-colors group">
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Formacion Academica</h3>
+                    <p className="text-text-secondary text-sm mb-4">
+                        Muestra tu formacion academica.
+                    </p>
+                    <Link to="/academic-training" className="text-[#10B981] font-medium text-sm hover:underline">
+                        Ir a formacion academica →
+                    </Link>
+                </div>
+
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Experiencia</h3>
+                    <p className="text-text-secondary text-sm mb-4">
+                        Registra y organiza tu experiencia laboral.
+                    </p>
+                    <Link to="/experience" className="text-[#10B981] font-medium text-sm hover:underline">
+                        Ir a experiencia →
+                    </Link>
+                </div>
+
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">Proyectos</h3>
+                    <p className="text-text-secondary text-sm mb-4">
+                        Muestra tus mejores trabajos y casos de éxito.
+                    </p>
+                    <Link to="/projects" className="text-[#10B981] font-medium text-sm hover:underline">
+                        Ir a proyectos →
+                    </Link>
+                </div>
+
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
                     <h3 className="text-xl font-semibold text-text-primary mb-2">Gestión de CV</h3>
                     <p className="text-text-secondary text-sm mb-4">
                         Genera, sube y administra tu CV oficial desde aquí.
@@ -99,13 +100,13 @@ export const DashMyPerfilPage = () => {
                     <button
                         type="button"
                         onClick={() => setShowCVManagement(true)}
-                        className="text-brand-azul-brillante font-medium text-sm hover:underline"
+                        className="text-[#10B981] font-medium text-sm hover:underline"
                     >
                         Ir a Gestión de CV →
                     </button>
                 </div>
 
-                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#f59e0b]/50 transition-colors group">
+                <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl hover:border-[#10B981]/50 transition-colors group">
                     <h3 className="text-xl font-semibold text-text-primary mb-2">Configuración de Privacidad</h3>
                     <p className="text-text-secondary text-sm mb-4">
                         Revisa los datos que envía el backend y controla su visibilidad en el perfil del sistema.
@@ -113,7 +114,7 @@ export const DashMyPerfilPage = () => {
                     <button
                         type="button"
                         onClick={() => setShowPrivacySettings(true)}
-                        className="text-[#f59e0b] font-medium text-sm hover:underline"
+                        className="text-[#10B981] font-medium text-sm hover:underline"
                     >
                         Ir a Privacidad →
                     </button>

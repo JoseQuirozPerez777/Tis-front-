@@ -41,7 +41,7 @@ export const DashboardPage = () => {
             ¡Hola, {user?.fullName?.split(' ')[0] || 'Usuario'}! 👋
           </h1>
           <p className="text-text-secondary mt-1">
-            Bienvenido a tu panel de control de Portafolios TIS.
+            Bienvenido a tu inicio.
           </p>
         </div>
       </div>

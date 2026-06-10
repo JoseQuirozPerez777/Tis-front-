@@ -86,30 +86,18 @@ export const DashboardLayout = () => {
 
   const navLinks: { name: string; path: string | null; icon: string }[] = [
     {
-      name: 'Mi Perfil',
+      name: 'Informacion Basica',
       path: '/profile',
       icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
     },
     {
-      name: 'Habilidades',
-      path: '/hardskills',
-      icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-    },
-    {
-      name: 'Proyectos',
-      path: '/projects',
-      icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
-    },
+      name: 'Mis Likes',
+      path: '/my-profile/visits',
+icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',    },
     {
       name: 'Cambiar Contraseña',
       path: '/change-password',
-      icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0zM4.501 20.118a7.5 7.5 0 1114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
-    },
-    {
-      name: 'Experiencia',
-      path: '/experience',
-      icon: 'M12 14l9-5-9-5-9 5 9 5z',
-    },
+icon: 'M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9z'    },
     {
       name: 'Buscar Portafolios',
       path: '/buscar-portafolios',
