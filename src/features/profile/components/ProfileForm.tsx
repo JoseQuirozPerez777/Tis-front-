@@ -14,10 +14,13 @@ const normalizarDisponibilidad = (
 
 interface ProfileFormProps {
   onProfileUpdated?: () => void;
+  onCancel?: () => void;
 }
 
-export const ProfileForm = ({ onProfileUpdated }: ProfileFormProps) => {
-  
+export const ProfileForm = ({
+  onProfileUpdated,
+  onCancel,
+}: ProfileFormProps) => {  
   const { form, isLoading, serverError, onSubmit } =
     useProfile(onProfileUpdated);
 
@@ -84,23 +87,76 @@ const {
   }, [perfilData, profesiones, reset]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-8 md:p-10 bg-brand-azul-profundo/40 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-brand-azul-profundo rounded-t-2xl">
-        <h2 className="text-xl font-bold text-[#64ffda]">
-          Configuración del Perfil
+<div className="
+  w-full
+  max-w-4xl
+  mx-auto
+
+  p-4
+  sm:p-6
+  md:p-8
+  lg:p-10
+
+  bg-brand-azul-profundo
+  backdrop-blur-2xl
+
+  rounded-2xl
+  md:rounded-[32px]
+
+  border border-white/10
+
+  shadow-[0_0_50px_rgba(0,0,0,0.3)]
+
+  overflow-hidden
+">      
+
+<div className="
+  px-4
+  sm:px-6
+  py-4
+
+  border-b
+  border-white/10
+
+  flex
+  flex-col
+  sm:flex-row
+
+  gap-3
+  sm:gap-0
+
+  sm:justify-between
+  sm:items-center
+">
+<h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#199d7e]">
+            Configuración del Perfil
         </h2>
       </div>
 
-      <form onSubmit={onSubmit} className="p-6 space-y-8">
-        {serverError && (
+          <form
+            onSubmit={onSubmit} className="p-4 sm:p-6 space-y-6 sm:space-y-8">
+            {serverError && (
           <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm font-medium">
             {serverError}
           </div>
         )}
 
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#64ffda] bg-[#0F223D]">
-            <img
+<div className="
+  flex
+  flex-col
+  sm:flex-row
+
+  items-center
+  sm:items-center
+
+  text-center
+  sm:text-left
+
+  gap-4
+  mb-6
+">
+  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full">
+              <img
               src={
                 perfilData?.foto ||
                 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
@@ -111,8 +167,7 @@ const {
           </div>
 
           <div>
-            <h3 className="text-lg text-white font-semibold">
-              {loadingPerfil ? 'Cargando perfil...' : perfilData?.nombre || ''}
+            <h3 className="text-base sm:text-lg text-white font-semibold">              {loadingPerfil ? 'Cargando perfil...' : perfilData?.nombre || ''}
             </h3>
 
             <p className="text-sm text-[#9CA3AF]">
@@ -127,8 +182,13 @@ const {
             Información Básica
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
+<div className="
+  grid
+  grid-cols-1
+  lg:grid-cols-2
+  gap-4
+  md:gap-6
+">            <Input
               label="Nombre Completo"
               placeholder="Juan Pérez"
               {...register('fullName')}
@@ -144,8 +204,23 @@ const {
 
               <select
                 {...register('profession')}
-                className="w-full bg-[#0F223D] border border-white/10 rounded px-4 py-2 focus:border-[#3B82F6] outline-none text-[#E5E7EB]"
-                disabled={loadingProfesiones}
+className="
+  w-full
+  bg-[#0F223D]
+
+  border border-white/10
+
+  rounded-xl
+
+  px-4
+  py-3
+
+  focus:border-[#3B82F6]
+
+  outline-none
+
+  text-[#E5E7EB]
+"                disabled={loadingProfesiones}
               >
                 <option value="">
                   {loadingProfesiones
@@ -187,15 +262,30 @@ const {
               autoComplete="street-address"
               className="bg-[#0F223D] border-white/10 focus:border-[#3B82F6] text-[#E5E7EB]"
             />
-            <div className="md:col-span-2">
-  <label className="block text-sm text-[#9CA3AF] mb-2">
+<div className="lg:col-span-2">
+    <label className="block text-sm text-[#9CA3AF] mb-2">
     Disponibilidad laboral
   </label>
 
   <select
     {...register('disponibilidad')}
-    className="w-full bg-[#0F223D] border border-white/10 rounded px-4 py-2 focus:border-[#3B82F6] outline-none text-[#E5E7EB]"
-  >
+className="
+  w-full
+  bg-[#0F223D]
+
+  border border-white/10
+
+  rounded-xl
+
+  px-4
+  py-3
+
+  focus:border-[#3B82F6]
+
+  outline-none
+
+  text-[#E5E7EB]
+"  >
     <option value="Disponible">Disponible</option>
     <option value="No disponible">No disponible</option>
   </select>
@@ -206,8 +296,8 @@ const {
 </div>
 
 
-            <div className="md:col-span-2">
-              <label className="block text-sm text-[#9CA3AF] mb-2">
+<div className="lg:col-span-2"> 
+                <label className="block text-sm text-[#9CA3AF] mb-2">
                 Biografía Profesional
               </label>
 <RichTextEditor
@@ -230,12 +320,74 @@ const {
           </div>
         </section>
 
-        <div className="flex flex-col md:flex-row md:justify-end space-y-3 md:space-y-0 md:space-x-4 pt-4 border-t border-white/10">
+<div
+  className="
+    flex
+    flex-col
+    sm:flex-row
+
+    gap-3
+
+    sm:justify-end
+
+    pt-4
+
+    border-t
+    border-white/10
+  "
+>
+<button
+  type="button"
+  onClick={onCancel}
+  disabled={isLoading}
+className="
+  w-full
+  sm:w-auto
+
+  rounded-xl
+
+  border border-[#1E3A5F]
+
+  bg-transparent
+
+  px-5
+  py-3
+
+  font-medium
+
+  text-[#E5E7EB]
+
+  transition
+
+  hover:bg-[#1E3A5F]/30
+
+  disabled:cursor-not-allowed
+  disabled:opacity-70
+">
+  Cancelar
+</button>
 
           <Button
             type="submit"
-            className="px-6 py-2 bg-[#3B82F6] text-white rounded hover:opacity-90 shadow-lg font-bold"
-            isLoading={isLoading}
+className="
+  w-full
+  sm:w-auto
+
+  px-6
+  py-3
+
+  bg-[#3B82F6]
+
+  text-white
+
+  rounded-xl
+
+  hover:opacity-90
+
+  shadow-lg
+
+  font-bold
+"            isLoading={isLoading}
             size="lg"
           >
             Guardar Cambios
