@@ -69,6 +69,7 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
   const [originalVisibility, setOriginalVisibility] = useState<Record<string, boolean>>({});
   const [elementIds, setElementIds] = useState<Record<string, number>>({});
@@ -311,6 +312,18 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const handleOpenConfirmModal = () => {
+    if (!saving && portfolioData) {
+      setShowConfirmModal(true);
+    }
+  };
+
+  const handleCloseConfirmModal = () => {
+    if (!saving) {
+      setShowConfirmModal(false);
+    }
   };
 
   const handleApplyChanges = async () => {
@@ -557,7 +570,13 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
     });
   }, [portfolioData, visibility, openSections]);
 
+  const handleConfirmApplyChanges = async () => {
+    setShowConfirmModal(false);
+    await handleApplyChanges();
+  };
+
   return (
+    <>
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
@@ -605,7 +624,7 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
-              onClick={handleApplyChanges}
+              onClick={handleOpenConfirmModal}
               disabled={saving}
               className="inline-flex items-center justify-center rounded-2xl bg-brand-azul-brillante px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-azul-brillante/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
@@ -627,5 +646,53 @@ export const PrivacyConfigurationSection = ({ onBack }: PrivacyConfigurationSect
         </div>
       )}
     </div>
+    {showConfirmModal && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4"
+        onClick={handleCloseConfirmModal}
+      >
+        <div
+          className="w-full max-w-md rounded-3xl border border-card-border bg-card-bg p-6 shadow-2xl"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="space-y-3 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-azul-brillante/10 text-brand-azul-brillante">
+              <AlertCircle className="h-6 w-6" />
+            </div>
+            <h2 className="text-xl font-bold text-text-primary">Alerta - Se modificarán datos de visibilidad en tu perfil público</h2>
+            <p className="text-sm text-text-secondary">
+              Confirma si deseas guardar estos cambios y actualizar la visibilidad de tu perfil público.
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <button
+              type="button"
+              onClick={handleCloseConfirmModal}
+              disabled={saving}
+              className="inline-flex items-center justify-center rounded-2xl border border-card-border px-5 py-3 text-sm font-semibold text-text-primary transition hover:bg-card-bg/70 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmApplyChanges}
+              disabled={saving}
+              className="inline-flex items-center justify-center rounded-2xl bg-brand-azul-brillante px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-azul-brillante/90 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                'Aceptar'
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
