@@ -65,24 +65,12 @@ export const useProfile = (onProfileUpdated?: () => void) => {
     }
   };
 
-  const onCancel = () => {
-    form.reset({
-      fullName: storedProfile?.fullName || '',
-      profession: storedProfile?.profession || '',
-      bio: storedProfile?.bio || '',
-      telefono: storedProfile?.telefono || '',
-      direccion: storedProfile?.direccion || '',
-      disponibilidad: normalizarDisponibilidad(storedProfile?.disponibilidad),
-    });
 
-    setServerError(null);
-  };
 
   return {
     form,
     isLoading,
     serverError,
     onSubmit: form.handleSubmit(onSubmit),
-    onCancel,
   };
 };
