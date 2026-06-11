@@ -160,16 +160,16 @@ const generateCVHTML = (data: any, templateId: string): string => {
           <h1>${data.nombre || 'Nombre no disponible'}</h1>
           <div class="profession">${data.profesion || 'Profesional'}</div>
           <div class="contact-info">
-            <span>📧 ${data.correo || 'No especificado'}</span>
-            <span>📞 ${data.telefono || 'No especificado'}</span>
-            <span>📍 ${data.direccion || 'No especificada'}</span>
+            <span> ${data.correo || 'No especificado'}</span>
+            <span> ${data.telefono || 'No especificado'}</span>
+            <span> ${data.direccion || 'No especificada'}</span>
           </div>
         </div>
         
         <div class="content">
           ${data.biografia ? `
             <div class="section">
-              <h2 class="section-title">📖 Sobre mí</h2>
+              <h2 class="section-title"> Sobre mí</h2>
               <p>${data.biografia}</p>
             </div>
           ` : ''}
@@ -193,7 +193,7 @@ const generateCVHTML = (data: any, templateId: string): string => {
           
           ${data.formacionesAcademica?.length ? `
             <div class="section">
-              <h2 class="section-title">🎓 Formación Académica</h2>
+              <h2 class="section-title"> Formación Académica</h2>
               ${data.formacionesAcademica.map((edu: any) => `
                 <div class="education-item">
                   <div class="job-title">${edu.tituloObtenido || 'Título no especificado'}</div>
@@ -206,7 +206,7 @@ const generateCVHTML = (data: any, templateId: string): string => {
           
           ${data.habilidadesTecnicas?.length ? `
             <div class="section">
-              <h2 class="section-title">🛠️ Habilidades Técnicas</h2>
+              <h2 class="section-title"> Habilidades Técnicas</h2>
               <div>
                 ${data.habilidadesTecnicas.map((skill: any) => `
                   <span class="skill-tag">${skill.nombre || ''} ${skill.nivelDominio ? `(${skill.nivelDominio})` : ''}</span>
@@ -217,7 +217,7 @@ const generateCVHTML = (data: any, templateId: string): string => {
           
           ${data.proyectos?.length ? `
             <div class="section">
-              <h2 class="section-title">🚀 Proyectos</h2>
+              <h2 class="section-title"> Proyectos</h2>
               ${data.proyectos.map((proj: any) => `
                 <div class="job-item">
                   <div class="job-title">${proj.titulo || 'Proyecto sin título'}
@@ -227,9 +227,9 @@ const generateCVHTML = (data: any, templateId: string): string => {
                   <div>Tecnologías: ${proj.tecnologias?.join(', ') || 'No especificadas'}</div>
                   ${proj.enlaceGithub ? `<div>🔗 <a href="${proj.enlaceGithub}">GitHub</a></div>` : ''}
                   ${proj.enlaceDemo ? `
-                    <div>🌐 <a href="${proj.enlaceDemo}">Demo</a></div> ` : ''}
+                    <div> <a href="${proj.enlaceDemo}">Demo</a></div> ` : ''}
                   ${proj.urlPdf ? `
-                    div>📄 <a href="${proj.urlPdf}">Ver PDF del proyecto</a></div> ` : ''}
+                    div> <a href="${proj.urlPdf}">Ver PDF del proyecto</a></div> ` : ''}
                 </div>
               `).join('')}
             </div>

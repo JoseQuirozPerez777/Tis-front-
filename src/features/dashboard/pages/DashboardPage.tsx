@@ -38,7 +38,7 @@ export const DashboardPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">
-            ¡Hola, {user?.fullName?.split(' ')[0] || 'Usuario'}! 👋
+            ¡Hola, {user?.fullName?.split(' ')[0] || 'Usuario'}! 
           </h1>
           <p className="text-text-secondary mt-1">
             Bienvenido a tu inicio.
