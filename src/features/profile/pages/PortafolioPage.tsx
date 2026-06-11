@@ -79,6 +79,8 @@ interface ProyectoResumenDTO {
   fechaInicio: string;
   fechaFinalizacion: string | null;
   estadoProyecto: string;
+  destacar: boolean;
+
 }
 
 interface RedSocialResumenDTO {
@@ -788,7 +790,9 @@ if (data.message.includes("registrado")) {
           <div>
             {portafolio.proyectos.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {portafolio.proyectos.map((pro, index) => (
+                {[...portafolio.proyectos]
+  .sort((a, b) => Number(b.destacar) - Number(a.destacar))
+  .map((pro, index) => (
                   <article
                     key={index}
                     className="bg-card-bg/50 backdrop-blur-sm border border-card-border rounded-2xl overflow-hidden hover:border-brand-azul-brillante/30 transition flex flex-col h-full shadow-lg"
@@ -813,8 +817,16 @@ if (data.message.includes("registrado")) {
 
                     <div className="p-6 flex flex-col flex-1 gap-4">
                       <div>
-                        <h4 className="text-lg font-bold text-text-primary tracking-tight">{pro.titulo}</h4>
-                        <p className="text-xs text-brand-morado font-semibold uppercase tracking-wider mt-0.5">{pro.rolProyecto}</p>
+                        <h4 className="text-lg font-bold text-text-primary tracking-tight">
+                          {pro.titulo}</h4>
+                        <p className="text-xs text-brand-morado font-semibold uppercase tracking-wider mt-0.5">
+                          {pro.rolProyecto}</p>
+
+ {pro.destacar && (
+  <div className="absolute top-3 left-3 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-extrabold shadow-lg">
+    ★ Destacado
+  </div>
+)}
                         {pro.fechaInicio && (
                           <p className="text-[11px] text-text-secondary mt-0.5 flex items-center gap-1">
                             <Calendar className="w-3 h-3" />

@@ -21,6 +21,7 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
 .project-card {
@@ -122,14 +123,18 @@ body {
   color: #9fb3c8;
 }
 
-.project-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.project-chip {
+  max-width: 100%;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .project-chip {
   max-width: 100%;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
   background: #0b223d;
   color: #e2e8f0;
   padding: 10px 12px;
@@ -141,7 +146,9 @@ body {
   border: 1px solid #2b527a;
 }
 
-.project-chip button,
+.project-chip button {
+  flex-shrink: 0;
+}
 .project-add-chip {
   border: none;
   background: transparent;
@@ -158,6 +165,10 @@ body {
   border-radius: 8px;
   color: #22c7ff;
   background: #0b223d;
+}
+
+.project-field select {
+  text-overflow: ellipsis;
 }
 
 .project-url-row,
@@ -211,7 +222,7 @@ body {
 
 .project-image-grid {
   display: grid;
-  grid-template-columns: 170px repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 18px;
   align-items: stretch;
 }
@@ -555,9 +566,9 @@ body {
     min-height: 180px;
   }
 
-  .project-form-actions {
-    flex-direction: column;
-  }
+ .project-form-actions {
+  flex-direction: column-reverse;
+}
 
   .project-chips {
     gap: 8px;
@@ -566,6 +577,22 @@ body {
   .project-chip {
     font-size: 13px;
   }
+
+  .project-card h2 {
+  flex-wrap: wrap;
+}
+
+.project-field label {
+  font-size: 13px;
+}
+
+.project-message {
+  font-size: 14px;
+}
+
+.project-preview-links {
+  flex-direction: column;
+}
 }
 
 @media (max-width: 380px) {
@@ -608,6 +635,7 @@ body {
   font-size: 13px;
   line-height: 1.4;
   word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .project-pdf-preview a {
@@ -639,4 +667,36 @@ body {
 
 .project-pdf-preview {
   min-height: 240px;
+}
+
+.ProseMirror {
+  width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 320px) {
+  .project-card {
+    padding: 12px;
+  }
+
+  .project-chip {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .project-preview-status {
+    width: 100%;
+    text-align: center;
+  }
+
+  .project-save-btn,
+  .project-cancel-btn {
+    font-size: 13px;
+    padding: 12px;
+  }
 }

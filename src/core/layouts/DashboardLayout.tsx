@@ -91,7 +91,7 @@ export const DashboardLayout = () => {
       icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
     },
     {
-      name: 'Mis Likes',
+      name: 'Likes recibidos',
       path: '/my-profile/visits',
 icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',    },
     {
@@ -111,12 +111,12 @@ icon: 'M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0
 
     ...(esAdministrador
       ? [
-          {
-            name: 'Reportes de Usuarios',
-            path: '/admin/reportes/usuarios',
-            icon: 'M3 3v18h18M7 16V9m5 7V5m5 11v-6',
-          },
-        ]
+        {
+          name: 'Reportes de Usuarios',
+          path: '/admin/reportes/usuarios',
+          icon: 'M3 3v18h18M7 16V9m5 7V5m5 11v-6',
+        },
+      ]
       : []),
   ];
 
@@ -135,7 +135,7 @@ icon: 'M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0
           </Link>
 
           {/* Navigation & User Profile */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
             {/* Top Navigation Links */}
             <nav className="hidden md:flex items-center gap-6">
               <Link
@@ -148,7 +148,7 @@ icon: 'M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0
                 to="/DashMyPerfil"
                 className={`text-sm font-medium transition-colors ${location.pathname === '/DashMyPerfil' ? 'text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary'}`}
               >
-                Mi Perfil
+                Gestión de Perfil
               </Link>
             </nav>
 
@@ -156,13 +156,13 @@ icon: 'M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex items-center gap-4 focus:outline-none transition-opacity hover:opacity-80 p-1 rounded-lg"
+                className="flex items-center gap-2 sm:gap-4 focus:outline-none transition-opacity hover:opacity-80 p-1 rounded-lg"
               >
                 <div className="text-sm text-right hidden sm:block">
-                  <p className="font-semibold text-text-primary">{user?.fullName || 'Usuario'}</p>
-                  <p className="text-text-secondary text-xs">{user?.email}</p>
+                  <p className="font-semibold text-text-primary truncate max-w-[150px]">{user?.fullName || 'Usuario'}</p>
+                  <p className="text-text-secondary text-xs truncate max-w-[150px]">{user?.email}</p>
                 </div>
-                <div className="w-9 h-9 rounded-full overflow-hidden border border-brand-azul-brillante/30 bg-brand-azul-brillante/20 shrink-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-brand-azul-brillante/30 bg-brand-azul-brillante/20 shrink-0">
                   <img
                     src={profilePhoto || user?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
                     alt="Foto de perfil"
@@ -180,7 +180,25 @@ icon: 'M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0
                   <p className="font-semibold text-text-primary truncate">{user?.fullName || 'Usuario'}</p>
                   <p className="text-text-secondary text-xs truncate">{user?.email}</p>
                 </div>
-                <nav className="p-2 space-y-1">
+                <div className="md:hidden p-2 border-b border-card-border/50 space-y-1">
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium ${location.pathname === '/dashboard' ? 'bg-brand-azul-brillante/10 text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary hover:bg-card-border/30'}`}
+                  >
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    Inicio
+                  </Link>
+                  <Link
+                    to="/DashMyPerfil"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium ${location.pathname === '/DashMyPerfil' ? 'bg-brand-azul-brillante/10 text-brand-azul-brillante' : 'text-text-secondary hover:text-text-primary hover:bg-card-border/30'}`}
+                  >
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V7a2 2 0 00-2-2h-3V4a2 2 0 00-2-2h-2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v6m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4" /></svg>
+                    Gestión de Perfil
+                  </Link>
+                </div>
+                <nav className="p-2 space-y-1 max-h-[60vh] overflow-y-auto">
                   {navLinks.map((link) => {
                     const isActive = link.path ? location.pathname === link.path : false;
                     const isShare = link.name === 'Comparte Portafolio';

@@ -195,20 +195,34 @@ export function ProjectsPage() {
   }
 
   return (
-    <main className="relative min-h-[calc(100vh-100px)] py-8 px-4 max-w-5xl mx-auto">
-      <button
+      <main className="relative min-h-[calc(100vh-100px)] py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 max-w-5xl mx-auto overflow-x-hidden">      <button
         type="button"
         onClick={() => navigate("/profile")}
-        className="mb-5 bg-card-bg/60 border border-card-border text-text-primary px-5 py-3 rounded-xl hover:border-[#10B981]/50 transition"
-      >
+className="
+mb-5
+w-full
+sm:w-auto
+bg-card-bg/60
+border
+border-card-border
+text-text-primary
+px-4
+sm:px-5
+py-3
+rounded-xl
+hover:border-[#10B981]/50
+transition
+text-sm
+sm:text-base
+"      >
         ← Ir a perfil
       </button>
 
       <section className="bg-card-bg/60 backdrop-blur-md border border-card-border rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-text-primary">
-              Mis Proyectos
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">     
+                   Mis Proyectos
             </h2>
             <p className="text-text-secondary text-sm mt-1">
               Proyectos registrados en tu portafolio.
@@ -221,8 +235,21 @@ export function ProjectsPage() {
               setProjectToEdit(null);
               setShowForm(true);
             }}
-            className="bg-[#10B981] hover:opacity-90 text-white px-5 py-3 rounded-xl shadow-lg text-center font-semibold"
-          >
+className="
+w-full
+sm:w-auto
+bg-[#10B981]
+hover:opacity-90
+text-white
+px-5
+py-3
+rounded-xl
+shadow-lg
+text-center
+font-semibold
+text-sm
+sm:text-base
+"          >
             Agregar proyecto
           </button>
         </div>
@@ -242,7 +269,8 @@ export function ProjectsPage() {
         {loadingProyectos ? (
           <p className="text-text-secondary">Cargando proyectos...</p>
         ) : proyectos.length === 0 ? (
-          <div className="bg-card-bg/50 border border-card-border rounded-2xl p-6 text-center">
+          <div 
+          className="bg-card-bg/50 border border-card-border rounded-2xl p-6 text-center">
             <h3 className="text-lg font-semibold text-text-primary">
               Aún no tienes proyectos registrados
             </h3>
@@ -253,19 +281,19 @@ export function ProjectsPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {sortedProjects.map((proyecto) => (
-              <article
-                key={proyecto.idProyecto}
-                className={`bg-card-bg/50 backdrop-blur-sm border rounded-2xl p-5 transition-colors ${
-                  proyecto.destacar
-                    ? " "
-                    : "border-card-border hover:border-[#10B981]/50"
-                }`}
-              >
+<article
+  key={proyecto.idProyecto}
+  className={`bg-card-bg/50 backdrop-blur-sm border rounded-2xl p-4 sm:p-5 md:p-6 overflow-hidden transition-all ${
+    proyecto.destacar
+      ? "border-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.25)]"
+      : "border-card-border hover:border-[#10B981]/50"
+  }`}
+>
                 <div className="flex-1">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div>
-                      <h3 className="text-xl font-bold text-text-primary">
-                        {proyecto.titulo}
+              <h3 className="text-lg sm:text-xl font-bold text-text-primary break-words">       
+                 {proyecto.titulo}
                       </h3>
 
                       {proyecto.destacar && (
@@ -291,24 +319,39 @@ export function ProjectsPage() {
 
 {proyecto.descripcion && (
   <div
-    className="
-      text-sm sm:text-base text-text-secondary mt-3 max-w-xl mx-auto md:mx-0
-      [&_ul]:list-disc [&_ul]:pl-6
-      [&_ol]:list-decimal [&_ol]:pl-6
-      [&_li]:mb-1
-    "
+className="
+text-sm
+sm:text-base
+text-text-secondary
+mt-3
+max-w-full
+break-words
+overflow-hidden
+[&_ul]:list-disc [&_ul]:pl-6
+[&_ol]:list-decimal [&_ol]:pl-6
+[&_li]:mb-1
+"
     dangerouslySetInnerHTML={{
       __html: proyecto.descripcion,
     }}
   />
 )}
 
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {proyecto.tecnologiaIds?.map((id, index) => (
+<div className="flex flex-wrap gap-2 mt-4 overflow-hidden">                    {proyecto.tecnologiaIds?.map((id, index) => (
                       <span
                         key={id}
-                        className="px-3 py-1 rounded-lg bg-brand-azul-brillante/10 text-brand-azul-brillante text-xs font-semibold"
-                      >
+className="
+px-2
+sm:px-3
+py-1
+rounded-lg
+bg-brand-azul-brillante/10
+text-brand-azul-brillante
+text-[11px]
+sm:text-xs
+font-semibold
+break-all
+"                      >
                         {proyecto.nombresTecnologias?.[index] ||
                           technologyNameById[id] ||
                           `Tecnología ${id}`}
@@ -316,8 +359,8 @@ export function ProjectsPage() {
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-sm">
-                    <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-sm">
+                      <div className="bg-card-bg/50 border border-card-border rounded-xl p-3">
                       <p className="text-text-secondary">Visibilidad</p>
                       <p className="font-semibold text-text-primary">
                         {proyecto.esPublico ? "Público" : "Privado"}
@@ -339,14 +382,20 @@ export function ProjectsPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 mt-4">
-                    {proyecto.enlaceGithub && (
+<div className="flex flex-wrap gap-2 sm:gap-3 mt-4 break-all">
+                      {proyecto.enlaceGithub && (
                       <a
                         href={proyecto.enlaceGithub}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-brand-azul-brillante hover:underline font-semibold text-sm"
-                      >
+className="
+text-brand-azul-brillante
+hover:underline
+font-semibold
+text-xs
+sm:text-sm
+break-all
+"                      >
                         Repositorio
                       </a>
                     )}
@@ -356,8 +405,14 @@ export function ProjectsPage() {
                         href={proyecto.enlaceDemo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-brand-azul-brillante hover:underline font-semibold text-sm"
-                      >
+className="
+text-brand-azul-brillante
+hover:underline
+font-semibold
+text-xs
+sm:text-sm
+break-all
+"                      >
                         Demo
                       </a>
                     )}
@@ -381,14 +436,25 @@ export function ProjectsPage() {
       Imágenes del proyecto
     </p>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {proyecto.urlsImagenes.map((imagenUrl, index) => (
+<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {proyecto.urlsImagenes.map((imagenUrl, index) => (
         <button
           key={`${imagenUrl}-${index}`}
           type="button"
           onClick={() => setSelectedImage(imagenUrl)}
-          className="w-full h-20 rounded-2xl bg-[#0F223D] border border-card-border flex items-center justify-center cursor-pointer"
-        >
+  className="
+    w-full
+    h-12
+    sm:h-16
+    rounded-lg
+    bg-[#0F223D]
+    border
+    border-card-border
+    text-xs
+    flex
+    items-center
+    justify-center
+  "     >
           Imagen {index + 1}
         </button>
       ))}
@@ -401,14 +467,25 @@ export function ProjectsPage() {
     <p className="text-text-secondary text-sm font-semibold mb-3">
       PDFs del proyecto
     </p>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {proyecto.urlPdfs.map((pdfUrl, index) => {
+<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {proyecto.urlPdfs.map((pdfUrl, index) => {
         const pdfName = `PDF ${index + 1}`;
         return (
           <div
             key={`${pdfUrl}-${index}`}
-            className="bg-[#0F223D] border border-card-border rounded-2xl p-5 flex flex-col items-center text-center"
-          >
+className="
+bg-[#0F223D]
+border
+border-card-border
+rounded-2xl
+p-4
+sm:p-5
+flex
+flex-col
+items-center
+text-center
+overflow-hidden
+"          >
             <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-400/30 flex items-center justify-center mb-3">
               <span className="text-4xl">📄</span>
             </div>
@@ -431,12 +508,12 @@ export function ProjectsPage() {
   </div>
 )}
 
-                <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-card-border">
-                  <button
+<div className="flex flex-col md:flex-row justify-end gap-3 mt-6 pt-4 border-t border-card-border">
+                    <button
                     type="button"
                     onClick={() => handleToggleFeatured(proyecto)}
                     disabled={updatingFeaturedId === proyecto.idProyecto}
-                    className="border border-yellow-400 bg-yellow-400/10 text-yellow-200 px-5 py-2.5 rounded-xl font-bold hover:bg-yellow-400/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full md:w-auto bg-[#f3cf32] hover:bg-[#e8e82c] text-white px-5 py-2.5 rounded-xl font-bold"
                   >
                     {updatingFeaturedId === proyecto.idProyecto
                       ? "Actualizando..."
@@ -451,7 +528,7 @@ export function ProjectsPage() {
                       setProjectToEdit(proyecto);
                       setShowForm(true);
                     }}
-                    className="bg-[#0D8CFF] hover:bg-[#0077E6] text-white px-5 py-2.5 rounded-xl font-bold"
+                    className="w-full md:w-auto bg-[#0D8CFF] hover:bg-[#0077E6] text-white px-5 py-2.5 rounded-xl font-bold"
                   >
                     Editar
                   </button>
@@ -460,7 +537,7 @@ export function ProjectsPage() {
                     type="button"
                     onClick={() => handleOpenDeleteModal(proyecto)}
                     disabled={deletingProjectId === proyecto.idProyecto}
-                    className="border border-red-500 bg-red-500/10 text-red-300 px-5 py-2.5 rounded-xl font-bold hover:bg-red-500/20 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full md:w-auto bg-[#ff0d0d] hover:bg-[#ff7676] text-white px-5 py-2.5 rounded-xl font-bold"
                   >
                     {deletingProjectId === proyecto.idProyecto
                       ? "Eliminando..."
@@ -479,31 +556,51 @@ export function ProjectsPage() {
           onClick={() => setSelectedImage(null)}
         >
           <div
-            className="relative max-w-5xl w-full"
-            onClick={(e) => e.stopPropagation()}
+        className="relative max-w-5xl w-full px-2 sm:px-4"
+              onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl font-bold"
-            >
+className="
+absolute
+top-2
+right-2
+sm:-top-12
+sm:right-0
+text-white
+bg-red-500
+hover:bg-red-600
+px-3
+sm:px-4
+py-2
+rounded-xl
+font-bold
+text-sm
+"            >
               Cerrar
             </button>
 
             <img
               src={selectedImage}
               alt="Imagen ampliada del proyecto"
-              className="w-full max-h-[85vh] object-contain rounded-2xl bg-black"
-            />
+className="
+w-full
+max-h-[75vh]
+sm:max-h-[85vh]
+object-contain
+rounded-2xl
+bg-black
+"            />
           </div>
         </div>
       )}
 
       {projectPendingDelete && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#102B4C] border border-red-500/40 rounded-2xl shadow-2xl p-6">
-            <h3 className="text-xl font-bold text-white">
-              Eliminar proyecto
+          <div className="w-full max-w-md mx-3 sm:mx-0 bg-[#102B4C] border border-red-500/40 rounded-2xl shadow-2xl p-6">
+<h3 className="text-lg sm:text-xl font-bold text-white">
+                Eliminar proyecto
             </h3>
 
             <p className="text-slate-300 text-sm mt-3 leading-relaxed">
