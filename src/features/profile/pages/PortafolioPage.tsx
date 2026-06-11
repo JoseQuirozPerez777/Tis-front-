@@ -103,6 +103,17 @@ interface PortafolioCompleto {
   redesSociales: RedSocialResumenDTO[];
 }
 
+// Agregar esto después de la interfaz PortafolioCompleto
+interface VisibilidadAjustes {
+  nombreUsr: boolean;
+  correoUsr: boolean;
+  biografiaUsr: boolean;
+  telefonoUsr: boolean;
+  direccionUsr: boolean;
+  profesionUsr: boolean;
+  universidadUsr: boolean;
+}
+
 // ==================== UTILIDAD: extraer slug de enlacePublico ====================
 const extraerSlugDeEnlacePublico = (enlacePublico: string | null): string | null => {
   if (!enlacePublico) return null;
@@ -133,6 +144,7 @@ const [totalLikes, setTotalLikes] = useState(0);
 const [liked, setLiked] = useState(false);
 const [processingLike, setProcessingLike] = useState(false);
   const [slugPrivado, setSlugPrivado] = useState<string | null>(null);
+  const [visibilidad, setVisibilidad] = useState<VisibilidadAjustes | null>(null);
 
   const isPublicMode = !!textoUrl;
   const identifier = isPublicMode ? textoUrl! : id!;
@@ -226,6 +238,8 @@ const [
           if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
           const data = await response.json();
           setPortafolio(data);
+          // En modo privado (dueño del perfil), todos los datos son visibles
+setVisibilidad(null);
 
           // 🔥 CLAVE: extraer el slug real del enlace público (evita problemas de encoding)
           let slug = null;
@@ -236,6 +250,7 @@ const [
             slug = correoToSlug(data.correo);
           }
           setSlugPrivado(slug);
+           console.log("🔗 Slug generado:", slug);
 
           // Cargar total de likes usando el slug
 if (slug) {
@@ -253,6 +268,32 @@ if (slug) {
         },
       }
     );
+     console.log("cargando visibilidad ");
+    const visibilidadRes = await fetch(`http://localhost:8081/api/visibilidad/mis-ajustes`, {
+  headers: {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  },
+});
+console.log("satatus visibilidad ", visibilidadRes.status);
+if (visibilidadRes.ok) {
+  const visibilidadData = await visibilidadRes.json();
+  console.log("visibilidad cargada: ", visibilidadData);
+  setVisibilidad(visibilidadData);
+}else {
+      const errorText = await visibilidadRes.text();
+      console.error("error cargar viviblilidad:", visibilidadRes.status, errorText)
+      console.warn("Error al cargar visibilidad:", visibilidadRes.status);
+      // Si falla, establecer valores por defecto (todos false por seguridad)
+      setVisibilidad({
+        correoUsr: false,
+        telefonoUsr: false,
+        direccionUsr: false,
+        nombreUsr: false,
+        biografiaUsr: false,
+        profesionUsr: false,
+        universidadUsr: false,
+      });
+    }
 
     if (likesTotalRes.ok) {
       const { totalLikes } = await likesTotalRes.json();
@@ -266,6 +307,16 @@ if (slug) {
 
   } catch (err) {
     console.error("Error al cargar likes", err);
+    console.error("Error al cargar visibilidad:", err);
+    setVisibilidad({
+      correoUsr: false,
+      telefonoUsr: false,
+      direccionUsr: false,
+      nombreUsr: false,
+      biografiaUsr: false,
+      profesionUsr: false,
+      universidadUsr: false,
+    });
   }
 }
         }
@@ -577,24 +628,24 @@ if (data.message.includes("registrado")) {
               <div className="bg-card-bg/50 backdrop-blur-sm border border-card-border p-6 rounded-2xl">
                 <h3 className="text-lg font-bold text-text-primary border-b border-card-border/50 pb-3 mb-4">Información Rápida</h3>
                 <div className="space-y-4 text-sm">
-                  {portafolio.correo && (
-                    <div>
-                      <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Correo Electrónico</span>
-                      <span className="text-text-primary font-medium">{portafolio.correo}</span>
-                    </div>
-                  )}
-                  {portafolio.telefono && (
-                    <div>
-                      <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Teléfono / WhatsApp</span>
-                      <span className="text-text-primary font-medium">{portafolio.telefono}</span>
-                    </div>
-                  )}
-                  {portafolio.direccion && (
-                    <div>
-                      <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Ubicación</span>
-                      <span className="text-text-primary font-medium">{portafolio.direccion}</span>
-                    </div>
-                  )}
+                  {visibilidad !== null && portafolio.correo && visibilidad.correoUsr === true && (
+  <div>
+    <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Correo Electrónico</span>
+    <span className="text-text-primary font-medium">{portafolio.correo}</span>
+  </div>
+)}
+{visibilidad !== null && portafolio.telefono && visibilidad.telefonoUsr === true && (
+  <div>
+    <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Teléfono / WhatsApp</span>
+    <span className="text-text-primary font-medium">{portafolio.telefono}</span>
+  </div>
+)}
+{visibilidad !== null && portafolio.direccion && visibilidad.direccionUsr === true &&(
+  <div>
+    <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Ubicación</span>
+    <span className="text-text-primary font-medium">{portafolio.direccion}</span>
+  </div>
+)}
                   <div>
                     <span className="block text-xs text-text-secondary uppercase tracking-wider font-semibold">Modalidad Preferida</span>
                     <span className="text-brand-morado font-semibold">
