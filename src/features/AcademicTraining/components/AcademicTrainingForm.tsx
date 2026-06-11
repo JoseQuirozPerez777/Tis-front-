@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useAcademicTraining } from '../hooks/useAcademicTraining';
+import { RichTextEditor } from "@/shared/components/ui/RichTextEditor";
 
 export const AcademicTrainingForm = () => {
   const {
@@ -37,7 +38,7 @@ export const AcademicTrainingForm = () => {
     if (!endDate) {
       if (status !== 'EN_CURSO') setStatus('EN_CURSO');
     } else if (endDate === todayStr) {
-      if (status !== 'FINALIZADO') setStatus('FINALIZADO');
+      if (status !== 'EN_CURSO') setStatus('EN_CURSO');
     } else if (endDate > todayStr) {
       if (status !== 'EN_CURSO') setStatus('EN_CURSO');
     } else {
@@ -71,25 +72,6 @@ export const AcademicTrainingForm = () => {
             className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
           />
 
-          <Input
-            label="Carrera"
-            type="text"
-            placeholder="Ej. Ingeniería de Sistemas"
-            value={degree}
-            onChange={(e) => setDegree(e.target.value)}
-            required
-            className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
-          />
-          <Input
-            label="Área de estudio"
-            type="text"
-            placeholder="Ej. Desarrollo de Software"
-            value={fieldOfStudy}
-            onChange={(e) => setFieldOfStudy(e.target.value)}
-            required
-            className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
-          />
-
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium text-text-secondary ml-1">
               Nivel
@@ -110,6 +92,29 @@ export const AcademicTrainingForm = () => {
               <option value="CURSOS" className="bg-brand-azul-profundo text-white">Cursos</option>
             </select>
           </div>
+
+          {level !== 'PRIMARIA' && level !== 'SECUNDARIA' && level !== 'CURSOS' && (
+            <Input
+              label="Carrera"
+              type="text"
+              placeholder="Ej. Ingeniería de Sistemas"
+              value={degree}
+              onChange={(e) => setDegree(e.target.value)}
+              required
+              className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
+            />
+          )}
+          {level !== 'PRIMARIA' && level !== 'SECUNDARIA' && (
+            <Input
+              label="Área de estudio"
+              type="text"
+              placeholder="Ej. Desarrollo de Software"
+              value={fieldOfStudy}
+              onChange={(e) => setFieldOfStudy(e.target.value)}
+              required
+              className="bg-white/5 border-white/10 focus:border-brand-accent-neon/50"
+            />
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <Input
@@ -169,12 +174,10 @@ export const AcademicTrainingForm = () => {
             <label className="text-sm font-medium text-text-secondary ml-1">
               Descripción
             </label>
-            <textarea
-              placeholder="Ej. Enfoque en desarrollo web y bases de datos"
+            <RichTextEditor
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="flex w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent-neon/50 transition-all duration-200 resize-none"
+              onChange={(value) => setDescription(value)}
+              placeholder="Ej. Enfoque en desarrollo web y bases de datos"
             />
           </div>
           <div className="flex flex-col gap-1.5 w-full">
