@@ -46,11 +46,6 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-
-
-
-
-
       {esAdministrador && (
         <div className="rounded-2xl border border-card-border bg-brand-azul-medio/40 p-6 shadow-lg">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
@@ -87,23 +82,17 @@ export const DashboardPage = () => {
         </div>
       )}
 
-
-
-
-
-
-
       <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h2 className="text-xl font-bold text-[#E2F0FF] tracking-tight">
             Usuarios Registrados
           </h2>
 
           <button
             onClick={() => setMostrarFiltros(!mostrarFiltros)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all cursor-pointer ${mostrarFiltros
-                ? 'bg-brand-azul-brillante/20 border-brand-azul-brillante text-brand-azul-neon shadow-[0_0_12px_rgba(47,128,237,0.3)]'
-                : 'bg-brand-azul-medio/50 border-card-border text-text-secondary hover:border-brand-azul-brillante/50 hover:text-text-primary'
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all cursor-pointer w-full sm:w-auto justify-center sm:justify-start ${mostrarFiltros
+              ? 'bg-brand-azul-brillante/20 border-brand-azul-brillante text-brand-azul-neon shadow-[0_0_12px_rgba(47,128,237,0.3)]'
+              : 'bg-brand-azul-medio/50 border-card-border text-text-secondary hover:border-brand-azul-brillante/50 hover:text-text-primary'
               }`}
           >
             <SlidersHorizontal size={16} />
