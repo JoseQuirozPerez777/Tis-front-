@@ -11,7 +11,7 @@ import type {
 
 import type { BuscarPortafoliosResponseDTO } from "./filtros-busqueda.dto";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8081";
+const API_URL = import.meta.env.VITE_API_URL ?? "tis-back-production.up.railway.app";
 
 const USAR_MOCK = false;
 

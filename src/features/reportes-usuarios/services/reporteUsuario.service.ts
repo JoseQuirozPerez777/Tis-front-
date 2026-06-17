@@ -4,7 +4,7 @@
     ReporteUsuariosResponse,
   } from '../models/reporte-usuario.model';
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
+  const API_URL = import.meta.env.VITE_API_URL || 'tis-back-production.up.railway.app/api';
 
   /**
    * Cambia esto a false cuando el backend ya esté listo.

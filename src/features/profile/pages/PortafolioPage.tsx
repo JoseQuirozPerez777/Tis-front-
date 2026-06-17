@@ -164,14 +164,14 @@ const [
   likesRes,
   likedRes,
 ] = await Promise.all([
-  fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}`),
-  fetch(`http://localhost:8081/api/enlace/experiencias/${textoUrl}`),
-  fetch(`http://localhost:8081/api/enlace/proyectos/${textoUrl}`),
-  fetch(`http://localhost:8081/api/enlace/habilidades-tecnicas/${textoUrl}`),
-  fetch(`http://localhost:8081/api/enlace/habilidades-blandas/${textoUrl}`),
-  fetch(`http://localhost:8081/api/enlace/formaciones/${textoUrl}`),
-  fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}/likes/total`),
-  fetch(`http://localhost:8081/api/enlace/profile/${textoUrl}/liked`, {
+  fetch(`tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/experiencias/${textoUrl}`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/proyectos/${textoUrl}`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/habilidades-tecnicas/${textoUrl}`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/habilidades-blandas/${textoUrl}`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/formaciones/${textoUrl}`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}/likes/total`),
+  fetch(`tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}/liked`, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
@@ -218,7 +218,7 @@ const [
             localStorage.getItem("jwt") ||
             localStorage.getItem("token");
 
-          const response = await fetch(`http://localhost:8081/api/portafolio/${id}`, {
+          const response = await fetch(`tis-back-production.up.railway.app/api/portafolio/${id}`, {
             headers: {
               "Content-Type": "application/json",
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -244,11 +244,11 @@ if (slug) {
   try {
 
     const likesTotalRes = await fetch(
-      `http://localhost:8081/api/enlace/profile/${slug}/likes/total`
+      `tis-back-production.up.railway.app/api/enlace/profile/${slug}/likes/total`
     );
 
     const likedRes = await fetch(
-      `http://localhost:8081/api/enlace/profile/${slug}/liked`,
+      `tis-back-production.up.railway.app/api/enlace/profile/${slug}/liked`,
       {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -305,7 +305,7 @@ if (slug) {
 
     try {
       setProcessingLike(true);
-      const url = `http://localhost:8081/api/enlace/profile/${likeIdentifier}/like`;
+      const url = `tis-back-production.up.railway.app/api/enlace/profile/${likeIdentifier}/like`;
       const token = !isPublicMode
         ? sessionStorage.getItem("jwt") ||
           sessionStorage.getItem("token") ||
