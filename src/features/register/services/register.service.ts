@@ -19,7 +19,7 @@ export const registerService = {
       password: dto.password
     };
     console.log(nuevoDato)
-    const response = await fetch('tis-back-production.up.railway.app/api/usuarios/registro', {
+    const response = await fetch('https://tis-back-production.up.railway.app/api/usuarios/registro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(nuevoDato),

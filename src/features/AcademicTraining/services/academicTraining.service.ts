@@ -1,6 +1,6 @@
 import type { AcademicTraining } from '../models/academicTraining.model';
 
-const API_URL = 'tis-back-production.up.railway.app/api';
+const API_URL = 'https://tis-back-production.up.railway.app/api';
 
 export const academicTrainingService = {
   uploadToCloudinary: async (file: File): Promise<string> => {

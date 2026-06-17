@@ -164,14 +164,14 @@ const [
   likesRes,
   likedRes,
 ] = await Promise.all([
-  fetch(`tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/experiencias/${textoUrl}`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/proyectos/${textoUrl}`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/habilidades-tecnicas/${textoUrl}`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/habilidades-blandas/${textoUrl}`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/formaciones/${textoUrl}`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}/likes/total`),
-  fetch(`tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}/liked`, {
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/experiencias/${textoUrl}`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/proyectos/${textoUrl}`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/habilidades-tecnicas/${textoUrl}`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/habilidades-blandas/${textoUrl}`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/formaciones/${textoUrl}`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}/likes/total`),
+  fetch(`https://tis-back-production.up.railway.app/api/enlace/profile/${textoUrl}/liked`, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
@@ -218,7 +218,7 @@ const [
             localStorage.getItem("jwt") ||
             localStorage.getItem("token");
 
-          const response = await fetch(`tis-back-production.up.railway.app/api/portafolio/${id}`, {
+          const response = await fetch(`https://tis-back-production.up.railway.app/api/portafolio/${id}`, {
             headers: {
               "Content-Type": "application/json",
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -244,11 +244,11 @@ if (slug) {
   try {
 
     const likesTotalRes = await fetch(
-      `tis-back-production.up.railway.app/api/enlace/profile/${slug}/likes/total`
+      `https://tis-back-production.up.railway.app/api/enlace/profile/${slug}/likes/total`
     );
 
     const likedRes = await fetch(
-      `tis-back-production.up.railway.app/api/enlace/profile/${slug}/liked`,
+      `https://tis-back-production.up.railway.app/api/enlace/profile/${slug}/liked`,
       {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -305,7 +305,7 @@ if (slug) {
 
     try {
       setProcessingLike(true);
-      const url = `tis-back-production.up.railway.app/api/enlace/profile/${likeIdentifier}/like`;
+      const url = `https://tis-back-production.up.railway.app/api/enlace/profile/${likeIdentifier}/like`;
       const token = !isPublicMode
         ? sessionStorage.getItem("jwt") ||
           sessionStorage.getItem("token") ||

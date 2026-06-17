@@ -17,7 +17,7 @@ import {
   adaptTechnologies,
 } from './experience.adapter';
 
-const API_URL = 'tis-back-production.up.railway.app';
+const API_URL = 'https://tis-back-production.up.railway.app';
 
 const getAuthHeaders = () => {
   const token = sessionStorage.getItem('jwt');
