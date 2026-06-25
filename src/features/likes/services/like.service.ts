@@ -4,7 +4,7 @@ import type {
   LikeResponseDTO,
 } from './likes.dto';
 
-const API_URL = 'http://localhost:8081/api/enlace';
+const API_URL = 'https://tis-back-production.up.railway.app/api/enlace';
 
 
 const getToken = (): string | null => {

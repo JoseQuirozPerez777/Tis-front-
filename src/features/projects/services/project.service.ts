@@ -6,7 +6,7 @@ import type {
   UpdateProjectDTO,
 } from "./project.dto";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
+const API_URL = import.meta.env.VITE_API_URL || "https://tis-back-production.up.railway.app";
 
 function getToken() {
   return (
