@@ -271,7 +271,7 @@ if (slug) {
       }
     );
      console.log("cargando visibilidad ");
-    const visibilidadRes = await fetch(`http://localhost:8081/api/visibilidad/mis-ajustes`, {
+    const visibilidadRes = await fetch(`https://tis-back-production.up.railway.app/api/visibilidad/mis-ajustes`, {
   headers: {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   },
