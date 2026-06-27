@@ -60,31 +60,41 @@ export const getExperiences = async (): Promise<Experience[]> => {
 
 export const createExperience = async (
   formData: ExperienceFormData,
-): Promise<Experience> => {
+): Promise<{
+  message: string;
+  data: Experience;
+}> => {
   const payload = adaptExperienceToCreateDto(formData);
 
-  console.log('PAYLOAD EXPERIENCE:', payload);
-
-  const response = await fetch(`${API_URL}/api/experiencias/registrar`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
-  });
+  const response = await fetch(
+    `${API_URL}/api/experiencias/registrar`,
+    {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload),
+    },
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('ERROR BACKEND EXPERIENCE:', errorText);
-    throw new Error(errorText || 'No se pudo registrar la experiencia.');
+    throw new Error(errorText);
   }
 
-  const data = (await response.json()) as CreateExperienceResponseDto;
-  return adaptExperience(data.data);
-};
+const data =
+  (await response.json()) as CreateExperienceResponseDto;
 
+return {
+  message: data.message,
+  data: adaptExperience(data.data),
+};
+};
 export const updateExperience = async (
   id: number,
   formData: ExperienceFormData,
-): Promise<Experience> => {
+): Promise<{
+  message: string;
+  data: Experience;
+}> => {
   const payload = {
     id,
     ...adaptExperienceToCreateDto(formData),
@@ -101,8 +111,13 @@ export const updateExperience = async (
     throw new Error(errorText || 'No se pudo actualizar la experiencia.');
   }
 
-  const data = (await response.json()) as CreateExperienceResponseDto;
-  return adaptExperience(data.data);
+ const data =
+  (await response.json()) as CreateExperienceResponseDto;
+
+return {
+  message: data.message,
+  data: adaptExperience(data.data),
+};
 };
 
 export const deleteExperience = async (id: number): Promise<void> => {
