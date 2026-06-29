@@ -13,9 +13,9 @@ export type ModalidadTrabajo =
   | "Freelance"
   | "";
 
-export type NivelAcademico = "PRIMARIA" | "SECUNDARIA" | "TECNICO" | "LICENCIATURA" | "MAESTRIA" | "DOCTORADO" | "DIPLOMADO" | "CURSOS";
-export type EstadoFormacion = "EN CURSO" | "FINALIZADO" | "INCOMPLETO";
-export type NivelDominio = "BASICO" | "INTERMEDIO" | "AVANZADO" | "EXPERTO";
+export type NivelAcademico = "TODOS"|"PRIMARIA" | "SECUNDARIA" | "TECNICO" | "LICENCIATURA" | "MAESTRIA" | "DOCTORADO" | "DIPLOMADO" | "CURSOS";
+export type EstadoFormacion = "TODOS"|"EN CURSO" | "FINALIZADO" | "INCOMPLETO";
+export type NivelDominio = "TODOS"|"BASICO" | "INTERMEDIO" | "AVANZADO" | "EXPERTO";
 
 // --- Nuevas interfaces para filtros avanzados ---
 export interface ExperienciaLaboral {
@@ -108,17 +108,17 @@ export interface RespuestaBusquedaPortafolios {
 }
 
 export const filtrosBusquedaIniciales: FiltrosBusqueda = {
-  buscar: null,
-  profesion: null,
-  especializacion: null,
-  tecnologia: null,
-  empresa: null,
+  buscar: '',
+  profesion: '',
+  especializacion: '',
+  tecnologia: '',
+  empresa: '',
   //formacionAcademica: "",
-  disponibilidad: null,
-  modalidadTrabajo: null,
-  experienciaMinima: null,
-  idiomas: null,
-  ubicacion: null,
+  disponibilidad: '',
+  modalidadTrabajo: '',
+  experienciaMinima: '',
+  idiomas: [],
+  ubicacion: '',
   ordenarPor: "experiencia",
   pagina: 1,
   limite: 10,

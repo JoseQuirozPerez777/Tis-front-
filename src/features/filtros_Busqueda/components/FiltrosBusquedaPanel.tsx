@@ -48,7 +48,7 @@ export const FiltrosBusquedaPanel = ({
 
   const [habilidadTecnica, setHabilidadTecnica] = useState<HabilidadTecnica>({
     nombre: "",
-    nivel: "BASICO",
+    nivel: "TODOS",
     anosExperiencia: 0,
   });
 
@@ -66,9 +66,9 @@ export const FiltrosBusquedaPanel = ({
   const [formacionAcademica, setFormacionAcademica] = useState<FormacionAcademica>({
     institucion: "",
     titulo: "",
-    nivel: "LICENCIATURA",
+    nivel: "TODOS",
     duracion: 0,
-    estado: "FINALIZADO",
+    estado: "TODOS",
   });
 
   // Helper para convertir string de tecnologías separadas por coma a array
@@ -88,11 +88,11 @@ export const FiltrosBusquedaPanel = ({
       //habilidadesBlandas: habilidadBlanda.nombre.trim() ? [habilidadBlanda] : null,
       //proyectos: proyecto.nombre.trim() ? [proyecto] : null,
       //formacionAcademica: formacionAcademica.institucion.trim() ? [formacionAcademica] : null,
-      experienciaLaboral: experienciaLaboral.nombreEmpresa.trim() ? experienciaLaboral : null,
-    habilidadTecnica: habilidadTecnica.nombre.trim() ? habilidadTecnica : null,
-    habilidadBlanda: habilidadBlanda.nombre.trim() ? habilidadBlanda : null,
-    proyecto: proyecto.nombre.trim() ? proyecto : null,
-    formacionAcademica: formacionAcademica.institucion.trim() ? formacionAcademica : null,
+      experienciaLaboral: experienciaLaboral ? experienciaLaboral : null,
+    habilidadTecnica: habilidadTecnica ? habilidadTecnica : null,
+    habilidadBlanda: habilidadBlanda ? habilidadBlanda : null,
+    proyecto: proyecto ? proyecto : null,
+    formacionAcademica: formacionAcademica ? formacionAcademica : null,
     };
     console.log("📦 Filtros a aplicar:", filtrosCompletos);
     onAplicarFiltros(filtrosCompletos);
@@ -109,7 +109,7 @@ export const FiltrosBusquedaPanel = ({
     });
     setHabilidadTecnica({
       nombre: "",
-      nivel: "BASICO",
+      nivel: "TODOS",
       anosExperiencia: 0,
     });
     setHabilidadBlanda({ nombre: "" });
@@ -122,9 +122,9 @@ export const FiltrosBusquedaPanel = ({
     setFormacionAcademica({
       institucion: "",
       titulo: "",
-      nivel: "LICENCIATURA",
+      nivel: "TODOS",
       duracion: 0,
-      estado: "FINALIZADO",
+      estado: "TODOS",
     });
     onLimpiarFiltros();
   };
@@ -327,12 +327,7 @@ export const FiltrosBusquedaPanel = ({
                       placeholder="Ej: React, Node.js"
                       className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition placeholder:text-text-secondary focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
                     />
-                    <button
-                      type="button"
-                      className="w-full rounded-xl border border-card-border bg-[#0F2B4C] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
-                    >
-                      Añadir más tecnología
-                    </button>
+              
                   </div>
                 </div>
               </div>
@@ -373,11 +368,12 @@ export const FiltrosBusquedaPanel = ({
                     onChange={(e) =>
                       setHabilidadTecnica((prev) => ({
                         ...prev,
-                        nivel: e.target.value as "BASICO" | "INTERMEDIO" | "AVANZADO" | "EXPERTO",
+                        nivel: e.target.value as "TODOS"|"BASICO" | "INTERMEDIO" | "AVANZADO" | "EXPERTO",
                       }))
                     }
                     className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
                   >
+                    <option value="TODOS">TODOS</option>
                     <option value="BASICO">BÁSICO</option>
                     <option value="INTERMEDIO">INTERMEDIO</option>
                     <option value="AVANZADO">AVANZADO</option>
@@ -549,6 +545,7 @@ export const FiltrosBusquedaPanel = ({
                       setFormacionAcademica((prev) => ({
                         ...prev,
                         nivel: e.target.value as
+                          |"TODOS"
                           | "PRIMARIA"
                           | "SECUNDARIA"
                           | "TECNICO"
@@ -561,6 +558,7 @@ export const FiltrosBusquedaPanel = ({
                     }
                     className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
                   >
+                    <option value="TODOS">TODOS</option>
                     <option value="PRIMARIA">PRIMARIA</option>
                     <option value="SECUNDARIA">SECUNDARIA</option>
                     <option value="TECNICO">TECNICO</option>
@@ -593,11 +591,12 @@ export const FiltrosBusquedaPanel = ({
                     onChange={(e) =>
                       setFormacionAcademica((prev) => ({
                         ...prev,
-                        estado: e.target.value as "EN CURSO" | "FINALIZADO" | "INCOMPLETO",
+                        estado: e.target.value as "TODOS"|"EN CURSO" | "FINALIZADO" | "INCOMPLETO",
                       }))
                     }
                     className="w-full rounded-xl border border-card-border bg-[#061327] px-3 py-2 text-sm text-text-primary outline-none transition focus:border-brand-azul-brillante focus:ring-2 focus:ring-brand-azul-brillante/20"
                   >
+                    <option value="TODOS">TODOS</option>
                     <option value="EN_CURSO">EN CURSO</option>
                     <option value="FINALIZADO">FINALIZADO</option>
                     <option value="INCOMPLETO">INCOMPLETO</option>

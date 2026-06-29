@@ -37,6 +37,7 @@ export const useFiltrosBusqueda = () => {
       setCargando(true);
       setError(null);
 
+      console.log("FILTROS ACTUALES",filtrosActuales)
       const response = await buscarPortafoliosService(filtrosActuales);
       // Remover usuario actual de los resultados
       const sinUsuarioActual = response.data.filter(
@@ -159,7 +160,7 @@ export const useFiltrosBusqueda = () => {
     buscarPortafolios(nuevosFiltros);
   };
 
-  const alternarIdioma = (idioma: string) => {
+  /*const alternarIdioma = (idioma: string) => {
     setFiltros((prev) => {
       const existe = prev.idiomas.includes(idioma);
 
@@ -171,17 +172,18 @@ export const useFiltrosBusqueda = () => {
         pagina: 1,
       };
     });
+  };*/
+
+  // En useFiltrosBusqueda.ts
+const aplicarFiltros = (filtrosDesdePanel?: FiltrosBusqueda) => {
+  const nuevosFiltros = {
+    ...(filtrosDesdePanel || filtros), // Si vienen del panel, usa esos; si no, el estado actual
+    pagina: 1,
   };
 
-  const aplicarFiltros = () => {
-    const nuevosFiltros = {
-      ...filtros,
-      pagina: 1,
-    };
-
-    setFiltros(nuevosFiltros);
-    buscarPortafolios(nuevosFiltros);
-  };
+  setFiltros(nuevosFiltros);
+  buscarPortafolios(nuevosFiltros);
+};
 
   const limpiarFiltros = () => {
     setFiltros(filtrosBusquedaIniciales);
@@ -206,7 +208,7 @@ export const useFiltrosBusqueda = () => {
     actualizarFiltro,
     cambiarOrden,
     cambiarPagina,
-    alternarIdioma,
+    //alternarIdioma,
     aplicarFiltros,
     limpiarFiltros,
     buscarPortafolios,
