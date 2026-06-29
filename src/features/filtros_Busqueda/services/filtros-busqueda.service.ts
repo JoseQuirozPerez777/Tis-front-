@@ -16,11 +16,13 @@ const buscarPortafoliosBackend = async (
   filtros: FiltrosBusqueda,
 ): Promise<RespuestaBusquedaPortafolios> => {
   const requestDTO = filtrosBusquedaToRequestDTO(filtros);
+  console.log("Request DTO:", requestDTO); 
 
-  const response = await fetch(`${API_URL}/portafolios/buscar`, {
+  const response = await fetch(`${API_URL}/portafolios/avanzada/buscar`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
     },
     body: JSON.stringify(requestDTO),
   });

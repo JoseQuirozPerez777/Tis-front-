@@ -2,6 +2,11 @@ import type {
   Disponibilidad,
   ModalidadTrabajo,
   OrdenarPor,
+  ExperienciaLaboral,
+  HabilidadTecnica,
+  HabilidadBlanda,
+  Proyecto,
+  FormacionAcademica,
 } from "../models/filtros-busqueda.model";
 
 export interface BuscarPortafoliosRequestDTO {
@@ -10,7 +15,7 @@ export interface BuscarPortafoliosRequestDTO {
   especializacion?: string | null;
   tecnologia?: string | null;
   empresa?: string | null;
-  formacionAcademica?: string | null;
+  //formacionAcademica?: string | null;
   disponibilidad?: Disponibilidad | null;
   modalidadTrabajo?: "REMOTO" | "PRESENCIAL" | "HIBRIDO" | null;
   experienciaMinima?: number | null;
@@ -19,6 +24,17 @@ export interface BuscarPortafoliosRequestDTO {
   ordenarPor?: OrdenarPor;
   pagina: number;
   limite: number;
+  // Avanzados
+  //experienciasLaborales?: ExperienciaLaboral[] | null;
+  //habilidadesTecnicas?: HabilidadTecnica[] | null;
+  //habilidadesBlandas?: HabilidadBlanda[] | null;
+  //proyectos?: Proyecto[] | null;
+  //formacionAcademica?: FormacionAcademica[] | null;
+  experienciaLaboral?: ExperienciaLaboral | null;
+  habilidadTecnica?: HabilidadTecnica | null;
+  habilidadBlanda?: HabilidadBlanda | null;
+  proyecto?: Proyecto | null;
+  formacionAcademica?: FormacionAcademica | null;
 }
 
 export interface PortafolioResultadoResponseDTO {

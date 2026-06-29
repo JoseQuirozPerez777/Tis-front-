@@ -4,6 +4,7 @@ import { FiltrosBusquedaPagination } from "../components/FiltrosBusquedaPaginati
 import { FiltrosBusquedaPanel } from "../components/FiltrosBusquedaPanel";
 import { FiltrosBusquedaSort } from "../components/FiltrosBusquedaSort";
 import { useFiltrosBusqueda } from "../hooks/useFiltrosBusqueda";
+import type { FiltrosBusqueda } from "../models/filtros-busqueda.model";
 
 export const FiltrosBusquedaPage = () => {
   const {
@@ -18,7 +19,18 @@ export const FiltrosBusquedaPage = () => {
     cambiarPagina,
     aplicarFiltros,
     limpiarFiltros,
+    setFiltros,
+    buscarPortafolios
   } = useFiltrosBusqueda();
+
+  // Manejador para aplicar filtros desde el panel (recibe el objeto completo)
+  const handleAplicarFiltros = (filtrosCompletos: FiltrosBusqueda) => {
+    //setFiltros(filtrosCompletos);
+    // Aplicar filtros (reinicia página y busca)
+    //aplicarFiltros(); // ya usa el estado actualizado
+    setFiltros(filtrosCompletos); // opcional, para mantener el estado actualizado
+    buscarPortafolios(filtrosCompletos); // pasa los filtros directamente
+  };
 
   return (
     <main className="min-h-screen bg-bg-dark px-4 py-8 text-text-primary">
@@ -46,8 +58,7 @@ export const FiltrosBusquedaPage = () => {
           <FiltrosBusquedaPanel
             filtros={filtros}
             cargando={cargando}
-            onActualizarFiltro={actualizarFiltro}
-            onAplicarFiltros={aplicarFiltros}
+            onAplicarFiltros={handleAplicarFiltros}
             onLimpiarFiltros={limpiarFiltros}
           />
 

@@ -24,15 +24,27 @@ export const filtrosBusquedaToRequestDTO = (
     especializacion: limpiarTexto(filtros.especializacion),
     tecnologia: limpiarTexto(filtros.tecnologia),
     empresa: limpiarTexto(filtros.empresa),
-    formacionAcademica: limpiarTexto(filtros.formacionAcademica),
+    //formacionAcademica: limpiarTexto(filtros.formacionAcademica),
     disponibilidad: filtros.disponibilidad || null,
     modalidadTrabajo: null,
-    experienciaMinima: null,
-    idiomas: filtros.idiomas.length > 0 ? filtros.idiomas : null,
+    experienciaMinima: filtros.experienciaMinima ?? null,
+    idiomas: filtros.idiomas?.length ? filtros.idiomas : null,
     ubicacion: limpiarTexto(filtros.ubicacion),
     ordenarPor: filtros.ordenarPor,
     pagina: filtros.pagina,
     limite: filtros.limite,
+
+    // Avanzados
+    //experienciasLaborales: filtros.experienciasLaborales,
+    //habilidadesTecnicas: filtros.habilidadesTecnicas,
+    //habilidadesBlandas: filtros.habilidadesBlandas,
+    //proyectos: filtros.proyectos,
+    //formacionAcademica: filtros.formacionAcademica,
+    experienciaLaboral: filtros.experienciaLaboral ?? null,
+    habilidadTecnica: filtros.habilidadTecnica ?? null,
+    habilidadBlanda: filtros.habilidadBlanda ?? null,
+    proyecto: filtros.proyecto ?? null,
+    formacionAcademica: filtros.formacionAcademica ?? null,
   };
 };
 
