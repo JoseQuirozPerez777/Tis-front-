@@ -5,7 +5,7 @@ import { FiltrosBusquedaPanel } from "../components/FiltrosBusquedaPanel";
 import { FiltrosBusquedaSort } from "../components/FiltrosBusquedaSort";
 import { useFiltrosBusqueda } from "../hooks/useFiltrosBusqueda";
 import type { FiltrosBusqueda } from "../models/filtros-busqueda.model";
-import { useEffect } from "react";
+//import { useEffect } from "react";
 
 export const FiltrosBusquedaPage = () => {
   const {

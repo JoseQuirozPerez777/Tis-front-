@@ -2,11 +2,11 @@ import type {
   Disponibilidad,
   ModalidadTrabajo,
   OrdenarPor,
-  ExperienciaLaboral,
-  HabilidadTecnica,
-  HabilidadBlanda,
-  Proyecto,
-  FormacionAcademica,
+  //ExperienciaLaboral,
+  //HabilidadTecnica,
+  //HabilidadBlanda,
+  //Proyecto,
+  //FormacionAcademica,
 } from "../models/filtros-busqueda.model";
 
 // --- Sub-DTOs Avanzados con propiedades que admiten null ---
